@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thefirstlineofcode.sand.demo.server.lite.RecordedVideoMapper">
+	<insert id="insert" parameterType="com.thefirstlineofcode.sand.demo.server.lite.D_RecordedVideo">
+		INSERT INTO RECORDED_VIDEOS(id, recorder_thing_id, video_name, video_url, recording_time, recording_reason, stored_time) VALUES(#{id}, #{recorderThingId}, #{videoName}, #{videoUrl}, #{recordingTime}, #{recordingReason}, CURRENT_TIMESTAMP)
+	</insert>
+	
+	<select id="selectByRecorder" resultMap="recordedVideoResultMap">
+		SELECT * FROM RECORDED_VIDEOS WHERE recorder_thing_id = #{arg0} ORDER BY recording_time DESC
+	</select>
+	
+	<resultMap id="recordedVideoResultMap" type="com.thefirstlineofcode.sand.demo.protocols.RecordedVideo">
+		<result property="videoName" column="video_name"/>
+		<result property="videoUrl" column="video_url"/>
+		<result property="recordingTime" column="recording_time"/>
+		<result property="recordingReason" column="recording_reason"/>
+	</resultMap>
+</mapper>

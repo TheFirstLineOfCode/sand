@@ -1,0 +1,517 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+		http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<groupId>com.thefirstlineofcode.sand</groupId>
+	<artifactId>com.thefirstlineofcode.sand</artifactId>
+	<packaging>pom</packaging>
+	<version>1.0.0-BETA2</version>
+	<name>Sand IoT Plugins</name>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<basalt.version>1.1.0-RELEASE</basalt.version>
+		<chalk.version>1.0.1-RELEASE</chalk.version>
+		<granite.version>1.0.3-RELEASE</granite.version>
+		<sand.version>1.0.0-BETA2</sand.version>
+		<gem.version>0.2.0-RELEASE</gem.version>
+	</properties>
+
+	<modules>
+		<module>protocols</module>
+		<module>client</module>
+		<module>emulators</module>
+		<module>server</module>
+		<module>demo</module>
+	</modules>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.1.2</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.15</version>
+			</plugin>
+		</plugins>
+	</build>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>jcenter</id>
+			<name>JCenter Repository</name>
+			<url>https://jcenter.bintray.com/</url>
+    		</pluginRepository>
+		<pluginRepository>
+			<id>central</id>
+			<name>Maven Central Repository</name>
+			<url>https://repo1.maven.org/maven2</url>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<repositories>
+		<repository>
+                        <id>com.thefirstlineofcode.public</id>
+                        <name>TheFirstLineOfCode Repository - Public</name>
+                        <url>http://120.25.166.188/repository/maven-public/</url>
+                </repository>
+		<repository>
+			<id>jcenter</id>
+			<name>JCenter Repository</name>
+			<url>https://jcenter.bintray.com/</url>
+    		</repository>
+		<repository>
+			<id>central</id>
+			<name>Central Repository</name>
+			<url>https://repo1.maven.org/maven2</url>
+		</repository>
+	</repositories>
+
+	<dependencyManagement>
+		<dependencies>
+			<!-- third party libraries -->
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.8.2</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-core</artifactId>
+				<version>1.2.5</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>1.2.5</version>
+			</dependency>
+			<dependency>
+        			<groupId>org.slf4j</groupId>
+        			<artifactId>slf4j-api</artifactId>
+        			<version>1.7.31</version>
+      			</dependency>
+			<dependency>
+        			<groupId>org.slf4j</groupId>
+        			<artifactId>jcl-over-slf4j</artifactId>
+        			<version>1.6.4</version>
+      			</dependency>
+			<dependency>
+				<groupId>com.google.zxing</groupId>
+				<artifactId>javase</artifactId>
+				<version>3.3.0</version>
+			</dependency>
+			<dependency>
+				<groupId>com.alexandriasoftware.swing</groupId>
+				<artifactId>jsplitbutton</artifactId>
+				<version>1.3.1</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.annotation</groupId>
+				<artifactId>jsr250-api</artifactId>
+				<version>1.0</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.xml.bind</groupId>
+				<artifactId>jaxb-api</artifactId>
+				<version>2.3.0</version>
+			</dependency>
+			<dependency>
+				<groupId>com.squareup.okhttp3</groupId>
+				<artifactId>okhttp</artifactId>
+				<version>4.9.3</version>
+			</dependency>
+			
+			<!-- basalt libraries -->
+			<dependency>
+				<groupId>com.thefirstlineofcode.basalt</groupId>
+				<artifactId>basalt-xmpp-core</artifactId>
+				<version>${basalt.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.thefirstlineofcode.basalt</groupId>
+				<artifactId>basalt-oxm</artifactId>
+				<version>${basalt.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.thefirstlineofcode.basalt.xeps</groupId>
+				<artifactId>basalt-xeps-ping</artifactId>
+				<version>${basalt.version}</version>
+			</dependency>
+			
+			<!-- chalk libraries -->
+			<dependency>
+				<groupId>com.thefirstlineofcode.chalk</groupId>
+				<artifactId>chalk-core</artifactId>
+				<version>${chalk.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.thefirstlineofcode.chalk</groupId>
+				<artifactId>chalk-logger</artifactId>
+				<version>${chalk.version}</version>
+			</dependency>
+
+			<!-- granite libraries -->
+			<dependency>
+        			<groupId>com.thefirstlineofcode.granite.framework</groupId>
+        			<artifactId>granite-framework-core</artifactId>
+        			<version>${granite.version}</version>
+			</dependency>
+
+			<dependency>
+        			<groupId>com.thefirstlineofcode.granite.framework</groupId>
+        			<artifactId>granite-framework-im</artifactId>
+        			<version>${granite.version}</version>
+			</dependency>
+
+			<dependency>
+        			<groupId>com.thefirstlineofcode.granite.stream</groupId>
+        			<artifactId>granite-stream-standard</artifactId>
+        			<version>${granite.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.granite.framework.adf</groupId>
+        			<artifactId>granite-framework-adf-core</artifactId>
+        			<version>${granite.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.granite.framework.adf</groupId>
+        			<artifactId>granite-framework-adf-mybatis</artifactId>
+        			<version>${granite.version}</version>
+			</dependency>
+
+			<!-- gem libraries -->
+			<dependency>
+        			<groupId>com.thefirstlineofcode.gem</groupId>
+        			<artifactId>gem-protocol-bxmpp</artifactId>
+        			<version>${gem.version}</version>
+			</dependency>
+			<dependency>
+                        	<groupId>com.thefirstlineofcode.gem.client</groupId>
+                        	<artifactId>gem-client-bxmpp</artifactId>
+        			<version>${gem.version}</version>
+                	</dependency>
+
+			<!-- sand libraries -->
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.emulators.lora</groupId>
+				<artifactId>sand-emulators-lora-network</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.emulators</groupId>
+				<artifactId>sand-emulators-things</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.emulators</groupId>
+				<artifactId>sand-emulators-commons</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.emulators.lora</groupId>
+				<artifactId>sand-emulators-lora-things</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.emulators.lora</groupId>
+				<artifactId>sand-emulators-lora-simple-light</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.emulators</groupId>
+				<artifactId>sand-emulators-models</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+				<artifactId>sand-protocols-core</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+				<artifactId>sand-protocols-thing</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+				<artifactId>sand-protocols-lora-dac</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+				<artifactId>sand-protocols-ibtr</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+				<artifactId>sand-protocols-concentrator</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+				<artifactId>sand-protocols-location</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+				<artifactId>sand-protocols-actuator</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+				<artifactId>sand-protocols-operator</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+				<artifactId>sand-protocols-webrtc-signaling</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+				<artifactId>sand-protocols-edge</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+				<artifactId>sand-protocols-lora-gateway</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+				<artifactId>sand-protocols-sensor</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+				<artifactId>sand-protocols-bxmpp-extensions</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.protocols.things</groupId>
+				<artifactId>sand-protocols-things-simple-light</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.protocols.things</groupId>
+				<artifactId>sand-protocols-things-simple-camera</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.protocols.things</groupId>
+				<artifactId>sand-protocols-things-simple-temperature-reporter</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.client</groupId>
+				<artifactId>sand-client-thing</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.client</groupId>
+				<artifactId>sand-client-edge</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.client</groupId>
+				<artifactId>sand-client-ibtr</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.client</groupId>
+				<artifactId>sand-client-lora</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.client</groupId>
+				<artifactId>sand-client-concentrator</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.client</groupId>
+				<artifactId>sand-client-location</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.client</groupId>
+				<artifactId>sand-client-actuator</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.client</groupId>
+				<artifactId>sand-client-friends</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.client</groupId>
+				<artifactId>sand-client-remoting</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+				
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.client</groupId>
+				<artifactId>sand-client-sensor</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.client.things</groupId>
+				<artifactId>sand-client-things-simple-light</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.client.things</groupId>
+				<artifactId>sand-client-things-simple-camera</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.client</groupId>
+				<artifactId>sand-client-webcam</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.client</groupId>
+				<artifactId>sand-client-lora-dac</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.client</groupId>
+				<artifactId>sand-client-lora-gateway</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.server</groupId>
+				<artifactId>sand-server-things</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.server</groupId>
+				<artifactId>sand-server-stream</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.server</groupId>
+				<artifactId>sand-server-ibtr</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.server</groupId>
+				<artifactId>sand-server-concentrator</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.server</groupId>
+				<artifactId>sand-server-location</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.server</groupId>
+				<artifactId>sand-server-actuator</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.server</groupId>
+				<artifactId>sand-server-notification</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.server</groupId>
+				<artifactId>sand-server-friends</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.server</groupId>
+				<artifactId>sand-server-sensor</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.demo</groupId>
+				<artifactId>sand-demo-protocols</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.demo</groupId>
+				<artifactId>sand-demo-bxmpp-extensions</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.demo</groupId>
+				<artifactId>sand-demo-server</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	
+	<distributionManagement>
+                <repository>
+                        <id>com.thefirstlineofcode.public</id>
+                        <name>thefirstlineofcode Repository - Public</name>
+                        <url>http://120.25.166.188/repository/maven-public/</url>
+                </repository>
+	</distributionManagement>
+
+</project>

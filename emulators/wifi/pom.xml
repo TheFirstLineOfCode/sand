@@ -1,0 +1,23 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+		http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>com.thefirstlineofcode.sand</groupId>
+		<artifactId>sand-emulators</artifactId>
+		<version>1.0.0-BETA2</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<groupId>com.thefirstlineofcode.sand.emulators</groupId>
+	<artifactId>sand-emulators-wifi</artifactId>
+	<packaging>pom</packaging>
+	<name>Sand IoT WiFi emulators</name>
+
+	<modules>
+		<module>simple-light</module>
+	</modules>
+
+</project>

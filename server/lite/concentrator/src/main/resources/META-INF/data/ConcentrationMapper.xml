@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thefirstlineofcode.sand.server.lite.concentrator.ConcentrationMapper">
+    <insert id="insert" parameterType="com.thefirstlineofcode.sand.server.lite.concentrator.D_Concentration">
+        INSERT INTO CONCENTRATIONS(id, concentrator, node, lan_id, communication_net, address, addition_time) VALUES(#{id}, #{concentratorThingName}, #{nodeThingId}, #{lanId}, #{communicationNet}, #{address}, #{additionTime})
+    </insert>
+	
+	<select id="selectCountByConcentratorAndLanId" resultType="int">
+		SELECT count(*) FROM CONCENTRATIONS WHERE concentrator = #{arg0} AND lan_id = #{arg1}
+	</select>
+	
+	<select id="selectNodeByConcentratorAndLanId" resultType="com.thefirstlinelinecode.sand.protocols.concentrator.Node">
+		SELECT node AS thing_id, lan_id, communication_net, address FROM CONCENTRATIONS WHERE concentrator = #{arg0} AND lan_id = #{arg1}
+	</select>
+	
+	<select id="selectCountByConcentratorAndNode" resultType="int">
+		SELECT count(*) FROM CONCENTRATIONS WHERE concentrator = #{arg0} AND node = #{arg1}
+	</select>
+	
+	<select id="selectNodeByConcentratorAndNode" resultType="com.thefirstlinelinecode.sand.protocols.concentrator.Node">
+		SELECT node AS thing_id, lan_id, communication_net, address FROM CONCENTRATIONS WHERE concentrator = #{arg0} AND node = #{arg1}
+	</select>
+	
+	<select id="selectCountByNode" resultType="int">
+		SELECT count(*) FROM CONCENTRATIONS WHERE node = #{arg0}
+	</select>
+	
+	<select id="selectConcentrationByNode" resultType="com.thefirstlineofcode.sand.server.lite.concentrator.D_Concentration">
+		SELECT id, concentrator AS concentrator_thing_name, node AS node_thing_id, lan_id, communication_net, address, addition_time FROM CONCENTRATIONS WHERE node = #{arg0}
+	</select>
+	
+	<select id="selectNodesByConcentrator" resultMap="nodesResultMap">
+		SELECT
+			c.node AS c_node,
+			c.lan_id AS c_lan_id,
+			c.communication_net AS c_communication_net,
+			c.address AS c_address,
+			t.model AS t_model
+		FROM CONCENTRATIONS AS c LEFT JOIN THINGS as t ON
+			c.node = t.thing_id
+		WHERE
+			concentrator = #{arg0}
+	</select>
+	
+	<delete id="deleteNode">
+        DELETE FROM CONCENTRATIONS WHERE concentrator=#{arg0} AND lan_id=#{arg1}
+    </delete>
+	
+	<resultMap id="nodesResultMap" type="com.thefirstlinelinecode.sand.protocols.concentrator.Node">
+	    <result property="thingId" column="c_node"/>
+	    <result property="lanId" column="c_lan_id"/>
+	    <result property="model" column="t_model"/>
+	    <result property="communicationNet" column="c_communication_net"/>
+	    <result property="address" column="c_address"/>
+	</resultMap>
+</mapper>

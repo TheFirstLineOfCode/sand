@@ -1,0 +1,69 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+		http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>com.thefirstlineofcode.sand</groupId>
+		<artifactId>com.thefirstlineofcode.sand</artifactId>
+		<version>1.0.0-BETA2</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<groupId>com.thefirstlineofcode.sand</groupId>
+	<artifactId>sand-client</artifactId>
+	<packaging>pom</packaging>
+	<name>Sand IoT client plugins</name>
+
+	<modules>
+		<module>thing</module>
+		<module>ibtr</module>
+		<module>edge</module>
+		<module>concentrator</module>
+		<module>location</module>
+		<module>actuator</module>
+		<module>operator</module>
+		<module>things</module>
+		<module>remoting</module>
+		<module>webcam</module>
+		<module>lora-dac</module>
+		<module>lora-gateway</module>
+		<module>friends</module>
+		<module>sensor</module>
+	</modules>
+	
+	<build>
+	    <plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.10.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<additionalConfig>
+						<file>
+							<name>.settings/org.eclipse.core.resources.prefs</name>
+							<content>
+							<![CDATA[encoding/<project>=${project.build.sourceEncoding}
+							eclipse.preferences.version=1
+							]]>
+							</content>
+						</file>
+					</additionalConfig>
+					<preferStandardClasspathContainer>true</preferStandardClasspathContainer>
+				</configuration>
+			</plugin>
+	    </plugins>
+	</build>
+
+</project>

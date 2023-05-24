@@ -1,0 +1,7 @@
+ibtr-bxmpp-extension.properties
+edge-bxmpp-extension.properties
+thing-bxmpp-extension.properties
+actuator-bxmpp-extension.properties
+concentrator-bxmpp-extension.properties
+lora-dac-bxmpp-extension.properties
+sensor-bxmpp-extension.properties

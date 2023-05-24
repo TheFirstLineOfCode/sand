@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.thefirstlineofcode.sand.demo.app.android.ConfigureStreamActivity">
+
+    <EditText
+        android:id="@+id/et_host"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:ems="10"
+        android:importantForAutofill="no"
+        android:inputType="textPersonName"
+        android:minHeight="48dp"
+        android:text="@string/stream_config_default_host"
+        app:layout_constraintBottom_toTopOf="@+id/et_port"
+        app:layout_constraintEnd_toEndOf="@+id/et_port"
+        app:layout_constraintStart_toStartOf="@+id/et_port"
+        tools:ignore="LabelFor" />
+
+    <TextView
+        android:id="@+id/tv_host"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="@string/host"
+        app:layout_constraintBaseline_toBaselineOf="@+id/et_host"
+        app:layout_constraintEnd_toStartOf="@+id/et_host" />
+
+    <EditText
+        android:id="@+id/et_port"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:importantForAutofill="no"
+        android:inputType="textPersonName"
+        android:minHeight="48dp"
+        android:text="@string/stream_config_default_port"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="LabelFor" />
+
+    <TextView
+        android:id="@+id/tv_port"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:importantForAutofill="no"
+        android:text="@string/port"
+        app:layout_constraintBaseline_toBaselineOf="@+id/et_port"
+        app:layout_constraintEnd_toEndOf="@+id/tv_host" />
+
+    <CheckBox
+        android:id="@+id/cb_enable_tls"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
+        app:layout_constraintStart_toStartOf="@+id/et_port"
+        app:layout_constraintTop_toBottomOf="@+id/et_port" />
+
+    <TextView
+        android:id="@+id/tv_tls_required"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:importantForAutofill="no"
+        android:text="@string/enable_tls"
+        app:layout_constraintBaseline_toBaselineOf="@+id/cb_enable_tls"
+        app:layout_constraintEnd_toEndOf="@+id/tv_port" />
+
+    <Button
+        android:id="@+id/bt_ok"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:onClick="configureStream"
+        android:text="@string/ok"
+        android:textAllCaps="false"
+        app:layout_constraintEnd_toEndOf="@+id/et_port"
+        app:layout_constraintStart_toStartOf="@+id/et_port"
+        app:layout_constraintTop_toBottomOf="@+id/cb_enable_tls" />
+</androidx.constraintlayout.widget.ConstraintLayout>

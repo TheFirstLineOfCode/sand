@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thefirstlineofcode.sand.server.lite.things.ThingMapper">
+    <insert id="insert" parameterType="com.thefirstlineofcode.sand.server.lite.things.D_Thing">
+        INSERT INTO THINGS(id, thing_id, model, registration_time) VALUES(#{id}, #{thingId}, #{model}, #{registrationTime})
+    </insert>
+    
+   <update id="delete">
+        DELETE FROM THINGS WHERE thing_id=#{0}
+    </update>
+    
+	<select id="selectByThingId" resultType="com.thefirstlineofcode.sand.server.lite.things.D_Thing">
+		SELECT * FROM THINGS WHERE thing_id=#{0}
+    </select>
+    
+	<select id="selectByThingName" resultType="com.thefirstlineofcode.sand.server.lite.things.D_Thing">
+		SELECT things.* FROM THINGS AS things LEFT JOIN THING_IDENTITIES as thing_identities ON things.thing_id = thing_identities.thing_id WHERE thing_identities.thing_name=#{0}
+    </select>
+    
+	<resultMap id="thingResultMap" type="Thing">
+		<id property="id" column="id"/>
+		<result property="thingId" column="thing_id"/>
+		<result property="model" column="model"/>
+	    <result property="softwareVersion" column="software_version"/>
+		<result property="registrationTime" column="registration_time"/>
+	</resultMap>
+    
+	<select id="selectCountByThingId" resultType="int">
+		SELECT count(*) FROM THINGS WHERE thing_id=#{0}
+    </select>
+    
+	<select id="selectCountByThingName" resultType="int">
+		SELECT count(*) FROM THINGS AS things LEFT JOIN THING_IDENTITIES as thing_identities ON things.thing_id = thing_identities.thing_id WHERE thing_identities.thing_name=#{0}
+    </select>
+</mapper>

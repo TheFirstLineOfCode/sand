@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.thefirstlineofcode.sand</groupId>
+		<artifactId>sand-server</artifactId>
+		<version>1.0.0-BETA2</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<groupId>com.thefirstlineofcode.sand.server</groupId>
+	<artifactId>sand-server-ibtr</artifactId>
+	<name>Sand server IBTR implementation</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.thefirstlineofcode.sand.server</groupId>
+			<artifactId>sand-server-stream</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.thefirstlineofcode.granite.framework</groupId>
+			<artifactId>granite-framework-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+			<artifactId>sand-protocols-ibtr</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.thefirstlineofcode.sand.server</groupId>
+			<artifactId>sand-server-things</artifactId>
+		</dependency>
+	</dependencies>
+</project>

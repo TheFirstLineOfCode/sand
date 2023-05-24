@@ -1,0 +1,15 @@
+.DS_Store
+.metadata
+bin/
+.classpath
+.project
+.settings/
+.idea
+*.iml
+*.ipr
+*.iws
+!/com.firstlinecode.sand.demo/*.ipr
+!/com.firstlinecode.sand.demo/*.iws
+!/com.firstlinecode.sand.demo/.idea
+target/
+.theia

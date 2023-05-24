@@ -1,0 +1,2 @@
+things-simple-light-bxmpp-extension.properties
+things-simple-temperature-reporter-bxmpp-extension.properties

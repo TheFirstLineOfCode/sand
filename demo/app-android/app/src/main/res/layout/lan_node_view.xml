@@ -1,0 +1,46 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+
+    <LinearLayout
+        android:layout_width="256dp"
+        android:layout_height="64dp"
+        android:orientation="vertical">
+        <TextView android:id="@+id/tv_thing_id"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="5dp"
+            android:padding="2dp"
+            android:text="Thing ID"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_lan_id"
+            android:layout_width="wrap_content"
+            android:text="LAN ID"
+            android:layout_height="32dp"
+            android:layout_marginStart="24dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/tv_control"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/control_the_thing"
+            android:textStyle="bold" />
+        <view xmlns:android="http://schemas.android.com/apk/res/android"
+            class="com.thefirstlineofcode.sand.demo.app.android.ThingsAdapter$ControlSpinner"
+            android:id="@+id/spn_control_actions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,25 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+		http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>com.thefirstlineofcode.sand</groupId>
+		<artifactId>sand-protocols</artifactId>
+		<version>1.0.0-BETA2</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+	<artifactId>sand-protocols-things</artifactId>
+	<packaging>pom</packaging>
+	<name>Sand IoT protocol libraries for things</name>
+
+	<modules>
+		<module>simple-light</module>
+		<module>simple-camera</module>
+		<module>simple-temperature-reporter</module>
+	</modules>
+
+</project>

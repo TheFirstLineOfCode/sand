@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.thefirstlineofcode.sand</groupId>
+		<artifactId>sand-server</artifactId>
+		<version>1.0.0-BETA2</version>
+		<relativePath>../../server/pom.xml</relativePath>
+	</parent>
+
+	<groupId>com.thefirstlineofcode.sand.demo</groupId>
+	<artifactId>sand-demo-server</artifactId>
+	<name>Sand demo server</name>
+	
+	<dependencies>
+		<dependency>
+			<groupId>com.thefirstlineofcode.granite.framework</groupId>
+			<artifactId>granite-framework-im</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.thefirstlineofcode.sand.server</groupId>
+			<artifactId>sand-server-ibtr</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.thefirstlineofcode.sand.server</groupId>
+			<artifactId>sand-server-notification</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.thefirstlineofcode.sand.server</groupId>
+			<artifactId>sand-server-concentrator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.thefirstlineofcode.sand.server</groupId>
+			<artifactId>sand-server-location</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.thefirstlineofcode.sand.server</groupId>
+			<artifactId>sand-server-sensor</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.thefirstlineofcode.basalt.xeps</groupId>
+			<artifactId>basalt-xeps-ping</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.thefirstlineofcode.sand.demo</groupId>
+			<artifactId>sand-demo-protocols</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+			<artifactId>sand-protocols-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+			<artifactId>sand-protocols-webrtc-signaling</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+			<artifactId>sand-protocols-operator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.thefirstlineofcode.sand.emulators</groupId>
+			<artifactId>sand-emulators-models</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.thefirstlineofcode.sand.protocols.things</groupId>
+			<artifactId>sand-protocols-things-simple-temperature-reporter</artifactId>
+		</dependency>
+	</dependencies>
+</project>

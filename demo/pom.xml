@@ -1,0 +1,29 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+		http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>com.thefirstlineofcode.sand</groupId>
+		<artifactId>com.thefirstlineofcode.sand</artifactId>
+		<version>1.0.0-BETA2</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<groupId>com.thefirstlineofcode.sand</groupId>
+	<artifactId>sand-demo</artifactId>
+	<packaging>pom</packaging>
+	<name>Sand IoT Demo Projects</name>
+
+	<modules>
+		<module>protocols</module>
+		<module>client</module>
+		<module>server</module>
+		<module>server-lite</module>
+		<module>server-web-fileupload</module>
+		<module>things</module>
+		<module>bxmpp-extensions</module>
+	</modules>
+
+</project>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thefirstlineofcode.sand.server.lite.friends.FollowMapper">
+    <insert id="insert" parameterType="com.thefirstlineofcode.sand.server.lite.friends.D_FollowApproval">
+        INSERT INTO FOLLOWS(id, friend, event, follower, approver, approval_time) VALUES(#{id}, #{follow.friend}, #{follow.event}, #{follow.follower}, #{approver}, #{approvalTime})
+    </insert>
+    
+	<select id="selectCountByFollow" parameterType="com.thefirstlineofcode.sand.server.friends.Follow" resultType="int">
+		SELECT count(*) FROM FOLLOWS WHERE friend = #{friend} AND event = #{event} AND follower = #{follower}
+	</select>
+	
+	<select id="selectFollowersByFriendAndEvent" resultType="JabberId">
+		SELECT follower FROM FOLLOWS WHERE friend = #{arg0} AND event = #{arg1}
+	</select>
+		
+	<select id="getLanFollowsByConcentrator" resultMap="lanFollowsResultMap">
+		SELECT friend, event, follower FROM FOLLOWS WHERE friend LIKE CONCAT(#{arg0}, '%') AND follower LIKE CONCAT(#{arg0}, '%')
+	</select>
+	
+	<resultMap id="lanFollowsResultMap" type="com.thefirstlineofcode.sand.server.friends.Follow">
+		<result property="friend" column="friend"/>
+		<result property="event" column="event"/>
+		<result property="follower" column="follower"/>
+	</resultMap>
+</mapper>

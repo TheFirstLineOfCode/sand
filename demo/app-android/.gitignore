@@ -1,0 +1,14 @@
+!*.ipr
+!*.iws
+*.iml
+/local.properties
+/.idea
+/.gradle
+/gradle/wrapper
+/gradlew
+/gradlew.bat
+/gradlew.sh
+.DS_Store
+/captures
+.externalNativeBuild
+.cxx

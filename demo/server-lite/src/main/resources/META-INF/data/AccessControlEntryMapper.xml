@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thefirstlineofcode.sand.demo.server.lite.AccessControlEntryMapper">
+	<insert id="insert" parameterType="AccessControlEntry">
+		INSERT INTO ACCESS_CONTROL_ENTRIES(id, user, thing_id, role, removed, update_time) VALUES(#{id}, #{user}, #{thingId}, #{role}, FALSE, CURRENT_TIMESTAMP)
+	</insert>
+	
+	<update id="remove">
+		UPDATE ACCESS_CONTROL_ENTRIES SET removed = TRUE, update_time = CURRENT_TIMESTAMP WHERE ACCESS_CONTROL_ENTRIES.user = #{arg0} AND thing_id = #{arg1} AND removed = FALSE
+	</update>
+	
+	<update id="updateRole">
+		UPDATE ACCESS_CONTROL_ENTRIES SET role = #{2}, update_time = CURRENT_TIMESTAMP WHERE ACCESS_CONTROL_ENTRIES.user = #{arg0} AND thing_id = #{arg1} AND removed = FALSE
+	</update>
+	
+	<select id="selectByUser" resultMap="accessControlEntryResultMap">
+		SELECT * FROM ACCESS_CONTROL_ENTRIES WHERE ACCESS_CONTROL_ENTRIES.user = #{arg0} AND removed = FALSE ORDER BY update_time DESC
+	</select>
+	
+	<select id="selectByThingId" resultMap="accessControlEntryResultMap">
+		SELECT * FROM ACCESS_CONTROL_ENTRIES WHERE thing_id = #{arg0} AND removed = FALSE ORDER BY update_time DESC
+	</select>
+	
+	<select id="selectOwnerByThingId" resultType="string">
+		SELECT ACCESS_CONTROL_ENTRIES.user FROM ACCESS_CONTROL_ENTRIES WHERE thing_id = #{arg0} AND role = 'OWNER' AND removed = FALSE
+	</select>
+	
+	<select id="selectRoleByUserAndThingId" resultType="com.thefirstlineofcode.sand.demo.protocols.AccessControlList$Role">
+		SELECT role FROM ACCESS_CONTROL_ENTRIES WHERE ACCESS_CONTROL_ENTRIES.user = #{arg0} AND thing_id = #{arg1} AND removed = FALSE
+	</select>
+	
+	<resultMap id="accessControlEntryResultMap" type="AccessControlEntry">
+		<result property="user" column="user"/>
+		<result property="thingId" column="thing_id"/>
+		<result property="role" column="role"/>
+		<result property="updateTime" column="update_time"/>
+	</resultMap>
+</mapper>
