@@ -3,15 +3,18 @@ package com.thefirstlineofcode.sand.demo.protocols;
 import java.util.Date;
 
 import com.thefirstlineofcode.basalt.oxm.coc.conversion.annotations.Int2Enum;
+import com.thefirstlineofcode.basalt.oxm.coc.conversion.annotations.String2UtilDate;
 import com.thefirstlineofcode.sand.demo.protocols.VideoRecorded.RecordingReason;
 
 public class RecordedVideo {
 	private String recorderThingId;
 	private String videoName;
 	private String videoUrl;
+	@String2UtilDate
 	private Date recordingTime;
 	@Int2Enum(RecordingReason.class)
 	private RecordingReason recordingReason;
+	@String2UtilDate
 	private Date storedTime;
 	
 	public RecordedVideo() {}
