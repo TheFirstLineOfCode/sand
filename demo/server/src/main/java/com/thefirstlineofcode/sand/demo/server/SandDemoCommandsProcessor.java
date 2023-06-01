@@ -20,7 +20,8 @@ import com.thefirstlineofcode.sand.server.notification.INotificationDispatcher;
 public class SandDemoCommandsProcessor extends AbstractCommandsProcessor implements IDataObjectFactoryAware {
 	public static final String[] TEST_USERS = {
 			"dongger",
-			"sand-demo"
+			"sand-demo",
+			"wg_test"
 	};
 	
 	private static final String COMMAND_GROUP_SAND_DEMO = "sand-demo";
