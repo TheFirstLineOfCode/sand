@@ -5,6 +5,7 @@ import org.pf4j.Extension;
 import com.thefirstlineofcode.basalt.xmpp.core.IqProtocolChain;
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.IPipelineExtendersConfigurator;
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.PipelineExtendersConfigurator;
+import com.thefirstlineofcode.granite.framework.im.ResourceAvailableEvent;
 import com.thefirstlineofcode.sand.demo.protocols.AccessControlList;
 import com.thefirstlineofcode.sand.demo.protocols.AuthorizedThings;
 import com.thefirstlineofcode.sand.demo.protocols.DeliverTemperatureToOwner;
@@ -45,6 +46,7 @@ public class PipelineExtendersContributor extends PipelineExtendersConfigurator 
 		configurator.registerEventListener(ThingRegistrationEvent.class, new ThingRegistrationListener());
 		configurator.registerEventListener(NodeConfirmationRequestEvent.class, new NodeConfirmationRequestListener());
 		configurator.registerEventListener(NodeAdditionEvent.class, new NodeAdditionListener());
+		configurator.registerEventListener(ResourceAvailableEvent.class, new EdgeThingAvailableEventListener());
 		
 		configurator.registerPipelinePreprocessor(new AclPipelinePreprocessor());
 		

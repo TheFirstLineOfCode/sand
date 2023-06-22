@@ -33,6 +33,9 @@ public class ThingsAdapter extends BaseExpandableListAdapter {
 	public void setThings(AuthorizedThing[] things) {
 		this.things = things;
 	}
+	public AuthorizedThing[] getThings() {
+		return things;
+	}
 	
 	@Override
 	public int getGroupCount() {
@@ -140,7 +143,6 @@ public class ThingsAdapter extends BaseExpandableListAdapter {
 					"Show Recorded Videos",
 					"Open Live Streaming",
 					"Stop",
-					"Restart",
 					"Shutdown System"
 			};
 		} else if (model.startsWith("LG-")) {
@@ -306,9 +308,6 @@ public class ThingsAdapter extends BaseExpandableListAdapter {
 					break;
 				case "Stop":
 					mainActivity.stop(getJidTargetByThingId(thingId));
-					break;
-				case "Restart":
-					mainActivity.restart(getJidTargetByThingId(thingId));
 					break;
 				case "Shutdown System":
 					mainActivity.shutdownSystem(getJidTargetByThingId(thingId));

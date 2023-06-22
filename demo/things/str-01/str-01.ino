@@ -45,8 +45,8 @@ int8_t acquireCelsiusDegree(Protocol *protocol) {
 }
 
 void configureThingProtocolsImpl() {
-  ProtocolName pnResetThing = {0xf8, 0x02, 0x09};
-  registerActionProtocol(pnResetThing, processResetThing, false);
+  ProtocolName pnResetThing = {0xf8, 0x02, 0x0s9};
+  registerActionProtocol(pnResetThing, procesResetThing, false);
 
   ProtocolName pnAquireCelsiusDegree = {0xf7, 0x03, 0x00};
   registerDataProtocol(pnAquireCelsiusDegree, acquireCelsiusDegree, 2000);

@@ -8,7 +8,6 @@ import com.thefirstlineofcode.basalt.xmpp.core.IqProtocolChain;
 import com.thefirstlineofcode.chalk.core.IChatSystem;
 import com.thefirstlineofcode.chalk.core.IPlugin;
 import com.thefirstlineofcode.sand.client.actuator.ActuatorPlugin;
-import com.thefirstlineofcode.sand.protocols.edge.Restart;
 import com.thefirstlineofcode.sand.protocols.edge.ShutdownSystem;
 import com.thefirstlineofcode.sand.protocols.edge.Stop;
 
@@ -21,10 +20,6 @@ public class EdgeThingPlugin implements IPlugin {
 				new CocParserFactory<>(Stop.class));
 		chatSystem.registerTranslator(Stop.class,
 				new CocTranslatorFactory<>(Stop.class));
-		chatSystem.registerParser(new IqProtocolChain(Restart.PROTOCOL),
-				new CocParserFactory<>(Restart.class));
-		chatSystem.registerTranslator(Restart.class,
-				new CocTranslatorFactory<>(Restart.class));
 		chatSystem.registerParser(new IqProtocolChain(ShutdownSystem.PROTOCOL),
 				new CocParserFactory<>(ShutdownSystem.class));
 		chatSystem.registerTranslator(ShutdownSystem.class,
@@ -35,8 +30,6 @@ public class EdgeThingPlugin implements IPlugin {
 	public void destroy(IChatSystem chatSystem) {
 		chatSystem.unregisterTranslator(ShutdownSystem.class);
 		chatSystem.unregisterParser(new IqProtocolChain(ShutdownSystem.PROTOCOL));
-		chatSystem.unregisterTranslator(Restart.class);		
-		chatSystem.unregisterParser(new IqProtocolChain(Restart.PROTOCOL));
 		chatSystem.unregisterTranslator(Stop.class);
 		chatSystem.unregisterParser(new IqProtocolChain(Stop.PROTOCOL));
 		chatSystem.unregister(ActuatorPlugin.class);

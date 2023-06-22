@@ -44,12 +44,14 @@ import com.thefirstlineofcode.basalt.xmpp.core.stanza.Iq;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.Stanza;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.StanzaError;
 import com.thefirstlineofcode.basalt.xmpp.core.stream.error.StreamError;
+import com.thefirstlineofcode.basalt.xmpp.im.stanza.Presence;
 import com.thefirstlineofcode.chalk.core.ErrorException;
 import com.thefirstlineofcode.chalk.core.IChatClient;
 import com.thefirstlineofcode.chalk.core.IChatServices;
 import com.thefirstlineofcode.chalk.core.IErrorListener;
 import com.thefirstlineofcode.chalk.core.ITask;
 import com.thefirstlineofcode.chalk.core.IUnidirectionalStream;
+import com.thefirstlineofcode.chalk.im.stanza.IPresenceListener;
 import com.thefirstlineofcode.sand.client.operator.IOperator;
 import com.thefirstlineofcode.sand.client.remoting.IRemoting;
 import com.thefirstlineofcode.sand.client.sensor.IDataProcessor;
@@ -64,7 +66,6 @@ import com.thefirstlineofcode.sand.demo.protocols.AuthorizedThings;
 import com.thefirstlineofcode.sand.demo.protocols.DeliverTemperatureToOwner;
 import com.thefirstlineofcode.sand.demo.protocols.RecordedVideo;
 import com.thefirstlineofcode.sand.demo.protocols.VideoRecorded;
-import com.thefirstlineofcode.sand.protocols.edge.Restart;
 import com.thefirstlineofcode.sand.protocols.edge.ShutdownSystem;
 import com.thefirstlineofcode.sand.protocols.edge.Stop;
 import com.thefirstlineofcode.sand.protocols.lora.dac.ResetLoraDacService;
@@ -127,6 +128,9 @@ public class MainActivity extends AppCompatActivity implements IOperator.Listene
 		}
 		
 		IChatClient chatClient = ChatClientSingleton.get(this);
+		// Initial presence.
+		chatClient.getChatServices().getPresenceService().send(new Presence());
+		
 		reportService = chatClient.createApi(IReportService.class);
 		
 		listenNetConfigEvents();
@@ -400,6 +404,27 @@ public class MainActivity extends AppCompatActivity implements IOperator.Listene
 				
 				expandNodes(elvThings, things);
 			}
+			
+			IChatClient chatClient = ChatClientSingleton.get(this);
+			chatClient.getChatServices().getPresenceService().addListener(new IPresenceListener() {
+				
+				@Override
+				public void received(Presence presence) {
+					AuthorizedThing[] things = thingsAdapter.getThings();
+					if (things == null || things.length == 0) {
+						return;
+					}
+					
+					for (int i = 0; i < things.length; i++) {
+						if (things[i].getThingName().equals(presence.getFrom().getNode())) {
+							final String thingId = things[i].getThingId();
+							runOnUiThread(() -> Toast.makeText(MainActivity.this,
+									String.format("Thing %s is avaiable now.", thingId),
+									Toast.LENGTH_LONG).show());
+						}
+					}
+				}
+			});
 		});
 	}
 	
@@ -849,15 +874,11 @@ public class MainActivity extends AppCompatActivity implements IOperator.Listene
 		controlThing(target, new Stop(), "Stop");
 	}
 	
-	public void restart(JabberId target) {
-		controlThing(target, new Restart(), "Restart");
-	}
-	
 	public void shutdownSystem(JabberId target) {
 		ShutdownSystem shutdownSystem = new ShutdownSystem();
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Restart").setMultiChoiceItems(new String[] {"Restart after shutdown"}, new boolean[] {false},
+		builder.setTitle("Shutdown System").setMultiChoiceItems(new String[] {"Restart after shutdown"}, new boolean[] {false},
 				new DialogInterface.OnMultiChoiceClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which, boolean isChecked) {

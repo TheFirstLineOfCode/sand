@@ -39,7 +39,6 @@ import com.thefirstlineofcode.sand.client.concentrator.ResetNodeExecutor;
 import com.thefirstlineofcode.sand.client.concentrator.SyncNodesExecutor;
 import com.thefirstlineofcode.sand.client.edge.AbstractEdgeThing;
 import com.thefirstlineofcode.sand.client.edge.ResponseInAdvanceExecutor;
-import com.thefirstlineofcode.sand.client.edge.RestartExecutor;
 import com.thefirstlineofcode.sand.client.edge.ShutdownSystemExecutor;
 import com.thefirstlineofcode.sand.client.edge.StopExecutor;
 import com.thefirstlineofcode.sand.client.friends.IFollowProcessor;
@@ -65,7 +64,6 @@ import com.thefirstlineofcode.sand.demo.protocols.Str01ModelDescriptor;
 import com.thefirstlineofcode.sand.demo.protocols.VideoRecorded;
 import com.thefirstlineofcode.sand.demo.protocols.VideoRecorded.RecordingReason;
 import com.thefirstlineofcode.sand.protocols.actuator.ExecutionException;
-import com.thefirstlineofcode.sand.protocols.edge.Restart;
 import com.thefirstlineofcode.sand.protocols.edge.ShutdownSystem;
 import com.thefirstlineofcode.sand.protocols.edge.Stop;
 import com.thefirstlineofcode.sand.protocols.lora.dac.ResetLoraDacService;
@@ -277,7 +275,6 @@ public class LoraGatewayAndCamera extends AbstractEdgeThing implements ISimpleCa
 
 	private void registerExecutorsForEdgeThing(IActuator actuator) {
 		actuator.registerExecutorFactory(createStopExecutatorFactory());
-		actuator.registerExecutorFactory(createRestartExecutatorFactory());
 		actuator.registerExecutorFactory(createShutdownSystemExecutatorFactory());
 	}
 
@@ -298,28 +295,6 @@ public class LoraGatewayAndCamera extends AbstractEdgeThing implements ISimpleCa
 			
 			@Override
 			public IExecutor<ShutdownSystem> create() {
-				return executor;
-			}
-		};
-	}
-
-	private IExecutorFactory<?> createRestartExecutatorFactory() {
-		return new IExecutorFactory<Restart>() {
-			private IExecutor<Restart> executor = new ResponseInAdvanceExecutor<Restart>(
-					new RestartExecutor(LoraGatewayAndCamera.this), LoraGatewayAndCamera.this);
-			
-			@Override
-			public Protocol getProtocol() {
-				return Restart.PROTOCOL;
-			}
-			
-			@Override
-			public Class<Restart> getActionType() {
-				return Restart.class;
-			}
-			
-			@Override
-			public IExecutor<Restart> create() {
 				return executor;
 			}
 		};
@@ -744,6 +719,9 @@ public class LoraGatewayAndCamera extends AbstractEdgeThing implements ISimpleCa
 	}
 	
 	public static Capability getRequestedWebcamCapability(String sRequestedWebcamCapability) {
+		if (sRequestedWebcamCapability == null)
+			return DEFAULLT_REQUESTED_WEBCAM_CAPABILITY;
+		
 		StringTokenizer st = new StringTokenizer(sRequestedWebcamCapability, ",");
 		if (st.countTokens() != 3)
 			throw new IllegalArgumentException("Illegal webcam capability format. Capability format: WIDTH,HEIGHT,MAX_FPS.");

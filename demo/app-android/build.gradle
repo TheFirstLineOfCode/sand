@@ -43,7 +43,7 @@ allprojects {
 
         maven {
             allowInsecureProtocol = true
-            url 'http://47.115.36.99/repository/maven-releases'
+            url 'http://120.25.166.188:9090/repository/maven-releases'
         }
     }
 }

@@ -1795,12 +1795,6 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 	}
 
 	@Override
-	public void restart() throws ExecutionException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void shutdownSystem(boolean restart) throws ExecutionException {
 		// TODO Auto-generated method stub
 		

@@ -18,7 +18,5 @@ public interface IThing {
 	void stop() throws ExecutionException;
 	boolean isStopped();
 	
-	void restart() throws ExecutionException;
-	
 	void shutdownSystem(boolean restart) throws ExecutionException;
 }

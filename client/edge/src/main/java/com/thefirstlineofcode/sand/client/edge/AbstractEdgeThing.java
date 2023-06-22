@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import com.thefirstlineofcode.basalt.xmpp.Constants;
 import com.thefirstlineofcode.basalt.xmpp.core.ProtocolException;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.FeatureNotImplemented;
+import com.thefirstlineofcode.basalt.xmpp.im.stanza.Presence;
 import com.thefirstlineofcode.chalk.core.AuthFailureException;
 import com.thefirstlineofcode.chalk.core.IChatClient;
 import com.thefirstlineofcode.chalk.core.StandardChatClient;
@@ -272,8 +273,6 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 						printConsoleHelp();
 					} else if ("exit".equals(command)) {
 						stop();
-					} else if ("restart".equals(command)) {
-						restart();
 					} else {
 						System.out.println(String.format("Unknown command: '%s'", command));
 						printConsoleHelp();
@@ -287,7 +286,6 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 		private void printConsoleHelp() {
 			System.out.println("Commands:");
 			System.out.println("help        Display help information.");
-			System.out.println("restart     Restart program.");
 			System.out.println("exit        Exit program.");
 			System.out.print("$");
 		}
@@ -518,12 +516,6 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 	}
 	
 	@Override
-	public void restart() {
-		stop();
-		start();
-	}
-	
-	@Override
 	public void messageReceived(String message) {}
 
 	@Override
@@ -573,6 +565,9 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 		
 		startIotComponents();
 		startAutoReconnectThread();
+		
+		// Initial presence
+		chatClient.getChatServices().getPresenceService().send(new Presence());
 	}
 
 	protected void FailedToConnect(ConnectionException e) {
