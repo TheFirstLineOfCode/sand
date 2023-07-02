@@ -4,7 +4,6 @@ import com.thefirstlineofcode.chalk.core.stream.StandardStreamConfig;
 import com.thefirstlineofcode.chalk.logger.LogConfigurator;
 import com.thefirstlineofcode.chalk.logger.LogConfigurator.LogLevel;
 import com.thefirstlineofcode.sand.client.thing.commuication.ICommunicator;
-import com.thefirstlineofcode.sand.protocols.thing.ThingIdentity;
 import com.thefirstlineofcode.sand.protocols.thing.lora.LoraAddress;
 
 public class Main {
@@ -23,7 +22,7 @@ public class Main {
 		
 		String host = null;
 		Integer port = null;
-		boolean tlsPreferred = false;
+		Boolean tlsPreferred = null;
 		String logLevel = null;
 		boolean disableCamera = false;
 		boolean disableLoraGateway = false;
@@ -89,21 +88,38 @@ public class Main {
 		if (!disableLoraGateway)
 			communicator = new As32Ttl100LoraCommunicator();
 		
-		if (host != null) {
-			if (port == null) {
-				port = 6222;
-			}
-			
-			StandardStreamConfig streamConfig = new StandardStreamConfig(host, port);
-			streamConfig.setTlsPreferred(tlsPreferred);
-			streamConfig.setResource(ThingIdentity.DEFAULT_RESOURCE_NAME);
-			
-			gatewayAndCamera = new LoraGatewayAndCamera(webcamConfig, streamConfig, communicator, disableCamera, disableLoraGateway, startConsole);
-		} else {
-			gatewayAndCamera = new LoraGatewayAndCamera(webcamConfig, communicator, disableCamera, disableLoraGateway, startConsole);
-		}
+		gatewayAndCamera = new LoraGatewayAndCamera(webcamConfig, communicator, disableCamera, disableLoraGateway, startConsole);
+		StandardStreamConfig mergedStreamConfig = mergeStreamConfig(gatewayAndCamera.getStreamConfig(), host, port, tlsPreferred);
+		gatewayAndCamera.setStreamConfig(mergedStreamConfig);
 		
 		gatewayAndCamera.start();
+	}
+
+	private StandardStreamConfig mergeStreamConfig(StandardStreamConfig streamConfig, String host, Integer port,
+			Boolean tlsPreferred) {
+		if (streamConfig == null) {
+			if (host == null)
+				host = "localhost";
+			
+			if (port == null)
+				port = 6222;
+			
+			if (tlsPreferred == null)
+				tlsPreferred = false;
+			
+			return new StandardStreamConfig(host, port, tlsPreferred);
+		}
+		
+		if (host != null)
+			streamConfig.setHost(host);
+		
+		if (port != null)
+			streamConfig.setPort(port);
+		
+		if (tlsPreferred != null)
+			streamConfig.setTlsPreferred(tlsPreferred);
+		
+		return streamConfig;
 	}
 	
 	private LogLevel getLogLevel(String sLogLevel) {

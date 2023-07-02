@@ -21,7 +21,7 @@ import com.thefirstlineofcode.granite.framework.core.config.IConfigurationAware;
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.processing.IProcessingContext;
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.processing.IXepProcessor;
 import com.thefirstlineofcode.granite.framework.core.repository.IInitializable;
-import com.thefirstlineofcode.sand.protocols.thing.ThingIdentity;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
 import com.thefirstlineofcode.sand.protocols.thing.tacp.Notification;
 import com.thefirstlineofcode.sand.server.things.IThingManager;
 
@@ -113,7 +113,7 @@ public class NotificationProcessor implements IXepProcessor<Iq, Notification>,
 			return context.getJid();
 		
 		JabberId sender = context.getJid();
-		if (sender.getResource() != null && !ThingIdentity.DEFAULT_RESOURCE_NAME.equals(sender.getResource()))
+		if (sender.getResource() != null && !RegisteredThing.DEFAULT_RESOURCE_NAME.equals(sender.getResource()))
 			throw new ProtocolException(new BadRequest("Isn't the sender a edge thing?"));
 		
 		if (!sender.getBareId().equals(iq.getFrom().getBareId()))

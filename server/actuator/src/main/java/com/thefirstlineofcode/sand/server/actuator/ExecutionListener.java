@@ -15,7 +15,7 @@ import com.thefirstlineofcode.granite.framework.core.pipeline.stages.event.IEven
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.event.IEventListener;
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.processing.IIqResultProcessor;
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.processing.IProcessingContext;
-import com.thefirstlineofcode.sand.protocols.thing.ThingIdentity;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
 import com.thefirstlineofcode.sand.server.concentrator.IConcentrator;
 import com.thefirstlineofcode.sand.server.concentrator.IConcentratorFactory;
 import com.thefirstlineofcode.sand.server.things.IThingManager;
@@ -64,7 +64,7 @@ public class ExecutionListener implements IEventListener<ExecutionEvent>, IIqRes
 		if (isConcentrator && event.getLanId() != null) {			
 			iq.setTo(new JabberId(thingName, domain, String.valueOf(event.getLanId())));
 		} else {
-			iq.setTo(new JabberId(thingName, domain, ThingIdentity.DEFAULT_RESOURCE_NAME));
+			iq.setTo(new JabberId(thingName, domain, RegisteredThing.DEFAULT_RESOURCE_NAME));
 		}
 		
 		synchronized (this) {
@@ -85,7 +85,7 @@ public class ExecutionListener implements IEventListener<ExecutionEvent>, IIqRes
 		to.setDomain(domain);
 		
 		if (!isConcentrator) {
-			to.setResource(ThingIdentity.DEFAULT_RESOURCE_NAME);
+			to.setResource(RegisteredThing.DEFAULT_RESOURCE_NAME);
 		} else {			
 			to.setResource(String.valueOf(IConcentrator.LAN_ID_CONCENTRATOR));
 		}

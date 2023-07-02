@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.thefirstlineofcode.granite.framework.core.auth.IAuthenticator;
-import com.thefirstlineofcode.sand.protocols.thing.ThingIdentity;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
 
 @Transactional
 @Component
@@ -16,9 +16,9 @@ public class ThingAuthenticator implements IAuthenticator {
 
 	@Override
 	public Object getCredentials(Object principal) {
-		ThingIdentity identity = getThingIdentityMapper().selectByThingName((String)principal);
-		if (identity != null)
-			return identity.getCredentials();
+		RegisteredThing registeredThing = getThingIdentityMapper().selectByThingName((String)principal);
+		if (registeredThing != null)
+			return registeredThing.getCredentials();
 		
 		return null;
 	}
@@ -28,8 +28,8 @@ public class ThingAuthenticator implements IAuthenticator {
 		return getThingIdentityMapper().selectCountByThingName((String)principal) != 0;
 	}
 	
-	private ThingIdentityMapper getThingIdentityMapper() {
-		return sqlSession.getMapper(ThingIdentityMapper.class);
+	private RegisteredThingMapper getThingIdentityMapper() {
+		return sqlSession.getMapper(RegisteredThingMapper.class);
 	}
 
 }

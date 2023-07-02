@@ -119,7 +119,7 @@ import com.thefirstlineofcode.sand.protocols.actuator.ExecutionException;
 import com.thefirstlineofcode.sand.protocols.lora.gateway.ChangeWorkingMode;
 import com.thefirstlineofcode.sand.protocols.lora.gateway.WorkingMode;
 import com.thefirstlineofcode.sand.protocols.thing.BadAddressException;
-import com.thefirstlineofcode.sand.protocols.thing.ThingIdentity;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
 import com.thefirstlineofcode.sand.protocols.thing.lora.LoraAddress;
 import com.thefirstlineofcode.sand.protocols.things.simple.light.SwitchState;
 import com.thefirstlineofcode.sand.protocols.things.simple.light.SwitchStateChanged;
@@ -189,7 +189,7 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 	private JCheckBoxMenuItem dacModeMenuItem;
 	
 	private String thingId;
-	private ThingIdentity thingIdentity;
+	private RegisteredThing registeredThing;
 	private StandardStreamConfig streamConfig;
 	
 	private List<AbstractLoraThingEmulatorFactory<?>> thingFactories;
@@ -331,10 +331,10 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 	
 	private String getStatus() {
 		StringBuilder sb = new StringBuilder();
-		if (thingIdentity == null) {
+		if (registeredThing == null) {
 			sb.append("Unregistered. ");
 		} else {
-			sb.append("Registered: ").append(thingIdentity.getThingName()).append(". ");
+			sb.append("Registered: ").append(registeredThing.getThingName()).append(". ");
 			if (chatClient != null && chatClient.isConnected()) {
 				sb.append("Connected. ");
 				
@@ -554,7 +554,7 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 			
 			
 			if (!isConnected()) {
-				chatClient.connect(new UsernamePasswordToken(thingIdentity.getThingName().toString(), thingIdentity.getCredentials()));	
+				chatClient.connect(new UsernamePasswordToken(registeredThing.getThingName().toString(), registeredThing.getCredentials()));	
 			}
 		} finally {
 			autoReconnect = oldAutoReconnect;
@@ -587,7 +587,7 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 	}
 	
 	private IChatClient createChatClient() {
-		if (thingIdentity == null)
+		if (registeredThing == null)
 			throw new IllegalStateException("Thing identity is null. Please register your gateway.");
 		
 		StandardStreamConfig streamConfigWithResource = createStreamConfigWithResource();
@@ -694,7 +694,7 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 	
 	@Override
 	public void register() {
-		if (thingIdentity != null)
+		if (registeredThing != null)
 			throw new IllegalStateException("Gateway has already registered.");
 		
 		if (streamConfig == null) {
@@ -708,7 +708,7 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 			doRegister();	
 		}
 		
-		if (thingIdentity != null)
+		if (registeredThing != null)
 			UiUtils.showNotification(this, "Message", "Gateway has registered.");
 	}
 	
@@ -722,7 +722,7 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 		listenRegisrationInLogConsole(registration);
 		
 		try {
-			thingIdentity = registration.register(thingId);
+			registeredThing = registration.register(thingId, "abcdefghigkl");
 		} catch (RegistrationException e) {
 			JOptionPane.showMessageDialog(this, "Can't register thing. Error: " + e.getError(), "Registration Error", JOptionPane.ERROR_MESSAGE);
 		} finally {			
@@ -831,8 +831,8 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 				output.writeObject(null);
 			}
 			
-			if (thingIdentity != null) {
-				output.writeObject(thingIdentity);
+			if (registeredThing != null) {
+				output.writeObject(registeredThing);
 			} else {
 				output.writeObject(null);
 			}
@@ -1038,7 +1038,7 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 		
 		thingId = gatewayInfo.thingId;
 		streamConfig = gatewayInfo.streamConfig;
-		thingIdentity = gatewayInfo.thingIdentity;
+		registeredThing = gatewayInfo.registeredThing;
 		autoReconnect = gatewayInfo.autoReconnect;
 		
 		if (streamConfig == null)
@@ -1192,7 +1192,7 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 	}
 
 	private void refreshGatewayInstanceRelativeMenus() {
-		if (thingIdentity != null) {
+		if (registeredThing != null) {
 			UiUtils.getMenuItem(menuBar, MENU_NAME_TOOLS, MENU_ITEM_NAME_REGISTER).setEnabled(false);
 			
 			if (!isConnected()) {
@@ -1223,7 +1223,7 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 			StreamConfigInfo streamConfigInfo = (StreamConfigInfo)input.readObject();
 			gatewayInfo.streamConfig = streamConfigInfo == null ? null : createStreamConfig(streamConfigInfo);
 			
-			gatewayInfo.thingIdentity = (ThingIdentity)input.readObject();
+			gatewayInfo.registeredThing = (RegisteredThing)input.readObject();
 			
 			gatewayInfo.autoReconnect = input.readBoolean();
 			
@@ -1264,7 +1264,7 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 	private class GatewayInfo {
 		private String thingId;
 		private StandardStreamConfig streamConfig;
-		private ThingIdentity thingIdentity;
+		private RegisteredThing registeredThing;
 		private boolean autoReconnect;
 		private Map<Integer, LanNode> nodes;
 	}
@@ -1644,7 +1644,7 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 
 	@Override
 	public boolean isRegistered() {
-		return thingIdentity != null;
+		return registeredThing != null;
 	}
 
 	@Override

@@ -71,7 +71,7 @@ import com.thefirstlineofcode.sand.protocols.edge.Stop;
 import com.thefirstlineofcode.sand.protocols.lora.dac.ResetLoraDacService;
 import com.thefirstlineofcode.sand.protocols.lora.gateway.ChangeWorkingMode;
 import com.thefirstlineofcode.sand.protocols.lora.gateway.WorkingMode;
-import com.thefirstlineofcode.sand.protocols.thing.ThingIdentity;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
 import com.thefirstlineofcode.sand.protocols.things.simple.camera.TakePhoto;
 import com.thefirstlineofcode.sand.protocols.things.simple.camera.TakeVideo;
 import com.thefirstlineofcode.sand.protocols.things.simple.light.Flash;
@@ -953,7 +953,7 @@ public class MainActivity extends AppCompatActivity implements IOperator.Listene
 						
 						logger.info("Reset thing {}.", target);
 						JabberId jidConcentrator = new JabberId(target.getNode(),
-								target.getDomain(), ThingIdentity.DEFAULT_RESOURCE_NAME);
+								target.getDomain(), RegisteredThing.DEFAULT_RESOURCE_NAME);
 						controlThing(jidConcentrator, new ResetNode(target.getResource()), "Reset thing");
 					}
 				}).
@@ -987,7 +987,7 @@ public class MainActivity extends AppCompatActivity implements IOperator.Listene
 							@Override
 							public void trigger(IUnidirectionalStream<Iq> stream) {
 								JabberId jidConcentrator = new JabberId(target.getNode(),
-										target.getDomain(), ThingIdentity.DEFAULT_RESOURCE_NAME);
+										target.getDomain(), RegisteredThing.DEFAULT_RESOURCE_NAME);
 								
 								Iq removeNode = new Iq(Iq.Type.SET, new RemoveNode(Integer.parseInt(target.getResource())));
 								removeNode.setTo(jidConcentrator);
@@ -1077,7 +1077,7 @@ public class MainActivity extends AppCompatActivity implements IOperator.Listene
 							operator.addListener(MainActivity.this);
 						
 						JabberId follower = new JabberId(friend.getNode(),
-								friend.getDomain(), ThingIdentity.DEFAULT_RESOURCE_NAME);
+								friend.getDomain(), RegisteredThing.DEFAULT_RESOURCE_NAME);
 						operator.approve(friend, SwitchStateChanged.PROTOCOL, follower);
 					}
 				}).setNegativeButton(string.cancel, new DialogInterface.OnClickListener() {

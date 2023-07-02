@@ -12,7 +12,7 @@ import com.thefirstlineofcode.basalt.xmpp.core.ProtocolException;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.ItemNotFound;
 import com.thefirstlineofcode.granite.framework.core.annotations.BeanDependency;
 import com.thefirstlineofcode.sand.protocols.location.ThingLocation;
-import com.thefirstlineofcode.sand.protocols.thing.ThingIdentity;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
 import com.thefirstlineofcode.sand.server.concentrator.IConcentrator;
 import com.thefirstlineofcode.sand.server.concentrator.IConcentratorFactory;
 import com.thefirstlineofcode.sand.server.things.IThingManager;
@@ -95,7 +95,7 @@ public class LocationService implements ILocationService {
 		}
 		
 		String sLanId = location.substring(indexOfSlash + 1, location.length());		
-		if (ThingIdentity.DEFAULT_RESOURCE_NAME.equals(sLanId)) {
+		if (RegisteredThing.DEFAULT_RESOURCE_NAME.equals(sLanId)) {
 			return thingManager.getThingIdByThingName(edgeThingName);
 		} else {
 			int lanId;

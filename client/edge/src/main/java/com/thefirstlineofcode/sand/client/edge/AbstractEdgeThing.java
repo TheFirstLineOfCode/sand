@@ -24,6 +24,7 @@ import java.util.StringTokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.thefirstlineofcode.basalt.oxm.binary.BinaryUtils;
 import com.thefirstlineofcode.basalt.xmpp.Constants;
 import com.thefirstlineofcode.basalt.xmpp.core.ProtocolException;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.FeatureNotImplemented;
@@ -40,18 +41,18 @@ import com.thefirstlineofcode.sand.client.ibtr.IbtrPlugin;
 import com.thefirstlineofcode.sand.client.ibtr.RegistrationException;
 import com.thefirstlineofcode.sand.client.thing.AbstractThing;
 import com.thefirstlineofcode.sand.protocols.actuator.ExecutionException;
-import com.thefirstlineofcode.sand.protocols.thing.ThingIdentity;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
 
 public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeThing, IConnectionListener {
 	private static final String ATTRIBUTE_NAME_STREAM_CONFIG = "stream_config";
-	private static final String ATTRIBUTE_NAME_THING_IDENTITY = "thing_identity";
+	private static final String ATTRIBUTE_NAME_REGISTERED_THING = "registered_thing";
 	private static final String INTERNET_CONNECTIVITY_TEST_ADDRESS = "http://www.baidu.com";
 	private static final String SAND_EDGE_CONFIG_DIR = ".com.thefirstlineofcode.sand.client.edge";
 	
 	private static final Logger logger = LoggerFactory.getLogger(AbstractEdgeThing.class);
 	
 	protected StandardStreamConfig streamConfig;
-	protected ThingIdentity identity;
+	protected RegisteredThing registeredThing;
 	
 	protected StandardChatClient chatClient;
 	protected Thread autoReconnectThread;
@@ -81,6 +82,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 		super(model);
 		
 		this.streamConfig = streamConfig;
+		this.startConsole = startConsole;
 		
 		powered = true;
 		batteryPower = 100;
@@ -91,18 +93,17 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 		started = false;
 		stopToReconnect = true;
 		
-		this.startConsole = startConsole;
+		processAttributes(attributes);
 	}
 	
 	private String getStreamConfigString() {
 		return String.format("%s,%s,%s", streamConfig.getHost(), streamConfig.getPort(), streamConfig.isTlsPreferred() ? "true" : "false");
 	}
-
+	
 	protected StandardStreamConfig getStreamConfig(Map<String, String> attributes) {
 		String sStreamConfig = attributes.get(ATTRIBUTE_NAME_STREAM_CONFIG);
 		if (sStreamConfig == null) {
-			logger.error("Can't read stream config. Null stream config string.");
-			throw new IllegalArgumentException("Can't read stream config. Null stream config string.");
+			return null;
 		}
 		
 		StringTokenizer st = new StringTokenizer(sStreamConfig, ",");
@@ -112,7 +113,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 		}
 		
 		StandardStreamConfig streamConfig = createStreamConfig(st);
-		streamConfig.setResource(ThingIdentity.DEFAULT_RESOURCE_NAME);
+		streamConfig.setResource(RegisteredThing.DEFAULT_RESOURCE_NAME);
 		
 		return streamConfig;
 	}
@@ -129,12 +130,15 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 	public StandardStreamConfig getStreamConfig() {
 		return streamConfig;
 	}
+	
+	@Override
+	public void setStreamConfig(StandardStreamConfig streamConfig) {
+		this.streamConfig = streamConfig;
+	}
 
 	@Override
 	public void start() {
 		try {
-			processAttributes(attributes);
-			
 			doStart();
 		} catch (Exception e) {
 			logger.error("Some thing is wrong. The program can't run correctly.", e);
@@ -143,24 +147,21 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 		}
 	}
 	
-	private void processAttributes(Map<String, String> attributes) {
-		if (this.streamConfig == null) {
-			this.streamConfig = getStreamConfig(attributes);
+	protected void processAttributes(Map<String, String> attributes) {
+		if (streamConfig == null) {
+			streamConfig = getStreamConfig(attributes);
 		} else {
 			attributes.put(ATTRIBUTE_NAME_STREAM_CONFIG, getStreamConfigString());
 			attributesChanged = true;
 		}
 		
-		identity = getThingIdentity(attributes);
+		registeredThing = getRegisteredThing(attributes);
 		
 		if (doProcessAttributes(attributes))
 			attributesChanged = true;
 		
 		if (attributesChanged)
 			saveAttributes(attributes);
-		
-		logger.info("I'm an edge thing[thing_id='{}', host='{}', port='{}', tls_preferred='{}'].",
-				thingId, this.streamConfig.getHost(), this.streamConfig.getPort(), this.streamConfig.isTlsPreferred());
 	}
 
 	protected void doStart() {
@@ -169,6 +170,12 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 		
 		if (started)
 			stop();
+		
+		if (streamConfig == null)
+			throw new IllegalStateException("Null stream config.");
+		
+		logger.info("I'm an edge thing[thing_id='{}', host='{}', port='{}', tls_preferred='{}'].",
+				thingId, this.streamConfig.getHost(), this.streamConfig.getPort(), this.streamConfig.isTlsPreferred());
 		
 		if (!isHostLocalLanAddress()) {
 			checkInternetConnectivity(10);	
@@ -307,8 +314,8 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 		logger.info("The thing tries to connect to server.");
 		
 		try {
-			chatClient.connect(new UsernamePasswordToken(identity.getThingName().toString(),
-					identity.getCredentials()));
+			chatClient.connect(new UsernamePasswordToken(registeredThing.getThingName().toString(),
+					registeredThing.getCredentials()));
 			
 			if (isConnected()) {
 				for (IEdgeThingListener edgeThingListener : edgeThingListeners) {
@@ -352,7 +359,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 	protected StandardStreamConfig createStreamConfigWithResource() {
 		StandardStreamConfig cloned = new StandardStreamConfig(streamConfig.getHost(), streamConfig.getPort());
 		cloned.setTlsPreferred(streamConfig.isTlsPreferred());
-		cloned.setResource(ThingIdentity.DEFAULT_RESOURCE_NAME);
+		cloned.setResource(RegisteredThing.DEFAULT_RESOURCE_NAME);
 		
 		return cloned;
 	}
@@ -368,13 +375,13 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 		autoReconnectThread.start();
 	}
 
-	protected void registered(ThingIdentity identity) {
-		attributes.put(ATTRIBUTE_NAME_THING_IDENTITY, getThingIdentityString(identity));
+	protected void registered(RegisteredThing registeredThing) {
+		attributes.put(ATTRIBUTE_NAME_REGISTERED_THING, getRegisteredThingString(registeredThing));
 		saveAttributes(attributes);
 		
-		this.identity = identity;
+		this.registeredThing = registeredThing;
 		
-		logger.info("The thing has registered. Thing name is '{}'.", identity.getThingName());
+		logger.info("The thing has registered. Thing name is '{}'.", registeredThing.getThingName());
 	}
 	
 	@Override
@@ -431,7 +438,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 	
 	@Override
 	public boolean isRegistered() {
-		return identity != null;
+		return registeredThing != null;
 	}
 	
 	@Override
@@ -449,13 +456,13 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 			}
 			registration.addConnectionListener(this);
 			
-			identity = registration.register(thingId);
-			if (identity == null)
+			registeredThing = registration.register(thingId, loadRegistrationKey());
+			if (registeredThing == null)
 				return;
 			
-			registered(identity);
+			registered(registeredThing);
 			for (IEdgeThingListener edgeThingListener : edgeThingListeners) {
-				edgeThingListener.registered(identity);
+				edgeThingListener.registered(registeredThing);
 			}
 		} catch (RegistrationException e) {
 			for (IEdgeThingListener edgeThingListener : edgeThingListeners) {
@@ -474,8 +481,11 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 		}
 	}
 	
-	private String getThingIdentityString(ThingIdentity identity) {
-		return String.format("%s,%s", identity.getThingName(), identity.getCredentials());
+	protected abstract String loadRegistrationKey();
+
+	private String getRegisteredThingString(RegisteredThing registeredThing) {
+		return String.format("%s,%s,%s", registeredThing.getThingName(),
+				registeredThing.getCredentials(), BinaryUtils.encodeToBase64(registeredThing.getSecurityKey()));
 	}
 
 	@Override
@@ -591,21 +601,21 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 		logger.error("Registration exception occurred.", e);
 	}
 	
-	protected ThingIdentity getThingIdentity(Map<String, String> attributes) {
-		String sThingIdentity = attributes.get(ATTRIBUTE_NAME_THING_IDENTITY);
-		if (sThingIdentity == null)
+	protected RegisteredThing getRegisteredThing(Map<String, String> attributes) {
+		String sRegisteredThing = attributes.get(ATTRIBUTE_NAME_REGISTERED_THING);
+		if (sRegisteredThing == null)
 			return null;
 		
-		int commaIndex = sThingIdentity.indexOf(',');
-		if (commaIndex == -1) {
-			throw new IllegalArgumentException("Cant read thing identity. Not a valid thing identity string.");
-		}
+		StringTokenizer st = new StringTokenizer(sRegisteredThing, ",");
+		if (st.countTokens() != 3)
+			throw new RuntimeException("Invalid registered thing string!");
 			
-		ThingIdentity identity = new ThingIdentity();
-		identity.setThingName(sThingIdentity.substring(0, commaIndex).trim());
-		identity.setCredentials(sThingIdentity.substring(commaIndex + 1, sThingIdentity.length()).trim());
+		RegisteredThing registeredThing = new RegisteredThing();
+		registeredThing.setThingName(st.nextToken().trim());
+		registeredThing.setCredentials(st.nextToken().trim());
+		registeredThing.setCredentials(st.nextToken().trim());
 		
-		return identity;
+		return registeredThing;
 	}
 	
 	@Override
@@ -765,7 +775,10 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 		return attributesFilePath;
 	}
 	
-	protected abstract boolean doProcessAttributes(Map<String, String> attributes);
+	protected boolean doProcessAttributes(Map<String, String> attributes) {
+		return false;
+	}
+	
 	protected abstract void registerIotPlugins();
 	protected abstract void startIotComponents();
 	protected abstract void stopIotComponents();

@@ -15,7 +15,7 @@ import com.thefirstlineofcode.granite.framework.core.config.IConfigurationAware;
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.processing.IProcessingContext;
 import com.thefirstlineofcode.granite.framework.im.IResource;
 import com.thefirstlineofcode.granite.framework.im.IResourcesService;
-import com.thefirstlineofcode.sand.protocols.thing.ThingIdentity;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
 import com.thefirstlineofcode.sand.protocols.thing.tacp.Notification;
 import com.thefirstlineofcode.sand.server.notification.INotificationListener;
 
@@ -48,7 +48,7 @@ public class FollowDeliverer implements INotificationListener, IConfigurationAwa
 			if (!isLanFollowDeliveryDisabled() && isLanFollow(notifier, follower))
 				continue;
 			
-			JabberId edgeTarget = new JabberId(follower.getNode(), follower.getDomain(), ThingIdentity.DEFAULT_RESOURCE_NAME);
+			JabberId edgeTarget = new JabberId(follower.getNode(), follower.getDomain(), RegisteredThing.DEFAULT_RESOURCE_NAME);
 			IResource resource = resourcesService.getResource(edgeTarget);
 			if (resource == null) {
 				if (logger.isWarnEnabled())

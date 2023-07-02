@@ -24,7 +24,8 @@ import com.thefirstlineofcode.chalk.network.ConnectionException;
 import com.thefirstlineofcode.chalk.network.ConnectionListenerAdapter;
 import com.thefirstlineofcode.chalk.network.IConnectionListener;
 import com.thefirstlineofcode.sand.protocols.ibtr.ThingRegister;
-import com.thefirstlineofcode.sand.protocols.thing.ThingIdentity;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
+import com.thefirstlineofcode.sand.protocols.thing.UnregisteredThing;
 
 public class Registration extends ConnectionListenerAdapter implements IRegistration, INegotiationListener {
 	private StandardStreamConfig streamConfig;
@@ -34,7 +35,7 @@ public class Registration extends ConnectionListenerAdapter implements IRegistra
 	private boolean dontThrowConnectionException = false;
 	
 	@Override
-	public ThingIdentity register(String thingId) throws RegistrationException {
+	public RegisteredThing register(String thingId, String registrationKey) throws RegistrationException {
 		IChatClient chatClient = new IbtrChatClient(streamConfig);
 		chatClient.register(InternalIbtrPlugin.class);
 		
@@ -53,7 +54,7 @@ public class Registration extends ConnectionListenerAdapter implements IRegistra
 		}
 		
 		try {
-			return chatClient.getChatServices().getTaskService().execute(new RegisterTask(thingId));
+			return chatClient.getChatServices().getTaskService().execute(new RegisterTask(thingId, registrationKey));
 		} catch (ErrorException e) {
 			IError error = e.getError();
 			if (error.getDefinedCondition().equals(RemoteServerTimeout.DEFINED_CONDITION)) {
@@ -76,12 +77,12 @@ public class Registration extends ConnectionListenerAdapter implements IRegistra
 		}
 	}
 	
-	private class RegisterTask implements ISyncTask<Iq, ThingIdentity> {
+	private class RegisterTask implements ISyncTask<Iq, RegisteredThing> {
 		private ThingRegister thingRegister;
 		
-		public RegisterTask(String thingId) {
+		public RegisterTask(String thingId, String registrationKey) {
 			thingRegister = new ThingRegister();
-			thingRegister.setRegister(thingId);
+			thingRegister.setRegister(new UnregisteredThing(thingId, registrationKey));
 		}
 
 		@Override
@@ -93,9 +94,9 @@ public class Registration extends ConnectionListenerAdapter implements IRegistra
 		}
 
 		@Override
-		public ThingIdentity processResult(Iq iq) {
+		public RegisteredThing processResult(Iq iq) {
 			ThingRegister register = iq.getObject();
-			return (ThingIdentity)register.getRegister();
+			return (RegisteredThing)register.getRegister();
 		}
 	}
 

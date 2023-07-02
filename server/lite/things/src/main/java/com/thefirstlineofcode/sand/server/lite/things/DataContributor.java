@@ -11,7 +11,7 @@ public class DataContributor extends DataContributorAdapter {
 		return new Class<?>[] {
 			D_Thing.class,
 			D_ThingAuthorization.class,
-			D_ThingIdentity.class
+			D_RegisteredThing.class
 		};		
 	}
 	
@@ -24,7 +24,7 @@ public class DataContributor extends DataContributorAdapter {
 	protected String[] getMapperFileNames() {
 		return new String[] {
 			"ThingAuthorizationMapper.xml",
-			"ThingIdentityMapper.xml",
+			"RegisteredThingMapper.xml",
 			"ThingMapper.xml"
 		};
 	}

@@ -26,7 +26,7 @@ import com.thefirstlineofcode.sand.emulators.commons.Constants;
 import com.thefirstlineofcode.sand.emulators.commons.ui.LightEmulatorPanel;
 import com.thefirstlineofcode.sand.emulators.models.Sle02ModelDescriptor;
 import com.thefirstlineofcode.sand.protocols.actuator.ExecutionException;
-import com.thefirstlineofcode.sand.protocols.thing.ThingIdentity;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
 import com.thefirstlineofcode.sand.protocols.things.simple.light.Flash;
 import com.thefirstlineofcode.sand.protocols.things.simple.light.SwitchState;
 import com.thefirstlineofcode.sand.protocols.things.simple.light.SwitchStateChanged;
@@ -302,7 +302,7 @@ public class SimpleLight extends AbstractEdgeThing implements ISimpleLight, IAck
 	}
 
 	@Override
-	protected String generateThingId() {
+	protected String loadThingId() {
 		return getThingModel() + "-" + ThingsUtils.generateRandomId(8);
 	}
 	
@@ -312,7 +312,7 @@ public class SimpleLight extends AbstractEdgeThing implements ISimpleLight, IAck
 	}
 
 	@Override
-	protected ThingIdentity getThingIdentity(Map<String, String> attributes) {
+	protected RegisteredThing getRegisteredThing(Map<String, String> attributes) {
 		return null;
 	}
 	
@@ -341,5 +341,10 @@ public class SimpleLight extends AbstractEdgeThing implements ISimpleLight, IAck
 	public void noAck(Iq iq) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	protected String loadRegistrationKey() {
+		return "abcdefghigkl";
 	}
 }

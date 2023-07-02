@@ -5,25 +5,30 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 import org.apache.ibatis.session.SqlSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 import com.thefirstlineofcode.basalt.xmpp.core.ProtocolException;
+import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.BadRequest;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.Conflict;
+import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.NotAcceptable;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.NotAuthorized;
 import com.thefirstlineofcode.granite.framework.core.adf.IApplicationComponentService;
 import com.thefirstlineofcode.granite.framework.core.adf.IApplicationComponentServiceAware;
 import com.thefirstlineofcode.granite.framework.core.repository.IInitializable;
 import com.thefirstlineofcode.sand.protocols.thing.IThingModelDescriptor;
-import com.thefirstlineofcode.sand.protocols.thing.ThingIdentity;
-import com.thefirstlineofcode.sand.server.things.IThingIdRuler;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
 import com.thefirstlineofcode.sand.server.things.IThingManager;
 import com.thefirstlineofcode.sand.server.things.IThingModelsProvider;
+import com.thefirstlineofcode.sand.server.things.IThingRegistrationCustomizer;
 import com.thefirstlineofcode.sand.server.things.Thing;
 import com.thefirstlineofcode.sand.server.things.ThingAuthorization;
 import com.thefirstlineofcode.sand.server.things.ThingRegistered;
@@ -31,11 +36,12 @@ import com.thefirstlineofcode.sand.server.things.ThingRegistered;
 @Transactional
 @Component
 public class ThingManager implements IThingManager, IInitializable, IApplicationComponentServiceAware {
+	private static final Logger logger = LoggerFactory.getLogger(ThingManager.class);
+	
 	@Autowired
 	private SqlSession sqlSession;
 	
-	@Autowired(required = false)
-	private IThingIdRuler thingIdRuler;
+	private IThingRegistrationCustomizer registrationCustomizer;
 	
 	private IApplicationComponentService appComponentService;
 	
@@ -48,12 +54,31 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 	@Override
 	public void init() {
 		List<IThingModelsProvider> modelsProviders = appComponentService.getPluginManager().getExtensions(IThingModelsProvider.class);
-		if (modelsProviders == null || modelsProviders.size() == 0)
+		if (modelsProviders == null || modelsProviders.size() == 0) {
+			if (logger.isWarnEnabled())
+				logger.warn("No registration ruler definede.");
+			
 			return;
+		}
 		
 		for (IThingModelsProvider modelsProvider : modelsProviders) {
 			registerModels(modelsProvider);
 		}
+		
+		List<Class<? extends IThingRegistrationCustomizer>> registrationCustomizerClasses =
+				appComponentService.getPluginManager().getExtensionClasses(IThingRegistrationCustomizer.class);
+		
+		if (registrationCustomizerClasses == null || registrationCustomizerClasses.size() == 0) {
+			logger.warn("No thing registration customizer found. Default registration rule will be used.");
+			return;
+		}
+		
+		if (registrationCustomizerClasses.size() != 1) {
+			throw new RuntimeException("Error. Multiple thing registration customizers found.");
+		}
+		
+		registrationCustomizer = appComponentService.createExtension(registrationCustomizerClasses.get(0));
+		registrationCustomizer.setThingManager(this);
 	}
 	
 	private void registerModels(IThingModelsProvider modelsProvider) {
@@ -95,17 +120,26 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 	}
 	
 	@Override
-	public ThingRegistered register(String thingId) {
-		if (!isValid(thingId))
-			throw new RuntimeException(String.format("Invalid thing ID '%s'.", thingId));
+	public ThingRegistered register(String thingId, String registrationKey) {
+		if (thingId == null)
+			throw new ProtocolException(new BadRequest("Null thing ID."));
 		
-		if (isRegistered(thingId)) {
-			throw new ProtocolException(new Conflict());
-		}
+		if (registrationKey == null)
+			throw new ProtocolException(new BadRequest("Null registration key."));
 		
-		ThingAuthorization authorization = getAuthorization(thingId);
-		if (authorization == null || authorization.isCanceled() || isExpired(authorization)) {
-			throw new ProtocolException(new NotAuthorized());
+		if (!isUnregisteredThing(thingId, registrationKey))
+			throw new ProtocolException(new NotAcceptable(
+					String.format("Not a unregistered thing. Thing ID: %s. Regisration key: %s.",
+							thingId, registrationKey)));
+		
+		String authorizer = null;
+		if (registrationCustomizer == null || registrationCustomizer.isAuthenticationRequired()) {			
+			ThingAuthorization authorization = getAuthorization(thingId);
+			if (authorization == null || authorization.isCanceled() || isExpired(authorization)) {
+				throw new ProtocolException(new NotAuthorized());
+			}
+			
+			authorizer = authorization.getAuthorizer();
 		}
 		
 		D_Thing thing = new D_Thing();
@@ -115,17 +149,35 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 		thing.setRegistrationTime(Calendar.getInstance().getTime());
 		create(thing);
 		
-		D_ThingIdentity identity = new D_ThingIdentity();
-		identity.setId(UUID.randomUUID().toString());
-		identity.setThingId(thingId);
-		identity.setThingName(getThingName(thingId));
-		identity.setCredentials(createCredentials());
-		getThingIdentityMapper().insert(identity);
+		D_RegisteredThing registeredThing = new D_RegisteredThing();
+		registeredThing.setId(UUID.randomUUID().toString());
+		registeredThing.setThingId(thingId);
+		registeredThing.setThingName(getThingName(thingId));
+		registeredThing.setCredentials(createCredentials());
+		registeredThing.setSecurityKey(createSecurityKey());
 		
-		return new ThingRegistered(thingId, new ThingIdentity(identity.getThingName(), identity.getCredentials()),
-				authorization.getAuthorizer(), thing.getRegistrationTime());
+		getThingIdentityMapper().insert(registeredThing);
+		
+		return new ThingRegistered(thingId,
+				new RegisteredThing(
+						registeredThing.getThingName(),
+						registeredThing.getCredentials(),
+						registeredThing.getSecurityKey()),
+						authorizer,
+						thing.getRegistrationTime());
 	}
 	
+	private byte[] createSecurityKey() {
+		if (registrationCustomizer != null)
+			return registrationCustomizer.createSecurityKey();
+		
+		byte[] securityKey = new byte[16];
+		Random random = new Random(System.currentTimeMillis());
+		random.nextBytes(securityKey);
+		
+		return securityKey;
+	}
+
 	private boolean isExpired(ThingAuthorization authorization) {
 		Date current = Calendar.getInstance().getTime();
 		
@@ -191,8 +243,8 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 		return (ThingMapper)sqlSession.getMapper(ThingMapper.class);
 	}
 	
-	private ThingIdentityMapper getThingIdentityMapper() {
-		return (ThingIdentityMapper)sqlSession.getMapper(ThingIdentityMapper.class);
+	private RegisteredThingMapper getThingIdentityMapper() {
+		return (RegisteredThingMapper)sqlSession.getMapper(RegisteredThingMapper.class);
 	}
 	
 	private String generateRandomCredentials(int length) {
@@ -254,7 +306,7 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 
 	@Override
 	public Thing getByThingName(String thingName) {
-		D_ThingIdentity identity = (D_ThingIdentity)getThingIdentityMapper().selectByThingName(thingName);
+		D_RegisteredThing identity = (D_RegisteredThing)getThingIdentityMapper().selectByThingName(thingName);
 		if (identity == null)
 			return null;
 		
@@ -265,9 +317,6 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 	public boolean isValid(String thingId) {
 		if (thingId == null || thingId.length() == 0)
 			return false;
-		
-		if (thingIdRuler != null)
-			return thingIdRuler.isValid(thingId);
 		
 		for  (IThingModelDescriptor modelDescriptor : modelDescriptors.values()) {
 			if (thingId.length() > modelDescriptor.getModelName().length() &&
@@ -281,8 +330,8 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 
 	@Override
 	public String getModel(String thingId) {
-		if (thingIdRuler != null)
-			return thingIdRuler.guessModel(thingId);
+		if (registrationCustomizer != null)
+			return registrationCustomizer.guessModel(thingId);
 		
 		for (IThingModelDescriptor modelDescriptor : modelDescriptors.values()) {
 			if (thingId.startsWith(modelDescriptor.getModelName()))
@@ -331,9 +380,9 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 	
 	@Override
 	public String getThingNameByThingId(String thingId) {
-		ThingIdentity thingIdentity = getThingIdentityMapper().selectByThingId(thingId);
-		if (thingIdentity != null)
-			return thingIdentity.getThingName();
+		RegisteredThing registeredThing = getThingIdentityMapper().selectByThingId(thingId);
+		if (registeredThing != null)
+			return registeredThing.getThingName();
 		
 		return null;
 	}
@@ -396,5 +445,22 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 		IThingModelDescriptor modelDescriptor = getModelDescriptor(model);
 		
 		return modelDescriptor.getFollowedEvents().get(protocol);
+	}
+	
+	@Override
+	public boolean isUnregisteredThing(String thingId, String registrationCode) {
+		if (isRegistered(thingId)) {
+			throw new ProtocolException(new Conflict());
+		}
+		
+		if (registrationCustomizer != null)
+			return registrationCustomizer.isUnregisteredThing(thingId, registrationCode);
+		
+		return isValid(thingId);
+	}
+
+	@Override
+	public IThingModelDescriptor[] getModelDescriptors() {
+		return modelDescriptors.values().toArray(new IThingModelDescriptor[modelDescriptors.size()]);
 	}
 }

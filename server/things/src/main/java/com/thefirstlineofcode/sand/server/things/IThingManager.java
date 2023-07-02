@@ -9,7 +9,7 @@ public interface IThingManager {
 	void authorize(String thingId, String authorizer, Date expiredTime);
 	ThingAuthorization getAuthorization(String thingId);
 	void cancelAuthorization(String thingId);
-	ThingRegistered register(String thingId);
+	ThingRegistered register(String thingId, String registratioinKey);
 	void create(Thing thing);
 	void remove(String thingIds);
 	Thing getByThingId(String thingId);
@@ -22,6 +22,7 @@ public interface IThingManager {
 	String[] getModels();
 	IThingModelDescriptor getModelDescriptor(String model);
 	IThingModelDescriptor unregisterMode(String model);
+	IThingModelDescriptor[] getModelDescriptors();
 	boolean isRegistered(String thingId);
 	boolean isConcentrator(String model);
 	boolean isActuator(String model);
@@ -36,5 +37,6 @@ public interface IThingManager {
 	Class<?> getSupportedEventType(String model, Protocol protocol);
 	Class<?> getFollowedEventType(String model, Protocol protocol);
 	boolean isValid(String thingId);
+	boolean isUnregisteredThing(String thingId, String registrationCode);
 	String getModel(String thingId);
 }

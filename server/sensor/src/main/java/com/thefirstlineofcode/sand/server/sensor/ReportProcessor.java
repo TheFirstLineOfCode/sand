@@ -20,7 +20,7 @@ import com.thefirstlineofcode.granite.framework.core.pipeline.stages.processing.
 import com.thefirstlineofcode.granite.framework.core.repository.IInitializable;
 import com.thefirstlineofcode.sand.protocols.sensor.Report;
 import com.thefirstlineofcode.sand.protocols.sensor.Report.QoS;
-import com.thefirstlineofcode.sand.protocols.thing.ThingIdentity;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
 import com.thefirstlineofcode.sand.server.things.IThingManager;
 
 public class ReportProcessor implements IXepProcessor<Iq, Report>, IReportDispatcher, IInitializable {
@@ -86,7 +86,7 @@ public class ReportProcessor implements IXepProcessor<Iq, Report>, IReportDispat
 			return context.getJid();
 		
 		JabberId sender = context.getJid();
-		if (sender.getResource() != null && !ThingIdentity.DEFAULT_RESOURCE_NAME.equals(sender.getResource()))
+		if (sender.getResource() != null && !RegisteredThing.DEFAULT_RESOURCE_NAME.equals(sender.getResource()))
 			throw new ProtocolException(new BadRequest("Isn't the sender a edge thing?"));
 		
 		if (!sender.getBareId().equals(iq.getFrom().getBareId()))

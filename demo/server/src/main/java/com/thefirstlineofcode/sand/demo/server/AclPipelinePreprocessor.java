@@ -18,7 +18,7 @@ import com.thefirstlineofcode.sand.demo.protocols.AccessControlList.Role;
 import com.thefirstlineofcode.sand.protocols.actuator.Execution;
 import com.thefirstlineofcode.sand.protocols.location.LocateThings;
 import com.thefirstlineofcode.sand.protocols.operator.ApproveFollow;
-import com.thefirstlineofcode.sand.protocols.thing.ThingIdentity;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
 import com.thefirstlineofcode.sand.protocols.webrtc.signaling.Signal;
 import com.thefirstlineofcode.sand.server.concentrator.IConcentrator;
 import com.thefirstlineofcode.sand.server.concentrator.IConcentratorFactory;
@@ -205,7 +205,7 @@ public class AclPipelinePreprocessor implements IPipelinePreprocessor {
 			throw new ProtocolException(new BadRequest("Null target."));
 		
 		String thingId = null;
-		if (to.getResource() != null && !ThingIdentity.DEFAULT_RESOURCE_NAME.equals(to.getResource())) {
+		if (to.getResource() != null && !RegisteredThing.DEFAULT_RESOURCE_NAME.equals(to.getResource())) {
 			// The thing is a LAN node.
 			String concentratorThingName = to.getNode();
 			String sLanId = to.getResource();

@@ -16,7 +16,7 @@ import com.thefirstlineofcode.granite.framework.core.pipeline.stages.processing.
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.processing.IXepProcessor;
 import com.thefirstlineofcode.granite.framework.core.utils.CommonUtils;
 import com.thefirstlineofcode.granite.framework.im.IResourcesService;
-import com.thefirstlineofcode.sand.protocols.thing.ThingIdentity;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
 import com.thefirstlineofcode.sand.protocols.webrtc.signaling.Signal;
 import com.thefirstlineofcode.sand.server.things.IThingManager;
 
@@ -54,7 +54,7 @@ public class SignalProcessor implements IXepProcessor<Iq, Signal> {
 			}			
 			
 			if (iq.getTo().getResource() == null)
-				iq.getTo().setResource(ThingIdentity.DEFAULT_RESOURCE_NAME);
+				iq.getTo().setResource(RegisteredThing.DEFAULT_RESOURCE_NAME);
 		}
 		
 		if (isThingSession) {

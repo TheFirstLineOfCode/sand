@@ -7,7 +7,7 @@ import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.Iq;
 import com.thefirstlineofcode.chalk.core.IChatServices;
 import com.thefirstlineofcode.chalk.core.stanza.IIqListener;
-import com.thefirstlineofcode.sand.protocols.thing.ThingIdentity;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
 import com.thefirstlineofcode.sand.protocols.thing.tacp.Notification;
 
 public class FollowService implements IFollowService, IIqListener {
@@ -54,7 +54,7 @@ public class FollowService implements IFollowService, IIqListener {
 	public void received(Iq iq) {
 		JabberId to = iq.getTo();
 		if (to != null && to.getResource() != null &&
-				!to.getResource().equals(ThingIdentity.DEFAULT_RESOURCE_NAME))
+				!to.getResource().equals(RegisteredThing.DEFAULT_RESOURCE_NAME))
 			return;
 		
 		Notification notification = iq.getObject();

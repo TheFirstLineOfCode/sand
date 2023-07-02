@@ -17,7 +17,7 @@ import com.thefirstlineofcode.basalt.xmpp.core.JabberId;
 import com.thefirstlineofcode.sand.demo.protocols.AccessControlList;
 import com.thefirstlineofcode.sand.demo.protocols.AuthorizedThing;
 import com.thefirstlineofcode.sand.demo.protocols.LanNode;
-import com.thefirstlineofcode.sand.protocols.thing.ThingIdentity;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
 
 public class ThingsAdapter extends BaseExpandableListAdapter {
 	private final MainActivity mainActivity;
@@ -148,10 +148,14 @@ public class ThingsAdapter extends BaseExpandableListAdapter {
 		} else if (model.startsWith("LG-")) {
 			return new String[] {
 					"Change Working Mode",
-					"Reset DAC Service"
+					"Reset DAC Service",
+					"Sync Nodes",
+					"Pull LAN Follows",
+					"Stop",
+					"Shutdown System"
 			};
 		} else if (model.startsWith("SL-")) {
-			return new String[] {"Flash", "Turn On", "Turn Off"};
+			return new String[] {"Flash", "Turn On", "Turn Off", "Stop", "Shutdown System"};
 		} else {
 			throw new RuntimeException(String.format("Unknown thing model: %s.", model));
 		}
@@ -344,7 +348,7 @@ public class ThingsAdapter extends BaseExpandableListAdapter {
 		private JabberId getJidTargetByThingId(String thingId) {
 			for (AuthorizedThing thing : things) {
 				if (thingId.equals(thing.getThingId()))
-					return new JabberId(thing.getThingName(), host, ThingIdentity.DEFAULT_RESOURCE_NAME);
+					return new JabberId(thing.getThingName(), host, RegisteredThing.DEFAULT_RESOURCE_NAME);
 				
 				if (thing.isConcentrator() && thing.getNodes() != null && thing.getNodes().size() > 0) {
 					for (LanNode lanNode : thing.getNodes()) {

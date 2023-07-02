@@ -24,6 +24,7 @@ import com.thefirstlineofcode.granite.pipeline.stages.stream.negotiants.InitialS
 import com.thefirstlineofcode.sand.protocols.ibtr.ThingRegister;
 import com.thefirstlineofcode.sand.protocols.ibtr.oxm.ThingRegisterParserFactory;
 import com.thefirstlineofcode.sand.protocols.ibtr.oxm.ThingRegisterTranslatorFactory;
+import com.thefirstlineofcode.sand.protocols.thing.UnregisteredThing;
 import com.thefirstlineofcode.sand.server.things.ThingRegistered;
 
 public class IbtrNegotiant extends InitialStreamNegotiant {
@@ -110,13 +111,14 @@ public class IbtrNegotiant extends InitialStreamNegotiant {
 		
 		try {
 			Object register = thingRegister.getRegister();
-			if (register == null || !(register instanceof String))
+			if (register == null || !(register instanceof UnregisteredThing))
 				throw new ProtocolException(new BadRequest("Register object isn't a string."));
 			
-			String thingId = (String)register;
-			ThingRegistered registered = registrar.register(thingId);
+			UnregisteredThing unregisteredThing = (UnregisteredThing)register;
+			ThingRegistered registered = registrar.register(unregisteredThing.getThingId(),
+					unregisteredThing.getRegistrationKey());
 			Iq result = new Iq(Iq.Type.RESULT, iq.getId());
-			result.setObject(new ThingRegister(registered.thingIdentity));
+			result.setObject(new ThingRegister(registered.registeredThing));
 			
 			context.write(translatingFactory.translate(result));
 		} catch (RuntimeException e) {

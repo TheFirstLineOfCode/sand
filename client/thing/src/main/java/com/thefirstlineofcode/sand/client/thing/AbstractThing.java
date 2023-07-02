@@ -37,7 +37,7 @@ public abstract class AbstractThing implements IThing {
 		thingId = getThingId(attributes);
 		
 		if (thingId == null) {
-			thingId = generateThingId();
+			thingId = loadThingId();
 			
 			if (thingId == null)
 				throw new RuntimeException("Failed to generate thing ID. Null thing ID.");
@@ -54,7 +54,7 @@ public abstract class AbstractThing implements IThing {
 	}
 	
 	protected abstract Map<String, String> loadThingAttributes();
-	protected abstract String generateThingId();
+	protected abstract String loadThingId();
 	protected abstract void saveAttributes(Map<String, String> attributes);
 	
 	@Override

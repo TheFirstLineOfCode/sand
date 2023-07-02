@@ -40,7 +40,7 @@ public abstract class AbstractThingEmulator extends AbstractThing implements ITh
 		}
 	}
 
-	protected String generateThingId() {
+	protected String loadThingId() {
 		return getThingModel() + "-" + ThingsUtils.generateRandomId(8);
 	}
 	

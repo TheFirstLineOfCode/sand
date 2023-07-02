@@ -26,7 +26,7 @@ import com.thefirstlineofcode.sand.emulators.commons.ui.LightEmulatorPanel;
 import com.thefirstlineofcode.sand.emulators.commons.ui.UiUtils;
 import com.thefirstlineofcode.sand.emulators.models.Sle02ModelDescriptor;
 import com.thefirstlineofcode.sand.protocols.actuator.ExecutionException;
-import com.thefirstlineofcode.sand.protocols.thing.ThingIdentity;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
 import com.thefirstlineofcode.sand.protocols.things.simple.light.SwitchState;
 
 public class SimpleLightEmulator extends AbstractThingEmulator implements ISimpleLightEmulator, IEdgeThingListener {	
@@ -184,7 +184,7 @@ public class SimpleLightEmulator extends AbstractThingEmulator implements ISimpl
 	}
 	
 	@Override
-	public void registered(ThingIdentity identity) {
+	public void registered(RegisteredThing identity) {
 		if (logger.isInfoEnabled())
 			logger.info("Registered on the host.");
 		

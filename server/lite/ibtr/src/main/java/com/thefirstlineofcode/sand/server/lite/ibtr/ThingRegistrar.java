@@ -4,14 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.thefirstlineofcode.basalt.xmpp.core.ProtocolException;
-import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.NotAcceptable;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.NotAuthorized;
 import com.thefirstlineofcode.granite.framework.core.annotations.AppComponent;
 import com.thefirstlineofcode.granite.framework.core.annotations.BeanDependency;
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.event.IEventFirer;
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.event.IEventFirerAware;
 import com.thefirstlineofcode.sand.server.ibtr.IThingRegistrar;
-import com.thefirstlineofcode.sand.server.ibtr.IThingRegistrationCustomizerProxy;
 import com.thefirstlineofcode.sand.server.ibtr.NotAuthorizedThingRegistrationEvent;
 import com.thefirstlineofcode.sand.server.ibtr.ThingRegistrationEvent;
 import com.thefirstlineofcode.sand.server.things.IThingManager;
@@ -24,26 +22,17 @@ public class ThingRegistrar implements IThingRegistrar, IEventFirerAware {
 	@BeanDependency
 	private IThingManager thingManager;
 	
-	@BeanDependency
-	private IThingRegistrationCustomizerProxy registrationCustomizerProxy;
-	
 	private IEventFirer eventFirer;
 	
 	@Override
-	public ThingRegistered register(String thingId) {
-		if (!thingManager.isValid(thingId))
-			throw new ProtocolException(new NotAcceptable(String.format("Invalid thing ID '%s'.", thingId)));
-		
+	public ThingRegistered register(String thingId, String registrationKey) {
 		try {
-			ThingRegistered registered = thingManager.register(thingId);
+			ThingRegistered registered = thingManager.register(thingId, registrationKey);
 			if (logger.isInfoEnabled())
 				logger.info("Thing which's thing ID is '{}' has registered. It's thing name is assigned to '{}'.",
-						thingId, registered.thingIdentity.getThingName());
+						thingId, registered.registeredThing.getThingName());
 			
-			if (registrationCustomizerProxy.isBinded())
-				registrationCustomizerProxy.registered(registered);
-			else
-				eventFirer.fire(new ThingRegistrationEvent(registered.thingId, registered.thingIdentity.getThingName(),
+			eventFirer.fire(new ThingRegistrationEvent(registered.thingId, registered.registeredThing.getThingName(),
 						registered.authorizer, registered.registrationTime));
 			
 			return registered;
@@ -52,10 +41,7 @@ public class ThingRegistrar implements IThingRegistrar, IEventFirerAware {
 				if (logger.isWarnEnabled())
 					logger.warn("Thing which's thing ID is '{}' tried to register without authorization.", thingId);
 				
-				if (registrationCustomizerProxy.isBinded())
-					registrationCustomizerProxy.tryToRegisterWithoutAuthorization(thingId);
-				else
-					eventFirer.fire(new NotAuthorizedThingRegistrationEvent(thingId));
+				eventFirer.fire(new NotAuthorizedThingRegistrationEvent(thingId));
 			}
 			
 			throw e;

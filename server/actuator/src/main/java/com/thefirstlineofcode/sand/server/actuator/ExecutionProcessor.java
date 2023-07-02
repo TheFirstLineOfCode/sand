@@ -15,7 +15,7 @@ import com.thefirstlineofcode.granite.framework.core.pipeline.stages.processing.
 import com.thefirstlineofcode.granite.framework.im.IResource;
 import com.thefirstlineofcode.granite.framework.im.IResourcesService;
 import com.thefirstlineofcode.sand.protocols.actuator.Execution;
-import com.thefirstlineofcode.sand.protocols.thing.ThingIdentity;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
 import com.thefirstlineofcode.sand.server.concentrator.IConcentratorFactory;
 import com.thefirstlineofcode.sand.server.location.ILocationService;
 import com.thefirstlineofcode.sand.server.things.IThingManager;
@@ -70,7 +70,7 @@ public class ExecutionProcessor implements IXepProcessor<Iq, Execution> {
 			logger.warn("Action will be executed on edge thing which's thing ID is '{}'. Execution parameters 'lan-traceable' and 'lan-timeout'. will be ignored.", thingId);
 		}
 		
-		JabberId edgeTarget = new JabberId(target.getNode(), target.getDomain(), ThingIdentity.DEFAULT_RESOURCE_NAME);
+		JabberId edgeTarget = new JabberId(target.getNode(), target.getDomain(), RegisteredThing.DEFAULT_RESOURCE_NAME);
 		IResource resource = resourcesService.getResource(edgeTarget);
 		if (resource == null) {
 			logger.error("Can't deliver execution. Edge thing which's thing name is '{}' wasn't online.", edgeThingName);
@@ -81,6 +81,6 @@ public class ExecutionProcessor implements IXepProcessor<Iq, Execution> {
 	}
 	
 	private boolean doesExecutedOnNode(String lanId) {
-		return lanId != null && !ThingIdentity.DEFAULT_RESOURCE_NAME.equals(lanId);
+		return lanId != null && !RegisteredThing.DEFAULT_RESOURCE_NAME.equals(lanId);
 	}
 }

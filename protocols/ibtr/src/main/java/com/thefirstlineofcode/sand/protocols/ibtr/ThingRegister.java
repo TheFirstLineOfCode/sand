@@ -2,19 +2,20 @@ package com.thefirstlineofcode.sand.protocols.ibtr;
 
 import com.thefirstlineofcode.basalt.oxm.coc.annotations.ProtocolObject;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
-import com.thefirstlineofcode.sand.protocols.thing.ThingIdentity;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
+import com.thefirstlineofcode.sand.protocols.thing.UnregisteredThing;
 
-@ProtocolObject(namespace="urn:leps:tacp:ibtr", localName="query")
+@ProtocolObject(namespace="urn:leps:tacp:ibtr", localName="thing-register")
 public class ThingRegister {
-	public static final Protocol PROTOCOL = new Protocol("urn:leps:tacp:ibtr", "query");
+	public static final Protocol PROTOCOL = new Protocol("urn:leps:tacp:ibtr", "thing-register");
 	
 	private Object register;
 	
 	public ThingRegister() {}
 	
 	public ThingRegister(Object register) {
-		if (!(register instanceof String) && !(register instanceof ThingIdentity))
-			throw new IllegalArgumentException("Register object must be a string or a thing identity.");
+		if (!(register instanceof UnregisteredThing) && !(register instanceof RegisteredThing))
+			throw new IllegalArgumentException("Register object must be a unregistered thing or a registered thing.");
 		
 		this.register = register;
 	}
