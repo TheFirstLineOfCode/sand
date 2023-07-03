@@ -1,5 +1,6 @@
 package com.thefirstlineofcode.sand.demo.protocols;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
@@ -19,7 +20,7 @@ public class Sl01ModelDescriptor extends SingleTypeThingModelDescriptor {
 	
 	@Override
 	public Map<Protocol, Class<?>> getSupportedActions() {
-		Map<Protocol, Class<?>> supportedActions = super.getSupportedActions();
+		Map<Protocol, Class<?>> supportedActions = new HashMap<>(super.getSupportedActions());
 		
 		supportedActions.put(Flash.PROTOCOL, Flash.class);
 		supportedActions.put(TurnOn.PROTOCOL, TurnOn.class);

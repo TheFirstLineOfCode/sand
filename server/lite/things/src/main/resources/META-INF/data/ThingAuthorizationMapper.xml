@@ -7,7 +7,7 @@
     </insert>
     
     <update id="updateCanceled">
-		UPDATE THING_IDENTITIES SET canceled = #{1} WHERE thing_id = #{0}
+		UPDATE REGISTERED_THINGS SET canceled = #{1} WHERE thing_id = #{0}
     </update>
     
 	<select id="selectByThingId" resultMap="thingAuthorizationResultMap">

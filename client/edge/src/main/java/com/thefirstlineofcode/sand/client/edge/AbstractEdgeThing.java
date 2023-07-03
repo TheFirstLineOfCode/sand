@@ -134,6 +134,10 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 	@Override
 	public void setStreamConfig(StandardStreamConfig streamConfig) {
 		this.streamConfig = streamConfig;
+		Map<String, String> attributes = loadThingAttributes();
+		attributes.put(ATTRIBUTE_NAME_STREAM_CONFIG, getStreamConfigString());
+		
+		saveAttributes(attributes);
 	}
 
 	@Override
@@ -314,7 +318,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 		logger.info("The thing tries to connect to server.");
 		
 		try {
-			chatClient.connect(new UsernamePasswordToken(registeredThing.getThingName().toString(),
+			chatClient.connect(new UsernamePasswordToken(registeredThing.getThingName(),
 					registeredThing.getCredentials()));
 			
 			if (isConnected()) {
@@ -613,7 +617,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 		RegisteredThing registeredThing = new RegisteredThing();
 		registeredThing.setThingName(st.nextToken().trim());
 		registeredThing.setCredentials(st.nextToken().trim());
-		registeredThing.setCredentials(st.nextToken().trim());
+		registeredThing.setSecurityKey(BinaryUtils.decodeFromBase64(st.nextToken().trim()));
 		
 		return registeredThing;
 	}

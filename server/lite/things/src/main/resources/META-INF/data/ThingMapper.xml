@@ -15,7 +15,7 @@
     </select>
     
 	<select id="selectByThingName" resultType="com.thefirstlineofcode.sand.server.lite.things.D_Thing">
-		SELECT things.* FROM THINGS AS things LEFT JOIN THING_IDENTITIES as thing_identities ON things.thing_id = thing_identities.thing_id WHERE thing_identities.thing_name=#{0}
+		SELECT things.* FROM THINGS AS things LEFT JOIN REGISTERED_THINGS as registered_things ON things.thing_id = registered_things.thing_id WHERE registered_things.thing_name=#{0}
     </select>
     
 	<resultMap id="thingResultMap" type="Thing">
@@ -31,6 +31,6 @@
     </select>
     
 	<select id="selectCountByThingName" resultType="int">
-		SELECT count(*) FROM THINGS AS things LEFT JOIN THING_IDENTITIES as thing_identities ON things.thing_id = thing_identities.thing_id WHERE thing_identities.thing_name=#{0}
+		SELECT count(*) FROM THINGS AS things LEFT JOIN REGISTERED_THINGS as registered_things ON things.thing_id = registered_things.thing_id WHERE registered_things.thing_name=#{0}
     </select>
 </mapper>

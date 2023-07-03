@@ -449,12 +449,13 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 	
 	@Override
 	public boolean isUnregisteredThing(String thingId, String registrationCode) {
-		if (isRegistered(thingId)) {
-			throw new ProtocolException(new Conflict());
-		}
-		
-		if (registrationCustomizer != null)
+		if (registrationCustomizer != null) {			
 			return registrationCustomizer.isUnregisteredThing(thingId, registrationCode);
+		} else {
+			if (isRegistered(thingId)) {
+				throw new ProtocolException(new Conflict());
+			} 
+		}	
 		
 		return isValid(thingId);
 	}

@@ -2,6 +2,9 @@ package com.thefirstlineofcode.sand.server.things;
 
 import java.util.Random;
 
+import com.thefirstlineofcode.basalt.xmpp.core.ProtocolException;
+import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.BadRequest;
+import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.Conflict;
 import com.thefirstlineofcode.sand.protocols.thing.IThingModelDescriptor;
 
 public abstract class AbstractThingRegistrationCustomizer implements IThingRegistrationCustomizer {
@@ -10,7 +13,10 @@ public abstract class AbstractThingRegistrationCustomizer implements IThingRegis
 	@Override
 	public boolean isUnregisteredThing(String thingId, String registrationKey) {
 		if (thingId == null || thingId.length() == 0)
-			return false;
+			throw new ProtocolException(new BadRequest("Null thing ID."));
+		
+		if (thingManager.isRegistered(thingId))
+			throw new ProtocolException(new Conflict());
 		
 		IThingModelDescriptor[] modelDescriptors = thingManager.getModelDescriptors();
 		for  (IThingModelDescriptor modelDescriptor : modelDescriptors) {

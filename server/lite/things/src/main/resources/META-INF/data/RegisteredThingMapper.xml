@@ -19,6 +19,6 @@
     </select>
     
 	<select id="selectCountByThingName" resultType="int">
-		SELECT count(*) FROM THING_IDENTITIES WHERE thing_name = #{0}
+		SELECT count(*) FROM REGISTERED_THINGS WHERE thing_name = #{0}
     </select>
 </mapper>
