@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.thefirstlineofcode.basalt.oxm.IOxmFactory;
 import com.thefirstlineofcode.basalt.oxm.coc.CocParserFactory;
+import com.thefirstlineofcode.basalt.oxm.coc.annotations.ProtocolObject;
 import com.thefirstlineofcode.basalt.xmpp.core.IqProtocolChain;
 import com.thefirstlineofcode.basalt.xmpp.core.JabberId;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
@@ -114,10 +115,16 @@ public class Actuator implements IActuator, IIqListener {
 	@SuppressWarnings("unchecked")
 	private <T> IExecutor<T> createExecutor(T action) throws ProtocolException {
 		IExecutorFactory<T> executorFactory = (IExecutorFactory<T>)executorFactories.get(action.getClass());
+		
 		if (executorFactory != null)
 			return executorFactory.create();
 		
 		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> void injectWorker(IWorkerAware<T> executor, Object worker) {
+		executor.setWorker((T)worker);
 	}
 	
 	private IExecutor<?> createExecutor(Class<? extends IExecutor<?>> executorType) {
@@ -198,26 +205,44 @@ public class Actuator implements IActuator, IIqListener {
 	}
 	
 	@Override
-	public <T> void registerExecutor(Protocol protocol, Class<T> actionType, Class<? extends IExecutor<T>> executorType) {
-		registerExecutorFactory(new CreateByTypeExecutorFactory<T>(protocol, actionType, executorType));
+	public <T> void registerExecutor(Class<T> actionType, Class<? extends IExecutor<T>> executorType) {
+		registerExecutorFactory(new CreateByTypeExecutorFactory<T>(actionType, executorType, null));
+	}
+	
+	@Override
+	public <T> void registerExecutor(Class<T> actionType, Class<? extends IExecutor<T>> executorType, Object worker) {
+		registerExecutorFactory(new CreateByTypeExecutorFactory<T>(actionType, executorType, worker));
 	}
 	
 	private class CreateByTypeExecutorFactory<T> implements IExecutorFactory<T> {
 		private Protocol protocol;
 		private Class<T> actionType;
 		private Class<? extends IExecutor<T>> executorType;
+		private Object worker;
 		
-		public CreateByTypeExecutorFactory(Protocol protocol, Class<T> actionType,
-				Class<? extends IExecutor<T>> executorType) {
-			this.protocol = protocol;
+		public CreateByTypeExecutorFactory(Class<T> actionType,
+				Class<? extends IExecutor<T>> executorType, Object worker) {
 			this.actionType = actionType;
 			this.executorType = executorType;
+			this.worker = worker;
+			
+			ProtocolObject protocolObject = actionType.getAnnotation(ProtocolObject.class);
+			if (protocolObject == null)
+				throw new IllegalArgumentException(String.format("Not a protocol object. Object type: %s.",
+						actionType.getName()));
+			
+			protocol = new Protocol(protocolObject.namespace(), protocolObject.localName());
 		}
 
 		@SuppressWarnings("unchecked")
 		@Override
 		public IExecutor<T> create() {
-			return (IExecutor<T>)createExecutor(executorType);
+			IExecutor<T> executor = (IExecutor<T>)createExecutor(executorType);
+			if (executor instanceof IWorkerAware) {
+				injectWorker((IWorkerAware<?>)executor, worker);
+			}
+			
+			return executor;
 		}
 
 		@Override

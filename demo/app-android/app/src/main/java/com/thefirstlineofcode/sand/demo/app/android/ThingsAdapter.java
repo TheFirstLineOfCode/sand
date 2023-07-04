@@ -132,7 +132,7 @@ public class ThingsAdapter extends BaseExpandableListAdapter {
 	private String[] getAuthorizedThingActions(String model) {
 		if (model.startsWith("LGE-")) {
 			return new String[] {"Change Working Mode"};
-		} else if (model.equals("LGSC-01")) {
+		} else if ("LGSC-01".equals(model)) {
 			return new String[] {
 					"Change Working Mode",
 					"Reset DAC Service",
@@ -156,6 +156,8 @@ public class ThingsAdapter extends BaseExpandableListAdapter {
 			};
 		} else if (model.startsWith("SL-")) {
 			return new String[] {"Flash", "Turn On", "Turn Off", "Stop", "Shutdown System"};
+		} else if ("HAT".equals(model)) {
+			return new String[] {"Flash", "Turn On", "Turn Off"};
 		} else {
 			throw new RuntimeException(String.format("Unknown thing model: %s.", model));
 		}

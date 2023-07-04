@@ -1,8 +1,5 @@
 package com.thefirstlineofcode.sand.demo.server;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.pf4j.Extension;
 
 import com.thefirstlineofcode.sand.demo.protocols.Lg01ModelDescriptor;
@@ -20,18 +17,16 @@ import com.thefirstlineofcode.sand.server.things.IThingModelsProvider;
 public class ThingModelsProvider implements IThingModelsProvider {
 
 	@Override
-	public List<IThingModelDescriptor> provide() {
-		List<IThingModelDescriptor> models = new ArrayList<>();
-		
-		models.add(new Lge01ModelDescriptor());
-		models.add(new Sle01ModelDescriptor());
-		models.add(new Sle02ModelDescriptor());		
-		models.add(new Lgsc01ModelDescriptor());
-		models.add(new Sl01ModelDescriptor());
-		models.add(new Sl02ModelDescriptor());
-		models.add(new Lg01ModelDescriptor());
-		models.add(new Str01ModelDescriptor());
-		
-		return models;
+	public IThingModelDescriptor[] provide() {
+		return new IThingModelDescriptor[] {
+			new Lge01ModelDescriptor(),
+			new Sle01ModelDescriptor(),
+			new Sle02ModelDescriptor(),
+			new Lgsc01ModelDescriptor(),
+			new Sl01ModelDescriptor(),
+			new Sl02ModelDescriptor(),
+			new Lg01ModelDescriptor(),
+			new Str01ModelDescriptor()
+		};		
 	}
 }

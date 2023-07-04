@@ -20,8 +20,7 @@ import com.thefirstlineofcode.sand.server.notification.INotificationDispatcher;
 public class SandDemoCommandsProcessor extends AbstractCommandsProcessor implements IDataObjectFactoryAware {
 	public static final String[] TEST_USERS = {
 			"dongger",
-			"sand-demo",
-			"wg_test"
+			"sand-demo"
 	};
 	
 	private static final String COMMAND_GROUP_SAND_DEMO = "sand-demo";
@@ -38,10 +37,10 @@ public class SandDemoCommandsProcessor extends AbstractCommandsProcessor impleme
 	@Override
 	public void printHelp(IConsoleSystem consoleSystem) {
 		consoleSystem.printTitleLine(String.format("%s Available commands:", getIntroduction()));
-		consoleSystem.printContentLine("sand-demo help - Display the help information for sand demo command group.");
-		consoleSystem.printContentLine("sand-demo create-test-users - Create test users into system.");
-		consoleSystem.printContentLine("sand-demo listen-light-switch-on - Start to listen light switch state changed event.");
-		consoleSystem.printContentLine("sand-demo listen-light-switch-off - Stop to listen light switch state changed event.");
+		consoleSystem.printContentLine("sand-demo help - Display the help information for sand-demo command group.");
+		consoleSystem.printContentLine("sand-demo create-test-users - Create test users for sand demo.");
+		consoleSystem.printContentLine("sand-demo listen-light-switch-on - Start to listen LightSwitchStateChanged event.");
+		consoleSystem.printContentLine("sand-demo listen-light-switch-off - Stop to listen LightSwitchStateChanged event.");
 	}
 	
 	public void processListenLightSwitchOn(IConsoleSystem consoleSystem) {
@@ -50,7 +49,7 @@ public class SandDemoCommandsProcessor extends AbstractCommandsProcessor impleme
 			notificationDispatcher.addEventListener(SwitchStateChanged.class, lightSwtichStateListener);			
 		}
 		
-		consoleSystem.printContentLine("Started to listen.");
+		consoleSystem.printContentLine("Started to listen LightSwitchStateChanged event.");
 	}
 	
 	public void processListenLightSwitchOff(IConsoleSystem consoleSystem) {
@@ -59,7 +58,7 @@ public class SandDemoCommandsProcessor extends AbstractCommandsProcessor impleme
 			lightSwtichStateListener = null;
 		}
 		
-		consoleSystem.printContentLine("Stopped to listen.");
+		consoleSystem.printContentLine("Stopped to listen LightSwitchStateChanged event.");
 	}
 	
 	private class LightSwitchStateListener implements IEventListener<SwitchStateChanged> {

@@ -488,7 +488,7 @@
 			
 			<dependency>
 				<groupId>com.thefirstlineofcode.sand.demo</groupId>
-				<artifactId>sand-demo-protocols</artifactId>
+				<artifactId>sand-demo-protocol</artifactId>
 				<version>${sand.version}</version>
 			</dependency>
 

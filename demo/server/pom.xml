@@ -47,7 +47,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.thefirstlineofcode.sand.demo</groupId>
-			<artifactId>sand-demo-protocols</artifactId>
+			<artifactId>sand-demo-protocol</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.thefirstlineofcode.sand.protocols</groupId>

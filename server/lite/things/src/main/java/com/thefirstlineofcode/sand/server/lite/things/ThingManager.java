@@ -82,8 +82,7 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 	}
 	
 	private void registerModels(IThingModelsProvider modelsProvider) {
-		List<IThingModelDescriptor> modelDescriptors = modelsProvider.provide();
-		for (IThingModelDescriptor modelDescriptor : modelDescriptors) {
+		for (IThingModelDescriptor modelDescriptor : modelsProvider.provide()) {
 			registerModel(modelDescriptor);
 		}
 	}

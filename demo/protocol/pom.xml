@@ -13,8 +13,8 @@
 	</parent>
 
 	<groupId>com.thefirstlineofcode.sand.demo</groupId>
-	<artifactId>sand-demo-protocols</artifactId>
-	<name>Sand demo protocols</name>
+	<artifactId>sand-demo-protocol</artifactId>
+	<name>Sand demo protocol</name>
 	
 	<dependencies>
 		<dependency>
