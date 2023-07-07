@@ -22,7 +22,7 @@ public interface ILoraDacClient extends IAddressConfigurator<ICommunicator<LoraA
 	void setDacServiceAddress(LoraAddress dacServiceAddress);
 	void setListener(Listener listener);
 	void removeListener();
-	void introduce(String thingId);
+	void introduce(String thingId, String registrationCode);
 	void isConfigured(String thingId);
 	void reset();
 }

@@ -266,4 +266,9 @@ public class SimpleLightEmulator extends AbstractThingEmulator implements ISimpl
 	public void fireSwitchChangedEvent(SwitchState previous, SwitchState current) {
 		light.fireSwitchChangedEvent(previous, current);
 	}
+
+	@Override
+	protected String loadRegistrationCode() {
+		return "abcdefghigkl";
+	}
 }

@@ -9,6 +9,7 @@ import com.thefirstlineofcode.sand.protocols.thing.CommunicationNet;
 
 public class LanNode implements Externalizable {
 	private String thingId;
+	private String registrationCode;
 	private Integer lanId;
 	private String model;
 	private CommunicationNet communicationNet;
@@ -21,6 +22,14 @@ public class LanNode implements Externalizable {
 
 	public void setThingId(String thingId) {
 		this.thingId = thingId;
+	}
+	
+	public String getRegistrationCode() {
+		return registrationCode;
+	}
+
+	public void setRegistrationCode(String registrationCode) {
+		this.registrationCode = registrationCode;
 	}
 
 	public Integer getLanId() {
@@ -66,6 +75,7 @@ public class LanNode implements Externalizable {
 	@Override
 	public void writeExternal(ObjectOutput out) throws IOException {
 		out.writeObject(thingId);
+		out.writeObject(registrationCode);
 		out.writeObject(lanId);
 		out.writeObject(model);
 		out.writeObject(communicationNet);
@@ -76,6 +86,7 @@ public class LanNode implements Externalizable {
 	@Override
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 		thingId = (String)in.readObject();
+		registrationCode = (String)in.readObject();
 		lanId = (Integer)in.readObject();
 		model = (String)in.readObject();
 		communicationNet = (CommunicationNet)in.readObject();

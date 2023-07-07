@@ -62,7 +62,6 @@ import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 import com.thefirstlineofcode.basalt.xmpp.core.ProtocolException;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.Iq;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.BadRequest;
-import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.StanzaError;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.UnexpectedRequest;
 import com.thefirstlineofcode.chalk.core.AuthFailureException;
 import com.thefirstlineofcode.chalk.core.IChatClient;
@@ -722,7 +721,7 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 		listenRegisrationInLogConsole(registration);
 		
 		try {
-			registeredThing = registration.register(thingId, "abcdefghigkl");
+			registeredThing = registration.register(thingId, "abcdefghijkl");
 		} catch (RegistrationException e) {
 			JOptionPane.showMessageDialog(this, "Can't register thing. Error: " + e.getError(), "Registration Error", JOptionPane.ERROR_MESSAGE);
 		} finally {			
@@ -1701,17 +1700,10 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 	public void messageSent(String message) {
 		// NOOP
 	}
-
-	@Override
-	public void occurred(StanzaError error, LanNode source) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	@Override
 	public void occurred(AddNodeError error, LanNode source) {
 		// TODO Auto-generated method stub
-		
 	}
 	
 	@Override
@@ -1746,7 +1738,7 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 	}
 
 	@Override
-	public void addressConfigured(String thingId, LoraAddress address) {
+	public void addressConfigured(String thingId, String registrationCode, LoraAddress address) {
 		// NOOP
 	}
 

@@ -9,7 +9,7 @@ public interface IThingManager {
 	void authorize(String thingId, String authorizer, Date expiredTime);
 	ThingAuthorization getAuthorization(String thingId);
 	void cancelAuthorization(String thingId);
-	ThingRegistered register(String thingId, String registratioinKey);
+	ThingRegistered register(String thingId, String registratioinCode);
 	void create(Thing thing);
 	void remove(String thingIds);
 	Thing getByThingId(String thingId);
@@ -38,5 +38,7 @@ public interface IThingManager {
 	Class<?> getFollowedEventType(String model, Protocol protocol);
 	boolean isValid(String thingId);
 	boolean isUnregisteredThing(String thingId, String registrationCode);
+	boolean isAuthenticationRequired();
+	boolean isConfirmationRequired();
 	String getModel(String thingId);
 }

@@ -2,6 +2,7 @@ package com.thefirstlinelinecode.sand.protocols.concentrator;
 
 public class Node {
 	private String thingId;
+	private String RegistrationCode;
 	private Integer lanId;
 	private String model;
 	private String communicationNet;
@@ -15,6 +16,14 @@ public class Node {
 		this.thingId = node;
 	}
 	
+	public String getRegistrationCode() {
+		return RegistrationCode;
+	}
+
+	public void setRegistrationCode(String registrationCode) {
+		RegistrationCode = registrationCode;
+	}
+
 	public String getModel() {
 		return model;
 	}

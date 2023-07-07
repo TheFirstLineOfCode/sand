@@ -11,7 +11,7 @@ public abstract class AbstractThingRegistrationCustomizer implements IThingRegis
 	protected IThingManager thingManager;
 	
 	@Override
-	public boolean isUnregisteredThing(String thingId, String registrationKey) {
+	public boolean isUnregisteredThing(String thingId, String registrationCode) {
 		if (thingId == null || thingId.length() == 0)
 			throw new ProtocolException(new BadRequest("Null thing ID."));
 		
@@ -42,6 +42,11 @@ public abstract class AbstractThingRegistrationCustomizer implements IThingRegis
 
 	@Override
 	public boolean isAuthenticationRequired() {
+		return true;
+	}
+	
+	@Override
+	public boolean isConfirmationRequired() {
 		return true;
 	}
 

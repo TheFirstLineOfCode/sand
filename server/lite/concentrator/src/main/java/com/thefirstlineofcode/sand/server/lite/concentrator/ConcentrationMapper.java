@@ -3,9 +3,10 @@ package com.thefirstlineofcode.sand.server.lite.concentrator;
 import java.util.List;
 
 import com.thefirstlinelinecode.sand.protocols.concentrator.Node;
+import com.thefirstlineofcode.sand.server.concentrator.Concentration;
 
 public interface ConcentrationMapper {
-	void insert(D_Concentration concentration);
+	void insert(Concentration concentration);
 	int selectCountByConcentratorAndLanId(String concentratorThingName, int lanId);
 	Node selectNodeByConcentratorAndLanId(String concentratorThingName, int lanId);
 	int selectCountByConcentratorAndNode(String concentratorThingName, String nodeThingId);

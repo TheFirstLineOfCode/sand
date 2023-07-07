@@ -18,14 +18,14 @@ public class NodeAdditionListener implements IEventListener<NodeAdditionEvent>, 
 	
 	@Override
 	public void process(IEventContext context, NodeAdditionEvent event) {
-		String concentratorThingName = thingManager.getThingNameByThingId(event.getConcentratorThingName());
-		if (concentratorThingName == null)
-			throw new RuntimeException("Concentrator not existed?");
+		if (!thingManager.thingNameExists(event.getConcentratorThingName()))
+			throw new RuntimeException(String.format("Concentrator which's name is '%s' not existed?",
+					event.getConcentratorThingName()));
 		
 		Iq result = new Iq(Iq.Type.RESULT, event.getRequestId());		
 		result.setTo(getConcentratorJid(event));
-		result.setObject(new NodeAdded(concentratorThingName, event.getNodeThingId(), event.getLanId(),
-				event.getModel(), event.getAdditionTime()));
+		result.setObject(new NodeAdded(event.getConcentratorThingName(), event.getNodeThingId(),
+				event.getLanId(), event.getModel(), event.getAdditionTime()));
 		
 		context.write(result);
 	}

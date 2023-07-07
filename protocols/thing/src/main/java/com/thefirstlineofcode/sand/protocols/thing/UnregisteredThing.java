@@ -2,13 +2,13 @@ package com.thefirstlineofcode.sand.protocols.thing;
 
 public class UnregisteredThing {
 	private String thingId;
-	private String registrationKey;
+	private String registrationCode;
 	
 	public UnregisteredThing() {}
 	
-	public UnregisteredThing(String thingId, String registrationKey) {
+	public UnregisteredThing(String thingId, String registrationCode) {
 		this.thingId = thingId;
-		this.registrationKey = registrationKey;
+		this.registrationCode = registrationCode;
 	}
 	
 	public String getThingId() {
@@ -19,11 +19,11 @@ public class UnregisteredThing {
 		this.thingId = thingId;
 	}
 	
-	public String getRegistrationKey() {
-		return registrationKey;
+	public String getRegistrationCode() {
+		return registrationCode;
 	}
 	
-	public void setRegistrationKey(String registrationKey) {
-		this.registrationKey = registrationKey;
+	public void setRegistrationCode(String registrationCode) {
+		this.registrationCode = registrationCode;
 	}
 }

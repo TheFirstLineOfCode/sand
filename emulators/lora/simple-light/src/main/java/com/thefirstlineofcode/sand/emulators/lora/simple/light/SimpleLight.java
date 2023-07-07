@@ -260,4 +260,9 @@ public class SimpleLight extends AbstractLoraThingEmulator implements ISimpleLig
 			System.out.print(String.format("0x%02x, ", bytes[i]));
 		}
 	}
+
+	@Override
+	public String loadRegistrationCode() {
+		return "abcdefghijkl";
+	}
 }

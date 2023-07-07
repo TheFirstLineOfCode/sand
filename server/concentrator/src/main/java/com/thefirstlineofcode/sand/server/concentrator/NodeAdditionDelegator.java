@@ -5,7 +5,7 @@ import java.util.Date;
 
 import com.thefirstlineofcode.basalt.xmpp.core.ProtocolException;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.ItemNotFound;
-import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.NotAcceptable;
+import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.ServiceUnavailable;
 import com.thefirstlineofcode.granite.framework.core.annotations.AppComponent;
 import com.thefirstlineofcode.granite.framework.core.annotations.BeanDependency;
 import com.thefirstlineofcode.granite.framework.core.auth.IAccountManager;
@@ -34,15 +34,17 @@ public class NodeAdditionDelegator implements IEventFirerAware, IConfigurationAw
 	private int nodeConfirmationValidityTime;
 	
 	public void requestToConfirm(NodeConfirmation confirmation) {
-		String concentratorThingName = confirmation.getConcentratorThingName();
+		if (!thingManager.isConfirmationRequired())
+			throw new ProtocolException(new ServiceUnavailable());
 		
+		String concentratorThingName = confirmation.getConcentratorThingName();
 		String concentratorThingId = thingManager.getThingIdByThingName(concentratorThingName);
 		if (concentratorThingId == null)
 			throw new ProtocolException(new ItemNotFound(String.format("Thing which's thing name is '%s' not be found.",
 					concentratorThingName)));
 		
 		if (!thingManager.isConcentrator(thingManager.getModel(concentratorThingId)))
-			throw new ProtocolException(new NotAcceptable("Thing which's thing name is '%s' isn't a concentrator.",
+			throw new ProtocolException(new ServiceUnavailable("Thing which's thing name is '%s' isn't a concentrator.",
 					concentratorThingName));
 		
 		IConcentrator concentrator = concentratorFactory.getConcentrator(concentratorThingId);
@@ -66,13 +68,16 @@ public class NodeAdditionDelegator implements IEventFirerAware, IConfigurationAw
 	}
 	
 	public NodeAdded confirm(String concentratorThingName, String nodeThingId) {
+		if (!thingManager.isConfirmationRequired())
+			throw new ProtocolException(new ServiceUnavailable());
+		
 		String thingId = thingManager.getThingIdByThingName(concentratorThingName);
 		if (thingId == null)
 			throw new ProtocolException(new ItemNotFound(String.format("Thing which's thing name is '%s' not be found.",
 					concentratorThingName)));
 		
 		if (!thingManager.isConcentrator(thingManager.getModel(thingId)))
-			throw new ProtocolException(new NotAcceptable("Thing which's thing name is '%s' isn't a concentrator.",
+			throw new ProtocolException(new ServiceUnavailable("Thing which's thing name is '%s' isn't a concentrator.",
 					concentratorThingName));
 		
 		IConcentrator concentrator = concentratorFactory.getConcentrator(thingId);

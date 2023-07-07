@@ -22,15 +22,21 @@ public interface IConcentrator extends IActuator, IFollowService {
 		REDUPLICATE_THING_ID,
 		REDUPLICATE_THING_ADDRESS,
 		REDUPLICATE_LAN_ID,
-		BAD_NODE_ADDITION_RESPONSE,
 		ADDED_NODE_NOT_FOUND,
-		SERVER_CHANGED_LAN_ID
+		SERVER_CHANGED_LAN_ID,
+		BAD_NODE_ADDITION_RESPONSE,
+		NO_SUCH_CONCENTRATOR,
+		NOT_CONCENTRATOR,
+		REDUPLICATE_NODE_OR_LAN_ID,
+		NOT_UNREGISTERED_THING,
+		REMOTE_SERVER_TIMEOUT,
+		UNKNOWN_ERROR
 	}
 	
 	void addCommunicator(CommunicationNet net, ICommunicator<?, ?, byte[]> communicator);
 	ICommunicator<?, ?, byte[]> getCommunicator(CommunicationNet communicationNet);
 	int getBestSuitedNewLanId();
-	void requestServerToAddNode(String thingId, int lanId, IAddress address);
+	void requestServerToAddNode(String thingId, String registrationCode, int lanId, IAddress address);
 	void removeNode(int lanId) throws NodeNotFoundException;
 	void cleanNodes();
 	void setNodes(Map<Integer, LanNode> nodes);
@@ -82,7 +88,6 @@ public interface IConcentrator extends IActuator, IFollowService {
 		void nodeAdded(int lanId, LanNode node);
 		void nodeReset(int lanId, LanNode node);
 		void nodeRemoved(int lanId, LanNode node);
-		void occurred(StanzaError error, LanNode source);
 		void occurred(AddNodeError error, LanNode source);
 	}
 	

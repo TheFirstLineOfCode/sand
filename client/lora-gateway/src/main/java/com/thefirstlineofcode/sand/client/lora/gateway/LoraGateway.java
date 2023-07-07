@@ -174,9 +174,9 @@ public class LoraGateway implements ILoraGateway, ILoraDacService.Listener {
 	}
 
 	@Override
-	public void addressConfigured(String thingId, LoraAddress address) {
+	public void addressConfigured(String thingId, String registrationCode, LoraAddress address) {
 		IConcentrator concentrator = getConcentrator();
-		concentrator.requestServerToAddNode(thingId, concentrator.getBestSuitedNewLanId(), address);
+		concentrator.requestServerToAddNode(thingId, registrationCode, concentrator.getBestSuitedNewLanId(), address);
 	}
 
 }

@@ -12,6 +12,8 @@ public class AddNode {
 	@NotNull
 	private String thingId;
 	@NotNull
+	private String registrationCode;
+	@NotNull
 	@IntRange(min = 1, max = 255)
 	private Integer lanId;
 	@NotNull
@@ -27,6 +29,14 @@ public class AddNode {
 		this.thingId = thingId;
 	}
 	
+	public String getRegistrationCode() {
+		return registrationCode;
+	}
+
+	public void setRegistrationCode(String registrationCode) {
+		this.registrationCode = registrationCode;
+	}
+
 	public Integer getLanId() {
 		return lanId;
 	}

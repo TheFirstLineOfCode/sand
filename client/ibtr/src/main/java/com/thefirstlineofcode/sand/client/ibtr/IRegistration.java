@@ -5,7 +5,7 @@ import com.thefirstlineofcode.chalk.network.IConnectionListener;
 import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
 
 public interface IRegistration {
-	RegisteredThing register(String thingId, String registrationKey) throws RegistrationException;
+	RegisteredThing register(String thingId, String registrationCode) throws RegistrationException;
 	void remove();
 	void addConnectionListener(IConnectionListener listener);
 	void removeConnectionListener(IConnectionListener listener);

@@ -25,9 +25,9 @@ public class ThingRegistrar implements IThingRegistrar, IEventFirerAware {
 	private IEventFirer eventFirer;
 	
 	@Override
-	public ThingRegistered register(String thingId, String registrationKey) {
+	public ThingRegistered register(String thingId, String registrationCode) {
 		try {
-			ThingRegistered registered = thingManager.register(thingId, registrationKey);
+			ThingRegistered registered = thingManager.register(thingId, registrationCode);
 			if (logger.isInfoEnabled())
 				logger.info("Thing which's thing ID is '{}' has registered. It's thing name is assigned to '{}'.",
 						thingId, registered.registeredThing.getThingName());

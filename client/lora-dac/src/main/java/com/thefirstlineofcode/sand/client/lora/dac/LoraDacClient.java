@@ -62,14 +62,15 @@ public class LoraDacClient implements ILoraDacClient, ICommunicationListener<Lor
 	}
 
 	@Override
-	public void introduce(String thingId) {
+	public void introduce(String thingId, String registrationCode) {
 		changeToInitialDacClientAddress();
 		currentCommunicationListener = new IntroduceListener(thingId);
 		
 		communicator.startToListen();
 		try {
 			communicator.send(dacServiceAddress, ObxFactory.getInstance().toBinary(
-					new Introduction(communicator.getAddress().getBytes(), thingId)));
+					new Introduction(communicator.getAddress().getBytes(), thingId,
+							registrationCode)));
 			state = State.INTRODUCTING;
 		} catch (CommunicationException e) {
 			processCommunicationException(e);

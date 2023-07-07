@@ -11,7 +11,7 @@ public interface ILoraDacService<OA extends IAddress> extends IAddressConfigurat
 	public static final byte DEFAULT_THING_COMMUNICATION_CHANNEL = 0x17;
 	
 	public interface Listener {
-		void addressConfigured(String thingId, LoraAddress address);
+		void addressConfigured(String thingId, String registrationCode, LoraAddress address);
 	}
 	
 	void setConcentrator(IConcentrator concentrator);

@@ -11,12 +11,15 @@ public class Introduction {
 	private byte[] address;
 	@Text
 	private String thingId;
+	@Text
+	private String registrationCode;
 	
 	public Introduction() {}
 	
-	public Introduction(byte[] address, String thingId) {
+	public Introduction(byte[] address, String thingId, String registrationCode) {
 		this.address = address;
 		this.thingId = thingId;
+		this.registrationCode = registrationCode;
 	}
 	
 	public String getThingId() {
@@ -25,6 +28,14 @@ public class Introduction {
 
 	public void setThingId(String thingId) {
 		this.thingId = thingId;
+	}
+
+	public String getRegistrationCode() {
+		return registrationCode;
+	}
+
+	public void setRegistrationCode(String registrationCode) {
+		this.registrationCode = registrationCode;
 	}
 
 	public byte[] getAddress() {

@@ -45,7 +45,7 @@ public class ThingRegisterTranslatorFactory implements ITranslatorFactory<ThingR
 				UnregisteredThing unregisteredThing = (UnregisteredThing)register;
 				writer.writeElementBegin("unregistered-thing").
 				writeTextOnly("thing-id", unregisteredThing.getThingId()).
-				writeTextOnly("registration-key", unregisteredThing.getRegistrationKey()).
+				writeTextOnly("registration-key", unregisteredThing.getRegistrationCode()).
 				writeElementEnd();
 			} else if (register instanceof RegisteredThing) {
 				RegisteredThing registeredThing = (RegisteredThing)register;

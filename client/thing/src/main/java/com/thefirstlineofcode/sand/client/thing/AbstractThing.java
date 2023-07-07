@@ -56,6 +56,7 @@ public abstract class AbstractThing implements IThing {
 	protected abstract Map<String, String> loadThingAttributes();
 	protected abstract String loadThingId();
 	protected abstract void saveAttributes(Map<String, String> attributes);
+	protected abstract String loadRegistrationCode();
 	
 	@Override
 	public String getThingId() {

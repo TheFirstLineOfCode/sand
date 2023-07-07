@@ -33,6 +33,7 @@ import com.thefirstlineofcode.basalt.xmpp.core.ProtocolException;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.Iq;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.Stanza;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.BadRequest;
+import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.Conflict;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.InternalServerError;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.ItemNotFound;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.NotAcceptable;
@@ -741,10 +742,11 @@ public class Concentrator extends Actuator implements IConcentrator {
 	}
 
 	@Override
-	public void requestServerToAddNode(String thingId, int lanId, IAddress address) {
+	public void requestServerToAddNode(String thingId, String registrationCode, int lanId, IAddress address) {
 		synchronized (nodesLock) {
 			LanNode node = new LanNode();
 			node.setThingId(thingId);
+			node.setRegistrationCode(registrationCode);
 			node.setLanId(lanId);
 			node.setCommunicationNet(address.getCommunicationNet());
 			node.setAddress(address.toAddressString());
@@ -755,9 +757,7 @@ public class Concentrator extends Actuator implements IConcentrator {
 					logger.error("Node size overflow.");
 				}
 				
-				for (Listener listener : listeners) {
-					listener.occurred(AddNodeError.SIZE_OVERFLOW, node);
-				}
+				processNodeAdditionError(AddNodeError.SIZE_OVERFLOW, node);
 				
 				return;
 			}
@@ -768,10 +768,7 @@ public class Concentrator extends Actuator implements IConcentrator {
 						logger.error("Reduplicate thing ID: {}.", node.getThingId());
 					}
 					
-					for (Listener listener : listeners) {
-						listener.occurred(AddNodeError.REDUPLICATE_THING_ID, node);
-					}
-					
+					processNodeAdditionError(AddNodeError.REDUPLICATE_THING_ID, node);					
 					return;
 				}
 				
@@ -780,10 +777,7 @@ public class Concentrator extends Actuator implements IConcentrator {
 						logger.error("Reduplicate thing address: {}.", node.getAddress());
 					}
 					
-					for (Listener listener : listeners) {
-						listener.occurred(AddNodeError.REDUPLICATE_THING_ADDRESS, node);
-					}
-					
+					processNodeAdditionError(AddNodeError.REDUPLICATE_THING_ADDRESS, node);
 					return;
 				}
 				
@@ -792,10 +786,7 @@ public class Concentrator extends Actuator implements IConcentrator {
 						logger.error("Reduplicate thing LAN ID: {}.", node.getLanId());
 					}
 					
-					for (Listener listener : listeners) {
-						listener.occurred(AddNodeError.REDUPLICATE_THING_ADDRESS, node);
-					}
-					
+					processNodeAdditionError(AddNodeError.REDUPLICATE_LAN_ID, node);
 					return;
 				}
 			}
@@ -820,6 +811,7 @@ public class Concentrator extends Actuator implements IConcentrator {
 		public void trigger(IUnidirectionalStream<Iq> stream) {
 			AddNode addNode = new AddNode();
 			addNode.setThingId(node.getThingId());
+			addNode.setRegistrationCode(node.getRegistrationCode());
 			addNode.setLanId(node.getLanId());
 			addNode.setCommunicationNet(node.getCommunicationNet().toString());
 			addNode.setAddress(node.getAddress());
@@ -834,18 +826,6 @@ public class Concentrator extends Actuator implements IConcentrator {
 
 		@Override
 		public void processResponse(IUnidirectionalStream<Iq> stream, Iq iq) {
-			if (iq.getType() != Iq.Type.RESULT || iq.getObject() == null) {
-				if (logger.isErrorEnabled()) {
-					logger.error("Server returned a bad response. Response is {}.", iq);
-				}
-				
-				for (IConcentrator.Listener listener : listeners) {
-					listener.occurred(IConcentrator.AddNodeError.BAD_NODE_ADDITION_RESPONSE, node);
-				}
-				
-				return;
-			}
-			
 			NodeAdded nodeAdded = iq.getObject();
 			
 			LanNode confirmingNode = confirmingNodes.get(iq.getId());
@@ -854,10 +834,7 @@ public class Concentrator extends Actuator implements IConcentrator {
 					logger.error("Confirming node which's thing ID is '{}' not found.", nodeAdded.getNodeThingId());
 				}
 				
-				for (IConcentrator.Listener listener : listeners) {
-					listener.occurred(IConcentrator.AddNodeError.ADDED_NODE_NOT_FOUND, node);
-				}
-				
+				processNodeAdditionError(IConcentrator.AddNodeError.ADDED_NODE_NOT_FOUND, node);
 				return;
 			}
 			
@@ -870,10 +847,7 @@ public class Concentrator extends Actuator implements IConcentrator {
 							getThingName(), confirmingNode.getThingId(), nodeAdded.getNodeThingId(), nodeAdded.getConcentratorThingName());
 				}
 				
-				for (IConcentrator.Listener listener : listeners) {
-					listener.occurred(IConcentrator.AddNodeError.BAD_NODE_ADDITION_RESPONSE, node);
-				}
-				
+				processNodeAdditionError(IConcentrator.AddNodeError.BAD_NODE_ADDITION_RESPONSE, node);			
 				return;
 			}
 			
@@ -882,18 +856,15 @@ public class Concentrator extends Actuator implements IConcentrator {
 					logger.error("Bad node addition response. The server changed LAN ID of node to {}.", nodeAdded.getLanId());
 				}
 				
-				for (IConcentrator.Listener listener : listeners) {
-					listener.occurred(IConcentrator.AddNodeError.SERVER_CHANGED_LAN_ID, node);
-				}
-						
+				processNodeAdditionError(IConcentrator.AddNodeError.SERVER_CHANGED_LAN_ID, node);
 				return;
 			}
-			
-			confirmingNode.setModel(nodeAdded.getModel());
 			
 			synchronized (nodesLock) {
 				confirmingNodes.remove(iq.getId());
 				
+				confirmingNode.setModel(nodeAdded.getModel());
+				confirmingNode.setRegistrationCode(null);
 				confirmingNode.setConfirmed(true);
 				nodes.put(confirmingNode.getLanId(), confirmingNode);
 			}
@@ -910,18 +881,22 @@ public class Concentrator extends Actuator implements IConcentrator {
 		
 		@Override
 		public boolean processError(IUnidirectionalStream<Iq> stream, StanzaError error) {
-			if (logger.isErrorEnabled()) {
-				logger.error("Some errors occurred while adding node. Error defined condition: '{}'. Error text: '{}'.",
-						error.getDefinedCondition(), error.getText());
-			}
-			
 			try {
-				for (IConcentrator.Listener listener : listeners) {
-					listener.occurred(error, node);
-				}				
-			} catch (Exception e) {
 				if (logger.isErrorEnabled()) {
-					logger.error("Exception was thrown while processing error.", e);
+					logger.error("Stanza error receiving when requesting to add node to concentrator. Stanz error: '{}'.",
+							error.getDefinedCondition(), error.getText());
+				}
+				
+				if (ItemNotFound.DEFINED_CONDITION.equals(error.getDefinedCondition())) {
+					processNodeAdditionError(IConcentrator.AddNodeError.NO_SUCH_CONCENTRATOR, node);
+				} else if (ServiceUnavailable.DEFINED_CONDITION.equals(error.getDefinedCondition())) {
+					processNodeAdditionError(IConcentrator.AddNodeError.NOT_CONCENTRATOR, node);
+				} else if (Conflict.DEFINED_CONDITION.equals(error.getDefinedCondition())) {
+					processNodeAdditionError(IConcentrator.AddNodeError.REDUPLICATE_NODE_OR_LAN_ID, node);
+				} else if (NotAcceptable.DEFINED_CONDITION.equals(error.getDefinedCondition())) {
+					processNodeAdditionError(IConcentrator.AddNodeError.NOT_UNREGISTERED_THING, node);
+				} else {
+					processNodeAdditionError(IConcentrator.AddNodeError.UNKNOWN_ERROR, node);
 				}
 			} finally {				
 				synchronized (nodesLock) {
@@ -940,9 +915,7 @@ public class Concentrator extends Actuator implements IConcentrator {
 			
 			nodes.remove(node.getLanId());
 			
-			for (IConcentrator.Listener listener : listeners) {
-				listener.occurred(new RemoteServerTimeout(), node);
-			}
+			processNodeAdditionError(IConcentrator.AddNodeError.REMOTE_SERVER_TIMEOUT, node);
 			
 			return true;
 		}
@@ -958,6 +931,12 @@ public class Concentrator extends Actuator implements IConcentrator {
 	public void removeNode(int lanId) {
 		synchronized (nodesLock) {
 			nodes.remove(lanId);
+		}
+	}
+	
+	private void processNodeAdditionError(IConcentrator.AddNodeError error, LanNode node) {
+		for (IConcentrator.Listener listener : listeners) {
+			listener.occurred(error, node);
 		}
 	}
 	
@@ -1031,8 +1010,8 @@ public class Concentrator extends Actuator implements IConcentrator {
 			for (LanNode lanNode : oldNodes) {
 				if (!lanNode.isConfirmed() && !isConfirmed(pulledLanNodes.values(), lanNode)) {
 					try {
-						requestServerToAddNode(lanNode.getThingId(), lanNode.getLanId(),
-								lanNode.getCommunicationNet().parse(lanNode.getAddress()));
+						requestServerToAddNode(lanNode.getThingId(), lanNode.getRegistrationCode(),
+								lanNode.getLanId(), lanNode.getCommunicationNet().parse(lanNode.getAddress()));
 					} catch (BadAddressException e) {
 						throw new RuntimeException("Why???", e);
 					}

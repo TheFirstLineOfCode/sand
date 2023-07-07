@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class Thing {
 	private String thingId;
+	private String registrationCode;
 	private String model;
 	private String softwareVersion;
 	private Date registrationTime;
@@ -14,6 +15,14 @@ public class Thing {
 
 	public void setThingId(String thingId) {
 		this.thingId = thingId;
+	}
+	
+	public String getRegistrationCode() {
+		return registrationCode;
+	}
+	
+	public void setRegistrationCode(String registrationCode) {
+		this.registrationCode = registrationCode;
 	}
 
 	public String getModel() {

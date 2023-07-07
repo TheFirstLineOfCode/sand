@@ -460,7 +460,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 			}
 			registration.addConnectionListener(this);
 			
-			registeredThing = registration.register(thingId, loadRegistrationKey());
+			registeredThing = registration.register(thingId, loadRegistrationCode());
 			if (registeredThing == null)
 				return;
 			
@@ -485,8 +485,6 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 		}
 	}
 	
-	protected abstract String loadRegistrationKey();
-
 	private String getRegisteredThingString(RegisteredThing registeredThing) {
 		return String.format("%s,%s,%s", registeredThing.getThingName(),
 				registeredThing.getCredentials(), BinaryUtils.encodeToBase64(registeredThing.getSecurityKey()));

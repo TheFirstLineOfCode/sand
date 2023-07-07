@@ -247,7 +247,7 @@ public abstract class AbstractLoraThingEmulator extends AbstractCommunicationNet
 			}
 		});
 		
-		dacClient.introduce(thingId);
+		dacClient.introduce(thingId, loadRegistrationCode());
 	}
 	
 	private abstract class LoraDacClientListenerAdapter implements ILoraDacClient.Listener {

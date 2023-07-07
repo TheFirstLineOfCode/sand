@@ -13,5 +13,6 @@ public interface IConcentrator {
 	Node getNodeByLanId(int lanId);
 	Node getNodeByThingId(String nodeThingId);
 	Node[] getNodes();
+	void addNode(Node node);
 	void removeNode(int lanId);
 }

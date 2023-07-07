@@ -116,7 +116,7 @@ public class IbtrNegotiant extends InitialStreamNegotiant {
 			
 			UnregisteredThing unregisteredThing = (UnregisteredThing)register;
 			ThingRegistered registered = registrar.register(unregisteredThing.getThingId(),
-					unregisteredThing.getRegistrationKey());
+					unregisteredThing.getRegistrationCode());
 			Iq result = new Iq(Iq.Type.RESULT, iq.getId());
 			result.setObject(new ThingRegister(registered.registeredThing));
 			

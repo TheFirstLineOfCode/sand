@@ -11,6 +11,7 @@ import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.BadRequest;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.Conflict;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.ItemNotFound;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.NotAcceptable;
+import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.ServiceUnavailable;
 import com.thefirstlineofcode.granite.framework.core.adf.data.IDataObjectFactory;
 import com.thefirstlineofcode.granite.framework.core.adf.data.IDataObjectFactoryAware;
 import com.thefirstlineofcode.granite.framework.core.annotations.BeanDependency;
@@ -42,7 +43,7 @@ public class AddNodeProcessor implements IXepProcessor<Iq, AddNode>, IDataObject
 					context.getJid().getNode())));
 		
 		if (!thingManager.isConcentrator(thingManager.getModel(thingId)))
-			throw new ProtocolException(new NotAcceptable("Thing which's thing name is '%s' isn't a concentrator.",
+			throw new ProtocolException(new ServiceUnavailable("Thing which's thing name is '%s' isn't a concentrator.",
 					context.getJid().getNode()));
 		
 		IConcentrator concentrator = concentratorFactory.getConcentrator(thingId);
@@ -58,18 +59,37 @@ public class AddNodeProcessor implements IXepProcessor<Iq, AddNode>, IDataObject
 		
 		if (concentrator.containsLanId(xep.getLanId())) {
 			throw new ProtocolException(new Conflict(String.format("Reduplicate LAN ID: '%s'.", xep.getLanId())));
-			
 		}
 		
+		if (!thingManager.isUnregisteredThing(xep.getThingId(), xep.getRegistrationCode())) {
+			throw new ProtocolException(new NotAcceptable());
+		}
+				
 		Node node = new Node();
 		node.setThingId(xep.getThingId());
+		node.setRegistrationCode(xep.getRegistrationCode());
 		node.setLanId(xep.getLanId());
 		node.setCommunicationNet(xep.getCommunicationNet());
 		node.setAddress(xep.getAddress());
 		
+		if (thingManager.isConfirmationRequired()) {
+			requestToConfirm(iq, thingManager.getThingNameByThingId(thingId), node);
+		} else {
+			addNode(thingId, node);
+		}
+	}
+
+	private void addNode(String concentratorThingId, Node node) {
+		IConcentrator concentrator = concentratorFactory.getConcentrator(concentratorThingId);
+		if (concentrator == null) {
+			throw new RuntimeException(String.format("No concentrator which's thing ID is '%s'.", concentratorThingId));
+		}
+	}
+
+	private void requestToConfirm(Iq iq, String concentratorThingName, Node node) {
 		NodeConfirmation confirmation = dataObjectFactory.create(NodeConfirmation.class);
 		confirmation.setRequestId(iq.getId());
-		confirmation.setConcentratorThingName(thingManager.getThingNameByThingId(thingId));
+		confirmation.setConcentratorThingName(concentratorThingName);
 		confirmation.setNode(node);
 		Date currentTime = Calendar.getInstance().getTime();
 		confirmation.setRequestedTime(currentTime);

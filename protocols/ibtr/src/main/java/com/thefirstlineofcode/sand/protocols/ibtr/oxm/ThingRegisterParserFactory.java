@@ -64,7 +64,7 @@ public class ThingRegisterParserFactory implements IParserFactory<ThingRegister>
 					@Override
 					public void processText(IParsingContext<ThingRegister> context, Value<?> text) {
 						UnregisteredThing unregisteredThing = (UnregisteredThing)context.getObject().getRegister();
-						unregisteredThing.setRegistrationKey(text.getString());
+						unregisteredThing.setRegistrationCode(text.getString());
 					}
 				};
 			} else if (parsingPath.match("/registered-thing")) {

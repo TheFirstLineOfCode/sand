@@ -13,9 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.thefirstlinelinecode.sand.protocols.concentrator.Node;
 import com.thefirstlineofcode.basalt.xmpp.core.ProtocolException;
-import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.BadRequest;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.Conflict;
-import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.NotAllowed;
+import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.InternalServerError;
+import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.NotAcceptable;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.UnexpectedRequest;
 import com.thefirstlineofcode.granite.framework.core.adf.data.IDataObjectFactory;
 import com.thefirstlineofcode.granite.framework.core.adf.data.IDataObjectFactoryAware;
@@ -61,9 +61,6 @@ public class Concentrator implements IConcentrator, IDataObjectFactoryAware {
 
 	@Override
 	public NodeAdded confirm(String nodeThingId) {
-		if (!thingManager.isValid(nodeThingId))
-			throw new RuntimeException(String.format("Invalid node thing ID '%s'.", nodeThingId));
-		
 		if (containsNode(nodeThingId))
 			throw new ProtocolException(new Conflict(String.format("Reduplicate node which's ID is '%s'.", nodeThingId)));
 		
@@ -72,21 +69,22 @@ public class Concentrator implements IConcentrator, IDataObjectFactoryAware {
 			throw new ProtocolException(new UnexpectedRequest("No node confirmation found."));
 		}
 		
-		String model = thingManager.getModel(nodeThingId);
-		if (model == null) {
-			throw new ProtocolException(new BadRequest(String.format("Can't get model of thing which's thing ID is '%s'.", nodeThingId)));
-		}
-		
 		int lanId = confirmation.getNode().getLanId();
 		if (containsLanId(lanId))
 			throw new ProtocolException(new Conflict(String.format("Reduplicate LAN ID('%'). The node's ID is '%s'.",
 					confirmation.getNode().getLanId(), nodeThingId)));
+		
+		String model = thingManager.getModel(nodeThingId);
+		if (model == null) {
+			throw new ProtocolException(new InternalServerError(String.format("Can't get model of thing which's thing ID is '%s'.", nodeThingId)));
+		}
 		
 		Date confirmedTime = Calendar.getInstance().getTime();
 		getNodeConfirmationMapper().updateConfirmed(confirmation.getId(), confirmedTime);
 		
 		Thing node = dataObjectFactory.create(Thing.class);
 		node.setThingId(nodeThingId);
+		node.setRegistrationCode(node.getRegistrationCode());
 		node.setModel(model);
 		node.setRegistrationTime(Calendar.getInstance().getTime());
 		thingManager.create(node);
@@ -137,7 +135,7 @@ public class Concentrator implements IConcentrator, IDataObjectFactoryAware {
 	@Override
 	public void requestToConfirm(NodeConfirmation confirmation) {
 		if (!thingName.equals(confirmation.getConcentratorThingName())) {
-			throw new ProtocolException(new NotAllowed("Wrong thing ID of concentrator. Your program maybe has a bug."));
+			throw new RuntimeException("Wrong thing ID of concentrator. Your program maybe has a bug.");
 		}
 		
 		if (containsNode(confirmation.getNode().getThingId())) {
@@ -146,6 +144,10 @@ public class Concentrator implements IConcentrator, IDataObjectFactoryAware {
 		
 		if (containsLanId(confirmation.getNode().getLanId()))
 			throw new ProtocolException(new Conflict(String.format("Reduplicate land ID '%s'.", confirmation.getNode().getLanId())));
+		
+		if (!thingManager.isUnregisteredThing(confirmation.getNode().getThingId(), confirmation.getNode().getRegistrationCode())) {
+			throw new ProtocolException(new NotAcceptable());
+		}
 		
 		getNodeConfirmationMapper().insert(confirmation);
 	}
@@ -181,6 +183,26 @@ public class Concentrator implements IConcentrator, IDataObjectFactoryAware {
 		getConcentrationMapper().deleteNode(thingName, lanId);
 		
 		thingManager.remove(node.getThingId());
+	}
+
+	@Override
+	public void addNode(Node node) {
+		Thing thing = dataObjectFactory.create(Thing.class);
+		thing.setThingId(node.getThingId());
+		thing.setRegistrationCode(node.getRegistrationCode());
+		thing.setModel(node.getModel());
+		thing.setRegistrationTime(Calendar.getInstance().getTime());
+		thingManager.create(thing);
+		
+		Concentration concentration = dataObjectFactory.create(Concentration.class);
+		concentration.setConcentratorThingName(thingManager.getThingIdByThingName(thingName));
+		concentration.setNodeThingId(node.getThingId());
+		concentration.setLanId(node.getLanId());
+		concentration.setCommunicationNet(node.getCommunicationNet());
+		concentration.setAddress(node.getAddress());
+		Date addedTime = Calendar.getInstance().getTime();
+		concentration.setAdditionTime(addedTime);
+		getConcentrationMapper().insert(concentration);
 	}
 	
 }

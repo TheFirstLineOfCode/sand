@@ -344,7 +344,7 @@ public class SimpleLight extends AbstractEdgeThing implements ISimpleLight, IAck
 	}
 
 	@Override
-	protected String loadRegistrationKey() {
+	public String loadRegistrationCode() {
 		return "abcdefghigkl";
 	}
 }

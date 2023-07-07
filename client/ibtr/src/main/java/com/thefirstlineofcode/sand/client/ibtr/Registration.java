@@ -35,7 +35,7 @@ public class Registration extends ConnectionListenerAdapter implements IRegistra
 	private boolean dontThrowConnectionException = false;
 	
 	@Override
-	public RegisteredThing register(String thingId, String registrationKey) throws RegistrationException {
+	public RegisteredThing register(String thingId, String registrationCode) throws RegistrationException {
 		IChatClient chatClient = new IbtrChatClient(streamConfig);
 		chatClient.register(InternalIbtrPlugin.class);
 		
@@ -54,7 +54,7 @@ public class Registration extends ConnectionListenerAdapter implements IRegistra
 		}
 		
 		try {
-			return chatClient.getChatServices().getTaskService().execute(new RegisterTask(thingId, registrationKey));
+			return chatClient.getChatServices().getTaskService().execute(new RegisterTask(thingId, registrationCode));
 		} catch (ErrorException e) {
 			IError error = e.getError();
 			if (error.getDefinedCondition().equals(RemoteServerTimeout.DEFINED_CONDITION)) {
@@ -80,9 +80,9 @@ public class Registration extends ConnectionListenerAdapter implements IRegistra
 	private class RegisterTask implements ISyncTask<Iq, RegisteredThing> {
 		private ThingRegister thingRegister;
 		
-		public RegisterTask(String thingId, String registrationKey) {
+		public RegisterTask(String thingId, String registrationCode) {
 			thingRegister = new ThingRegister();
-			thingRegister.setRegister(new UnregisteredThing(thingId, registrationKey));
+			thingRegister.setRegister(new UnregisteredThing(thingId, registrationCode));
 		}
 
 		@Override

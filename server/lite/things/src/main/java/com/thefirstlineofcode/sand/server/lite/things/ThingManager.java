@@ -119,17 +119,17 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 	}
 	
 	@Override
-	public ThingRegistered register(String thingId, String registrationKey) {
+	public ThingRegistered register(String thingId, String registrationCode) {
 		if (thingId == null)
 			throw new ProtocolException(new BadRequest("Null thing ID."));
 		
-		if (registrationKey == null)
-			throw new ProtocolException(new BadRequest("Null registration key."));
+		if (registrationCode == null)
+			throw new ProtocolException(new BadRequest("Null registration code."));
 		
-		if (!isUnregisteredThing(thingId, registrationKey))
+		if (!isUnregisteredThing(thingId, registrationCode))
 			throw new ProtocolException(new NotAcceptable(
-					String.format("Not a unregistered thing. Thing ID: %s. Regisration key: %s.",
-							thingId, registrationKey)));
+					String.format("Not a unregistered thing. Thing ID: %s. Regisration code: %s.",
+							thingId, registrationCode)));
 		
 		String authorizer = null;
 		if (registrationCustomizer == null || registrationCustomizer.isAuthenticationRequired()) {			
@@ -143,7 +143,8 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 		
 		D_Thing thing = new D_Thing();
 		thing.setId(UUID.randomUUID().toString());
-		thing.setThingId(thingId);		
+		thing.setThingId(thingId);
+		thing.setRegistrationCode(registrationCode);
 		thing.setModel(getModel(thingId));
 		thing.setRegistrationTime(Calendar.getInstance().getTime());
 		create(thing);
@@ -462,5 +463,21 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 	@Override
 	public IThingModelDescriptor[] getModelDescriptors() {
 		return modelDescriptors.values().toArray(new IThingModelDescriptor[modelDescriptors.size()]);
+	}
+	
+	@Override
+	public boolean isAuthenticationRequired() {
+		if (registrationCustomizer != null)
+			return registrationCustomizer.isAuthenticationRequired();
+		
+		return true;
+	}
+	
+	@Override
+	public boolean isConfirmationRequired() {
+		if (registrationCustomizer != null)
+			return registrationCustomizer.isConfirmationRequired();
+		
+		return true;
 	}
 }

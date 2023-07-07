@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.thefirstlineofcode.sand.server.lite.things.ThingMapper">
     <insert id="insert" parameterType="com.thefirstlineofcode.sand.server.lite.things.D_Thing">
-        INSERT INTO THINGS(id, thing_id, model, registration_time) VALUES(#{id}, #{thingId}, #{model}, #{registrationTime})
+        INSERT INTO THINGS(id, thing_id, registration_code, model, registration_time) VALUES(#{id}, #{thingId}, #{registration_code}, #{model}, #{registrationTime})
     </insert>
     
    <update id="delete">
@@ -17,14 +17,6 @@
 	<select id="selectByThingName" resultType="com.thefirstlineofcode.sand.server.lite.things.D_Thing">
 		SELECT things.* FROM THINGS AS things LEFT JOIN REGISTERED_THINGS as registered_things ON things.thing_id = registered_things.thing_id WHERE registered_things.thing_name=#{0}
     </select>
-    
-	<resultMap id="thingResultMap" type="Thing">
-		<id property="id" column="id"/>
-		<result property="thingId" column="thing_id"/>
-		<result property="model" column="model"/>
-	    <result property="softwareVersion" column="software_version"/>
-		<result property="registrationTime" column="registration_time"/>
-	</resultMap>
     
 	<select id="selectCountByThingId" resultType="int">
 		SELECT count(*) FROM THINGS WHERE thing_id=#{0}

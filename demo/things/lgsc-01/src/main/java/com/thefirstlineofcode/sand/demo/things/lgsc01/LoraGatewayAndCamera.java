@@ -609,7 +609,7 @@ public class LoraGatewayAndCamera extends AbstractEdgeThing implements ISimpleCa
 	}
 	
 	@Override
-	protected String loadRegistrationKey() {
+	protected String loadRegistrationCode() {
 		return "abcdefghigkl";
 	}
 

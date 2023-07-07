@@ -63,6 +63,7 @@ public class LoraDacService implements ILoraDacService<LoraAddress>, ICommunicat
 	
 	private State state;
 	private String nodeThingId;
+	private String nodeRegistrationCode;
 	private LoraAddress nodeIntroducedAddress;
 	private LoraAddress nodeAllocatedAddress;
 	
@@ -152,6 +153,7 @@ public class LoraDacService implements ILoraDacService<LoraAddress>, ICommunicat
 		
 		state = State.NONE;
 		nodeThingId = null;
+		nodeRegistrationCode = null;
 		nodeAllocatedAddress = null;
 		
 		started = false;
@@ -214,6 +216,7 @@ public class LoraDacService implements ILoraDacService<LoraAddress>, ICommunicat
 			
 			Introduction introduction = (Introduction)ObxFactory.getInstance().toObject(Introduction.class, message);
 			nodeThingId = introduction.getThingId();
+			nodeRegistrationCode = introduction.getRegistrationCode();
 			nodeIntroducedAddress = new LoraAddress(introduction.getAddress());
 			
 			if (logger.isInfoEnabled()) {
@@ -270,7 +273,7 @@ public class LoraDacService implements ILoraDacService<LoraAddress>, ICommunicat
 			state = State.ALLOCATED;
 			
 			for (Listener listener : listeners) {
-				listener.addressConfigured(nodeThingId, nodeAllocatedAddress);
+				listener.addressConfigured(nodeThingId, nodeRegistrationCode, nodeAllocatedAddress);
 			}
 			state = State.CONFIGURED;
 			
@@ -290,6 +293,7 @@ public class LoraDacService implements ILoraDacService<LoraAddress>, ICommunicat
 	@Override
 	public void reset() {
 		nodeThingId = null;
+		nodeRegistrationCode = null;
 		nodeIntroducedAddress = null;
 		nodeAllocatedAddress = null;
 		state = State.WAITING;

@@ -123,8 +123,8 @@ public class Actuator implements IActuator, IIqListener {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> void injectWorker(IWorkerAware<T> executor, Object worker) {
-		executor.setWorker((T)worker);
+	private <T> void injectThingController(IThingControllerAware<T> executor, Object thingController) {
+		executor.setThingController((T)thingController);
 	}
 	
 	private IExecutor<?> createExecutor(Class<? extends IExecutor<?>> executorType) {
@@ -210,21 +210,21 @@ public class Actuator implements IActuator, IIqListener {
 	}
 	
 	@Override
-	public <T> void registerExecutor(Class<T> actionType, Class<? extends IExecutor<T>> executorType, Object worker) {
-		registerExecutorFactory(new CreateByTypeExecutorFactory<T>(actionType, executorType, worker));
+	public <T> void registerExecutor(Class<T> actionType, Class<? extends IExecutor<T>> executorType, Object thingController) {
+		registerExecutorFactory(new CreateByTypeExecutorFactory<T>(actionType, executorType, thingController));
 	}
 	
 	private class CreateByTypeExecutorFactory<T> implements IExecutorFactory<T> {
 		private Protocol protocol;
 		private Class<T> actionType;
 		private Class<? extends IExecutor<T>> executorType;
-		private Object worker;
+		private Object thingController;
 		
 		public CreateByTypeExecutorFactory(Class<T> actionType,
-				Class<? extends IExecutor<T>> executorType, Object worker) {
+				Class<? extends IExecutor<T>> executorType, Object thingController) {
 			this.actionType = actionType;
 			this.executorType = executorType;
-			this.worker = worker;
+			this.thingController = thingController;
 			
 			ProtocolObject protocolObject = actionType.getAnnotation(ProtocolObject.class);
 			if (protocolObject == null)
@@ -238,8 +238,8 @@ public class Actuator implements IActuator, IIqListener {
 		@Override
 		public IExecutor<T> create() {
 			IExecutor<T> executor = (IExecutor<T>)createExecutor(executorType);
-			if (executor instanceof IWorkerAware) {
-				injectWorker((IWorkerAware<?>)executor, worker);
+			if (executor instanceof IThingControllerAware) {
+				injectThingController((IThingControllerAware<?>)executor, thingController);
 			}
 			
 			return executor;
