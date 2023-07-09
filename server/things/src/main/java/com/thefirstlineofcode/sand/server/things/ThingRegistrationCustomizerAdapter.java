@@ -7,7 +7,7 @@ import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.BadRequest;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.Conflict;
 import com.thefirstlineofcode.sand.protocols.thing.IThingModelDescriptor;
 
-public abstract class AbstractThingRegistrationCustomizer implements IThingRegistrationCustomizer {
+public class ThingRegistrationCustomizerAdapter implements IThingRegistrationCustomizer {
 	protected IThingManager thingManager;
 	
 	@Override

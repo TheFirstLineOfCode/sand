@@ -52,7 +52,7 @@ public class ThingRegisterTranslatorFactory implements ITranslatorFactory<ThingR
 				writer.writeElementBegin("registered-thing").
 					writeTextOnly("thing-name", registeredThing.getThingName()).
 					writeTextOnly("credentials", registeredThing.getCredentials()).
-					writeTextOnly("security-key", BinaryUtils.encodeToBase64(registeredThing.getSecurityKey())).					
+					writeTextOnly("security-key", BinaryUtils.encodeToBase64(registeredThing.getSecretKey())).					
 				writeElementEnd();
 			} else {
 				throw new RuntimeException("Unknown register object.");

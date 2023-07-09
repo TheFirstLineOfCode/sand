@@ -9,23 +9,23 @@ public class RegisteredThing implements Serializable {
 	
 	private String thingName;
 	private String credentials;
-	private byte[] securityKey;
+	private byte[] secretKey;
 	
 	public RegisteredThing() {}
 	
-	public RegisteredThing(String thingName, String credentials, byte[] securityKey) {
+	public RegisteredThing(String thingName, String credentials, byte[] secretKey) {
 		if (thingName == null)
 			throw new IllegalArgumentException("Null thing name.");
 		
 		if (credentials == null)
 			throw new IllegalArgumentException("Null credentials.");
 		
-		if (securityKey == null)
-			throw new IllegalArgumentException("Null security key.");
+		if (secretKey == null)
+			throw new IllegalArgumentException("Null secret key.");
 		
 		this.thingName = thingName;
 		this.credentials = credentials;
-		this.securityKey = securityKey;
+		this.secretKey = secretKey;
 	}
 
 	public void setThingName(String thingName) {
@@ -44,11 +44,11 @@ public class RegisteredThing implements Serializable {
 		return credentials;
 	}
 
-	public byte[] getSecurityKey() {
-		return securityKey;
+	public byte[] getSecretKey() {
+		return secretKey;
 	}
 
-	public void setSecurityKey(byte[] securityKey) {
-		this.securityKey = securityKey;
+	public void setSecretKey(byte[] securityKey) {
+		this.secretKey = securityKey;
 	}
 }

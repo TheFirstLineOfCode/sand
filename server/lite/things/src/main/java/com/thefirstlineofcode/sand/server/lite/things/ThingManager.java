@@ -154,7 +154,7 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 		registeredThing.setThingId(thingId);
 		registeredThing.setThingName(getThingName(thingId));
 		registeredThing.setCredentials(createCredentials());
-		registeredThing.setSecurityKey(createSecurityKey());
+		registeredThing.setSecretKey(createSecurityKey());
 		
 		getThingIdentityMapper().insert(registeredThing);
 		
@@ -162,7 +162,7 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 				new RegisteredThing(
 						registeredThing.getThingName(),
 						registeredThing.getCredentials(),
-						registeredThing.getSecurityKey()),
+						registeredThing.getSecretKey()),
 						authorizer,
 						thing.getRegistrationTime());
 	}

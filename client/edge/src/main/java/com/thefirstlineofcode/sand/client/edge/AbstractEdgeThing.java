@@ -487,7 +487,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 	
 	private String getRegisteredThingString(RegisteredThing registeredThing) {
 		return String.format("%s,%s,%s", registeredThing.getThingName(),
-				registeredThing.getCredentials(), BinaryUtils.encodeToBase64(registeredThing.getSecurityKey()));
+				registeredThing.getCredentials(), BinaryUtils.encodeToBase64(registeredThing.getSecretKey()));
 	}
 
 	@Override
@@ -615,7 +615,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 		RegisteredThing registeredThing = new RegisteredThing();
 		registeredThing.setThingName(st.nextToken().trim());
 		registeredThing.setCredentials(st.nextToken().trim());
-		registeredThing.setSecurityKey(BinaryUtils.decodeFromBase64(st.nextToken().trim()));
+		registeredThing.setSecretKey(BinaryUtils.decodeFromBase64(st.nextToken().trim()));
 		
 		return registeredThing;
 	}

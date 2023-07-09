@@ -100,7 +100,7 @@ public class ThingRegisterParserFactory implements IParserFactory<ThingRegister>
 					@Override
 					public void processText(IParsingContext<ThingRegister> context, Value<?> text) {
 						RegisteredThing registeredThing = (RegisteredThing)context.getObject().getRegister();
-						registeredThing.setSecurityKey(BinaryUtils.decodeFromBase64(text.getString()));
+						registeredThing.setSecretKey(BinaryUtils.decodeFromBase64(text.getString()));
 					}
 				};
 			} else {
