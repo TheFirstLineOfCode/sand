@@ -41,7 +41,7 @@ public class ThingRegistrationCustomizerAdapter implements IThingRegistrationCus
 	}
 
 	@Override
-	public boolean isAuthenticationRequired() {
+	public boolean isAuthorizationRequired() {
 		return true;
 	}
 	

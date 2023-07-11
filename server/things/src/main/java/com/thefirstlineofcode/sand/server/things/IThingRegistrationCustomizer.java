@@ -5,7 +5,7 @@ import org.pf4j.ExtensionPoint;
 public interface IThingRegistrationCustomizer extends ExtensionPoint {
 	boolean isUnregisteredThing(String thingId, String registrationCode);
 	String guessModel(String thingId);
-	boolean isAuthenticationRequired();
+	boolean isAuthorizationRequired();
 	boolean isConfirmationRequired();
 	void setThingManager(IThingManager thingManager);
 	byte[] createSecurityKey();

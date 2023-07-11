@@ -21,6 +21,8 @@ import com.thefirstlineofcode.sand.server.ibtr.ThingRegistrationEvent;
 
 public class ThingRegistrationListener implements IEventListener<ThingRegistrationEvent>,
 		IServerConfigurationAware, IDataObjectFactoryAware {
+	private static final String USER_NAME_SAND_DEMO = "sand-demo";
+
 	private static final Logger logger = LoggerFactory.getLogger(ThingRegistrationListener.class);
 	
 	@BeanDependency
@@ -33,8 +35,12 @@ public class ThingRegistrationListener implements IEventListener<ThingRegistrati
 	private String domainName;
 	
 	@Override
-	public void process(IEventContext context, ThingRegistrationEvent event) {		
-		createAce(event.getThingId(), event.getAuthorizer());
+	public void process(IEventContext context, ThingRegistrationEvent event) {
+		String authorizer = event.getAuthorizer();
+		if (authorizer == null)
+			authorizer = USER_NAME_SAND_DEMO;
+		
+		createAce(event.getThingId(), authorizer);
 		
 		IResource[] resources = resourceService.getResources(JabberId.parse(String.format("%s@%s", event.getAuthorizer(), domainName)));	
 		if (resources == null || resources.length == 0 && logger.isWarnEnabled()) {

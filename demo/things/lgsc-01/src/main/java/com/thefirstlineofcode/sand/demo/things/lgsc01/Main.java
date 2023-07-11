@@ -81,7 +81,7 @@ public class Main {
 		if (logLevel == null)
 			logLevel = "info";
 		
-		new LogConfigurator().configure(LoraGatewayAndCamera.THING_MODEL, getLogLevel(logLevel));
+		LogConfigurator.configure(LoraGatewayAndCamera.THING_MODEL, getLogLevel(logLevel));
 		
 		WebcamConfig webcamConfig = new WebcamConfig(dontRunWebrtcNativeService, webrtcNativeServicePath, requestedWebcamCapability);
 		ICommunicator<LoraAddress, LoraAddress, byte[]> communicator = null;

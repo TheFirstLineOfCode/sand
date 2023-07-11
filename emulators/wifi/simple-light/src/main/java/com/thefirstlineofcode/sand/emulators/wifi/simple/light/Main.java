@@ -11,7 +11,7 @@ public class Main {
 	}
 
 	private void run() {
-		new LogConfigurator().configure(APP_NAME_SAND_WIFI_LIGHT, LogLevel.DEBUG);
+		LogConfigurator.configure(APP_NAME_SAND_WIFI_LIGHT, LogLevel.DEBUG);
 		new SimpleLightFrame().setVisible(true);
 	}
 }

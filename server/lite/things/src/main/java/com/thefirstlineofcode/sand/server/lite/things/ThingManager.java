@@ -132,7 +132,7 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 							thingId, registrationCode)));
 		
 		String authorizer = null;
-		if (registrationCustomizer == null || registrationCustomizer.isAuthenticationRequired()) {			
+		if (registrationCustomizer == null || registrationCustomizer.isAuthorizationRequired()) {			
 			ThingAuthorization authorization = getAuthorization(thingId);
 			if (authorization == null || authorization.isCanceled() || isExpired(authorization)) {
 				throw new ProtocolException(new NotAuthorized());
@@ -468,7 +468,7 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 	@Override
 	public boolean isAuthenticationRequired() {
 		if (registrationCustomizer != null)
-			return registrationCustomizer.isAuthenticationRequired();
+			return registrationCustomizer.isAuthorizationRequired();
 		
 		return true;
 	}
