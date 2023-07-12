@@ -233,7 +233,6 @@ public class LoraDacService implements ILoraDacService<LoraAddress>, ICommunicat
 				return;
 			}
 			
-			
 			Allocation allocation = new Allocation();
 			allocation.setGatewayUplinkAddress(gatewayUplinkAddress.getBytes());
 			allocation.setGatewayDownlinkAddress(gatewayDownlinkAddress.getBytes());

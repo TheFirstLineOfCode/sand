@@ -44,7 +44,7 @@ public class ThingRegistrationListener implements IEventListener<ThingRegistrati
 		
 		IResource[] resources = resourceService.getResources(JabberId.parse(String.format("%s@%s", event.getAuthorizer(), domainName)));	
 		if (resources == null || resources.length == 0 && logger.isWarnEnabled()) {
-			logger.warn("Can't find any resource for authorizer '{}'. Ignore to pass thing registration stanza to the owner.", event.getAuthorizer());
+			logger.warn("Can't find any resource for authorizer '{}'. Ignore to pass thing registration stanza to the owner.", authorizer);
 			return;
 		}
 			
