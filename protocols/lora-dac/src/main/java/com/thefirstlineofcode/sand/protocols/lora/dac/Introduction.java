@@ -8,9 +8,8 @@ import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 public class Introduction {
 	public static final Protocol PROTOCOL = new Protocol("urn:leps:tacp:lora-dac", "introduction");
 	
-	private byte[] address;
-	@Text
 	private String thingId;
+	private byte[] address;
 	@Text
 	private String registrationCode;
 	

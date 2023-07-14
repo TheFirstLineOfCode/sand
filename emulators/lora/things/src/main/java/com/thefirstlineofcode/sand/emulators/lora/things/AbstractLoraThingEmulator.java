@@ -38,8 +38,7 @@ public abstract class AbstractLoraThingEmulator extends AbstractCommunicationNet
 	protected ILoraDacClient dacClient;
 	
 	protected DacState dacState;
-	protected LoraAddress gatewayUplinkAddress;
-	protected LoraAddress gatewayDownlinkAddress;
+	protected LoraAddress[] uplinkAddresses;
 	protected LoraAddress allocatedAddress;
 	
 	protected Integer lanId;
@@ -160,7 +159,7 @@ public abstract class AbstractLoraThingEmulator extends AbstractCommunicationNet
 										}
 										
 										if (Calendar.getInstance().getTimeInMillis() > nextRexTime) {
-											sendToPeer(gatewayUplinkAddress, entry.getKey());
+											sendToPeer(ChooseUplinkAddress(), entry.getKey());
 											strategy.retransmited();
 										}
 									}
@@ -184,11 +183,20 @@ public abstract class AbstractLoraThingEmulator extends AbstractCommunicationNet
 						}
 					}
 				}
-				
 			});
 			
 			ackRequiredLanNotificationSender.start();
 		}
+	}
+	
+	protected LoraAddress ChooseUplinkAddress() {
+		if (uplinkAddresses.length == 1)
+			return uplinkAddresses[0];
+		
+		Random random = new Random(System.currentTimeMillis());
+		int next = random.nextInt(uplinkAddresses.length);
+		
+		return uplinkAddresses[next - 1];
 	}
 
 	private void askIsConfigured() {
@@ -241,9 +249,8 @@ public abstract class AbstractLoraThingEmulator extends AbstractCommunicationNet
 			}
 			
 			@Override
-			public void allocated(LoraAddress gatewayUplinkAddress, LoraAddress gatewayDownlinkAddress,
-					LoraAddress allocatedAddress) {
-				addressAllocated(gatewayDownlinkAddress, gatewayUplinkAddress, allocatedAddress);
+			public void allocated(LoraAddress[] uplinkAddresses, LoraAddress allocatedAddress) {
+				addressAllocated(uplinkAddresses, allocatedAddress);
 			}
 		});
 		
@@ -253,8 +260,7 @@ public abstract class AbstractLoraThingEmulator extends AbstractCommunicationNet
 	private abstract class LoraDacClientListenerAdapter implements ILoraDacClient.Listener {
 
 		@Override
-		public void allocated(LoraAddress gatewayUplinkAddress, LoraAddress gatewayDownlinkAddress,
-				LoraAddress allocatedAddress) {}
+		public void allocated(LoraAddress[] uplinkAddresses, LoraAddress allocatedAddress) {}
 		
 		@Override
 		public void notConfigured() {}
@@ -293,17 +299,14 @@ public abstract class AbstractLoraThingEmulator extends AbstractCommunicationNet
 	protected void doReset() {
 		lanId = null;
 		
-		gatewayUplinkAddress = null;
-		gatewayDownlinkAddress = null;
+		uplinkAddresses = null;
 		allocatedAddress = null;
 		
 		dacState = DacState.INITIAL;
 	}
 	
-	public void addressAllocated(LoraAddress gatewayUplinkAddress, LoraAddress gatewayDownlinkAddress,
-				LoraAddress allocatedAddress) {
-		this.gatewayUplinkAddress = gatewayUplinkAddress;
-		this.gatewayDownlinkAddress = gatewayDownlinkAddress;
+	public void addressAllocated(LoraAddress[] uplinkAddresses, LoraAddress allocatedAddress) {
+		this.uplinkAddresses = uplinkAddresses;
 		this.allocatedAddress = allocatedAddress;
 		
 		dacState = DacState.ALLOCATED;
@@ -327,13 +330,10 @@ public abstract class AbstractLoraThingEmulator extends AbstractCommunicationNet
 			request = (LanExecution)ObxFactory.getInstance().toObject(data);		
 			Object action = request.getAction();
 			
-			if (from == null)
-				from = gatewayUplinkAddress;
-			
 			processAction(action);
-			sendToPeer(from, new LanAnswer(ThingsTinyId.createResponseId(request.getTraceId())));
+			sendToPeer(ChooseUplinkAddress(), new LanAnswer(ThingsTinyId.createResponseId(request.getTraceId())));
 		} catch (ExecutionException e) {
-			sendToPeer(from, new LanAnswer(ThingsTinyId.createErrorId(request.getTraceId()), e.getErrorNumber()));
+			sendToPeer(ChooseUplinkAddress(), new LanAnswer(ThingsTinyId.createErrorId(request.getTraceId()), e.getErrorNumber()));
 		} catch (BxmppConversionException e) {
 			throw new RuntimeException("Failed to convert BXMPP data to LAN execution object.", e);
 		}
@@ -348,7 +348,7 @@ public abstract class AbstractLoraThingEmulator extends AbstractCommunicationNet
 				lock.unlock();
 			}
 		} else {
-			sendToPeer(gatewayUplinkAddress, notification);
+			sendToPeer(ChooseUplinkAddress(), notification);
 		}
 	}
 	

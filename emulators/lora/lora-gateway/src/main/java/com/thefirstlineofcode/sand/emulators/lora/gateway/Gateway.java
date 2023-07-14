@@ -92,6 +92,7 @@ import com.thefirstlineofcode.sand.client.lora.gateway.LoraGatewayPlugin;
 import com.thefirstlineofcode.sand.client.thing.AbstractThing;
 import com.thefirstlineofcode.sand.client.thing.IBatteryPowerListener;
 import com.thefirstlineofcode.sand.client.thing.ThingsUtils;
+import com.thefirstlineofcode.sand.client.thing.commuication.ICommunicator;
 import com.thefirstlineofcode.sand.client.things.simple.light.ISimpleLight;
 import com.thefirstlineofcode.sand.emulators.commons.Constants;
 import com.thefirstlineofcode.sand.emulators.commons.IThingEmulator;
@@ -249,8 +250,9 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 	
 	protected LoraCommunicator createGatewayCommunicator() {
 		ILoraChip chip = null;
-		chip = network.createChip(new LoraAddress(new byte[] {0x00, 0x00,
-				ILoraDacService.DEFAULT_THING_COMMUNICATION_CHANNEL}));
+		chip = network.createChip(new LoraAddress(new byte[] {ILoraGateway.DEFAULT_UPLINK_ADDRESS_HIGH_BYTE,
+				ILoraGateway.DEFAULT_UPLINK_ADDRESS_LOW_BYTE,
+				ILoraGateway.DEFAULT_THING_COMMUNICATION_CHANNEL}));
 		
 		return new LoraCommunicator(chip);
 	}
@@ -527,7 +529,9 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 	}
 
 	private void configureLoraGateway(ILoraGateway loraGateway) {
-		loraGateway.setCommunicator(gatewayCommunicator);
+		loraGateway.setDownlinkCommunicator(gatewayCommunicator);
+		loraGateway.setUplinkCommunicators(Collections.singletonList(
+				(ICommunicator<LoraAddress, LoraAddress, byte[]>)gatewayCommunicator));
 		
 		registerExecutors(loraGateway.getConcentrator());
 		
@@ -1046,7 +1050,7 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 		chatClient = createChatClient();
 		
 		loraGateway = chatClient.createApi(ILoraGateway.class);
-		loraGateway.setCommunicator(gatewayCommunicator);
+		loraGateway.setDownlinkCommunicator(gatewayCommunicator);
 		IConcentrator concentrator = loraGateway.getConcentrator();
 		concentrator.setNodes(gatewayInfo.nodes);
 		
@@ -1062,7 +1066,7 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 			}
 		});
 		
-		ILoraDacService<?> loraDacService = loraGateway.getDacService();
+		LoraAddress[] uplinkAddresses = loraGateway.getUplinkAddresses();
 		for (LanNode node : nodes) {
 			String thingModel = node.getModel();
 			if (thingModel == null)
@@ -1086,8 +1090,7 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 			showThing(loraThing, getThingInstanceName(thingFactory, instanceIndex), -1, 30 * instanceIndex, 30 * instanceIndex);
 			
 			try {
-				loraThing.addressAllocated(loraDacService.getGatewayUplinkAddress(),
-						loraDacService.getGatewayDownlinkAddress(), LoraAddress.parse(node.getAddress()));
+				loraThing.addressAllocated(uplinkAddresses, LoraAddress.parse(node.getAddress()));
 			} catch (BadAddressException e) {
 				throw new RuntimeException(String.format("Invalid LORA address string: %s.", node.getAddress()));
 			}

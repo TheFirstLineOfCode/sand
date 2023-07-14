@@ -111,9 +111,11 @@ public class LoraDacClient implements ILoraDacClient, ICommunicationListener<Lor
 			if (Allocation.PROTOCOL.equals(protocol) && state == State.INTRODUCTING) {
 				try {
 					Allocation allocation = (Allocation)obxFactory.toObject(data);
+					LoraAddress[] uplinkAddresses = getUplinkAddresses(allocation.getUplinkChannelBegin(),
+							allocation.getUplinkChannelEnd(), allocation.getUplinkAddressHighByte(),
+							allocation.getUplinkAddressLowByte());
 					if (listener != null) {
-						listener.allocated(new LoraAddress(allocation.getGatewayUplinkAddress()),
-								new LoraAddress(allocation.getGatewayDownlinkAddress()),
+						listener.allocated(uplinkAddresses,
 								new LoraAddress(allocation.getAllocatedAddress()));
 					}
 				} catch (BxmppConversionException e) {
@@ -161,6 +163,19 @@ public class LoraDacClient implements ILoraDacClient, ICommunicationListener<Lor
 		}
 	}
 	
+	private LoraAddress[] getUplinkAddresses(int gatewayUplinkChannelBegin, int gatewayUplinkChannelEnd,
+			byte gatewayUplinkAddressHighByte, byte gatewayUplinkAddressLowByte) {
+		int uplinkAddressesSize = gatewayUplinkChannelEnd - gatewayUplinkChannelBegin + 1;
+		LoraAddress[] addresses = new LoraAddress[uplinkAddressesSize];
+		
+		for (int i = 0; i < uplinkAddressesSize; i++) {
+			addresses[i] = new LoraAddress(gatewayUplinkAddressHighByte,
+					gatewayUplinkAddressLowByte, (byte)(gatewayUplinkChannelBegin + i));
+		}
+		
+		return addresses;
+	}
+
 	private class IsConfiguredListener implements ICommunicationListener<LoraAddress, LoraAddress, byte[]> {
 
 		@Override

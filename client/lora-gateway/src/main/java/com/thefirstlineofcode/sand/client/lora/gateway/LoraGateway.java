@@ -1,5 +1,7 @@
 package com.thefirstlineofcode.sand.client.lora.gateway;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +13,7 @@ import com.thefirstlineofcode.sand.client.lora.dac.ILoraDacService;
 import com.thefirstlineofcode.sand.client.lora.dac.LoraDacService;
 import com.thefirstlineofcode.sand.client.thing.INotificationService;
 import com.thefirstlineofcode.sand.client.thing.INotifier;
+import com.thefirstlineofcode.sand.client.thing.commuication.CommunicationException;
 import com.thefirstlineofcode.sand.client.thing.commuication.ICommunicator;
 import com.thefirstlineofcode.sand.protocols.lora.gateway.WorkingMode;
 import com.thefirstlineofcode.sand.protocols.thing.CommunicationNet;
@@ -22,17 +25,29 @@ public class LoraGateway implements ILoraGateway, ILoraDacService.Listener {
 	private IChatServices chatServices;
 	private WorkingMode workingMode;
 	private boolean started;
-	private ICommunicator<LoraAddress, LoraAddress, byte[]> communicator;
+	
+	private int channels;
+	private ICommunicator<LoraAddress, LoraAddress, byte[]> downlinkCommunicator;
+	private List<ICommunicator<LoraAddress, LoraAddress, byte[]>> uplinkCommunicators;
 	private IConcentrator concentrator;
 	private ILoraDacService<LoraAddress> dacService;
 	
+	private byte thingCommunicationChannel;
+	
 	public LoraGateway(IChatServices chatServices) {
-		this(chatServices, null);
+		this(chatServices, 1, null, null);
 	}
 	
-	public LoraGateway(IChatServices chatServices, ICommunicator<LoraAddress, LoraAddress, byte[]> communicator) {
+	public LoraGateway(IChatServices chatServices, int channels,
+			ICommunicator<LoraAddress, LoraAddress, byte[]> downlinkCommunicator,
+			List<ICommunicator<LoraAddress, LoraAddress, byte[]>> uplinkCommunicators) {
 		this.chatServices = chatServices;
-		this.communicator = communicator;
+		
+		this.channels = channels;
+		this.downlinkCommunicator = downlinkCommunicator;
+		this.uplinkCommunicators = uplinkCommunicators;
+		
+		thingCommunicationChannel = ILoraGateway.DEFAULT_THING_COMMUNICATION_CHANNEL;
 		workingMode = WorkingMode.ROUTER;
 		started = false;
 	}
@@ -78,7 +93,11 @@ public class LoraGateway implements ILoraGateway, ILoraDacService.Listener {
 	public IConcentrator getConcentrator() {
 		if (concentrator == null) {
 			concentrator = chatServices.createApi(IConcentrator.class);
-			concentrator.addCommunicator(CommunicationNet.LORA, communicator);
+			if (uplinkCommunicators.size() == 1 && downlinkCommunicator.equals(uplinkCommunicators.get(0)))
+				concentrator.addCommunicator(CommunicationNet.LORA, downlinkCommunicator);
+			else
+				concentrator.addCommunicator(CommunicationNet.LORA,
+						new MultichannelLoraCommunicator(downlinkCommunicator, uplinkCommunicators));
 		}
 		
 		return concentrator;
@@ -89,7 +108,10 @@ public class LoraGateway implements ILoraGateway, ILoraDacService.Listener {
 		if (dacService == null) {
 			INotificationService notificationService = chatServices.createApi(INotificationService.class);
 			INotifier notifier = notificationService.getNotifier();
-			dacService = new LoraDacService(communicator, getConcentrator(), notifier);
+			dacService = new LoraDacService(downlinkCommunicator, 0, uplinkCommunicators.size() - 1,
+					DEFAULT_UPLINK_ADDRESS_HIGH_BYTE, DEFAULT_UPLINK_ADDRESS_LOW_BYTE,
+						getConcentrator(), notifier);
+			dacService.setThingCommunicationChannel(thingCommunicationChannel);
 		}
 		
 		return dacService;
@@ -110,8 +132,30 @@ public class LoraGateway implements ILoraGateway, ILoraDacService.Listener {
 		if (started)
 			return;
 		
-		if (communicator == null)
-			throw new IllegalStateException("Null communicator. Call setCommunicator first.");
+		if (downlinkCommunicator == null)
+			throw new IllegalStateException("Null downlink communicator. Call setDownlinkCommunicator first.");
+		
+		if (uplinkCommunicators == null || uplinkCommunicators.size() == 0)
+			throw new IllegalStateException("Null or size of uplink communicators is zero. Call setUplinkCommunicator first.");
+		
+		try {
+			if (uplinkCommunicators.size() == 1 && downlinkCommunicator.equals(uplinkCommunicators.get(0))) {
+				downlinkCommunicator.changeAddress(new LoraAddress(
+						new byte[] {DEFAULT_UPLINK_ADDRESS_HIGH_BYTE, DEFAULT_UPLINK_ADDRESS_LOW_BYTE, 0x00}), false);
+			} else {
+				downlinkCommunicator.changeAddress(new LoraAddress(
+						new byte[] {DEFAULT_UPLINK_ADDRESS_HIGH_BYTE,
+								DEFAULT_UPLINK_ADDRESS_LOW_BYTE, thingCommunicationChannel}), false);
+				
+				for (int i = 0; i < uplinkCommunicators.size(); i++) {
+					uplinkCommunicators.get(i).changeAddress(new LoraAddress(
+							new byte[] {DEFAULT_UPLINK_ADDRESS_HIGH_BYTE,
+									DEFAULT_UPLINK_ADDRESS_LOW_BYTE, (byte)i}), false);
+				}
+			}
+		} catch (CommunicationException e) {
+			throw new RuntimeException("Failed to configure lora communicators.", e);
+		}
 		
 		IConcentrator concentrator = getConcentrator();
 		concentrator.syncNodesWithServer(new SyncNodesListener() {
@@ -161,11 +205,8 @@ public class LoraGateway implements ILoraGateway, ILoraDacService.Listener {
 	}
 
 	@Override
-	public void setCommunicator(ICommunicator<LoraAddress, LoraAddress, byte[]> communicator) {
-		this.communicator = communicator;
-		
-		getDacService().setCommunicator(communicator);
-		getConcentrator().addCommunicator(CommunicationNet.LORA, communicator);
+	public void setDownlinkCommunicator(ICommunicator<LoraAddress, LoraAddress, byte[]> communicator) {
+		this.downlinkCommunicator = communicator;
 	}
 
 	@Override
@@ -179,4 +220,30 @@ public class LoraGateway implements ILoraGateway, ILoraDacService.Listener {
 		concentrator.requestServerToAddNode(thingId, registrationCode, concentrator.getBestSuitedNewLanId(), address);
 	}
 
+	@Override
+	public void setUplinkCommunicators(List<ICommunicator<LoraAddress, LoraAddress, byte[]>> uplinkCommunicators) {
+		this.uplinkCommunicators = uplinkCommunicators;
+	}
+	
+	@Override
+	public LoraAddress[] getUplinkAddresses() {
+		LoraAddress[] addresses = new LoraAddress[uplinkCommunicators.size()];
+		
+		for (int i = 0; i < uplinkCommunicators.size(); i++) {
+			addresses[i] = new LoraAddress(DEFAULT_UPLINK_ADDRESS_HIGH_BYTE,
+					DEFAULT_UPLINK_ADDRESS_LOW_BYTE, (byte)i);
+		}
+		
+		return addresses;
+	}
+
+	@Override
+	public int getChannels() {
+		return channels;
+	}
+
+	@Override
+	public void setThingCommunicationChannel(byte thingCommunicationChannel) {
+		this.thingCommunicationChannel = thingCommunicationChannel;
+	}
 }

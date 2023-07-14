@@ -12,8 +12,7 @@ public interface ILoraDacClient extends IAddressConfigurator<ICommunicator<LoraA
 	public static final LoraAddress DEFAULT_DAC_CLIENT_ADDRESS = new LoraAddress(new byte[] {(byte)0xef, (byte)0xee, DEFAULT_DAC_SERVICE_CHANNEL});
 	
 	public interface Listener {
-		void allocated(LoraAddress gatewayUplinkAddress, LoraAddress gatewayDownlinkAddress,
-				LoraAddress allocatedAddress);
+		void allocated(LoraAddress[] uplinkAddresses, LoraAddress allocatedAddress);
 		void configured();
 		void notConfigured();
 		void occurred(CommunicationException e);

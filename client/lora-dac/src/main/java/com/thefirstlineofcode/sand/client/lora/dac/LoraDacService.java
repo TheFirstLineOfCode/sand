@@ -33,8 +33,8 @@ public class LoraDacService implements ILoraDacService<LoraAddress>, ICommunicat
 	private static final byte DEFAULT_DAC_SERVICE_CHANNEL = 0x1f;
 	private static final LoraAddress DEFAULT_DAC_SERVICE_ADDRESS = new LoraAddress(new byte[] {(byte)0xef, (byte)0xef, DEFAULT_DAC_SERVICE_CHANNEL});
 	
-	private static final LoraAddress DEFAULT_GATEWAY_UPLINK_ADDRESS = new LoraAddress(new byte[] {0x0, 0x0, DEFAULT_THING_COMMUNICATION_CHANNEL});
-	private static final LoraAddress DEFAULT_GATEWAY_DOWNLINK_ADDRESS = new LoraAddress(new byte[] {0x0, 0x0, DEFAULT_THING_COMMUNICATION_CHANNEL});
+	private static final byte DEFAULT_THING_COMMUNICATION_CHANNEL = 0x17;
+	
 	private static final int MAX_MESSAGES_SIZE = 1024 * 16;
 	
 	private static final String PROTOCOL_NAMESPACE_LORA_DAC = "urn:leps:tacp:lora-dac";
@@ -56,9 +56,12 @@ public class LoraDacService implements ILoraDacService<LoraAddress>, ICommunicat
 	
 	private boolean started;
 	
+	private int uplinkChannelBegin;
+	private int uplinkChannelEnd;
+	private byte uplinkAddressHighByte;
+	private byte uplinkAddressLowByte;
+	
 	private LoraAddress dacServiceAddress;
-	private LoraAddress gatewayUplinkAddress;
-	private LoraAddress gatewayDownlinkAddress;
 	private byte thingCommunicationChannel;
 	
 	private State state;
@@ -72,22 +75,20 @@ public class LoraDacService implements ILoraDacService<LoraAddress>, ICommunicat
 	private byte[] messages;
 	private int messagesLength;
 	
-	public LoraDacService(INotifier notifier) {
-		this(null, null, notifier);
-	}
-	
 	public LoraDacService(ICommunicator<LoraAddress, LoraAddress, byte[]> communicator,
-			IConcentrator concentrator, INotifier notifier) {
+			int uplinkChannelBegin, int uplinkChannelEnd, byte uplinkAddressHighByte,
+			byte uplinkAddressLowByte, IConcentrator concentrator, INotifier notifier) {
 		this.concentrator = concentrator;
 		
 		dacServiceAddress = DEFAULT_DAC_SERVICE_ADDRESS;
-		gatewayUplinkAddress = DEFAULT_GATEWAY_UPLINK_ADDRESS;
-		gatewayDownlinkAddress = DEFAULT_GATEWAY_DOWNLINK_ADDRESS;
 		thingCommunicationChannel = DEFAULT_THING_COMMUNICATION_CHANNEL;
 		
 		messages = new byte[MAX_MESSAGES_SIZE];
 		cleanMessages();
 		
+		setUplinkChannelBegin(uplinkChannelBegin);
+		setUplinkChannelEnd(uplinkChannelEnd);
+		setUplinkAddress(uplinkAddressHighByte, uplinkAddressLowByte);
 		setCommunicator(communicator);
 		
 		this.notifier = notifier;
@@ -174,7 +175,7 @@ public class LoraDacService implements ILoraDacService<LoraAddress>, ICommunicat
 	@Override
 	public synchronized void negotiate(LoraAddress peerAddress, byte[] message)  {
 		try {
-			doNegotiate(peerAddress, message);			
+			doNegotiate(peerAddress, message);
 		} catch (Exception e) {
 			if (logger.isErrorEnabled())
 				logger.error("Catched an exception when the DAC service had configured the node.", e);
@@ -219,6 +220,14 @@ public class LoraDacService implements ILoraDacService<LoraAddress>, ICommunicat
 			nodeRegistrationCode = introduction.getRegistrationCode();
 			nodeIntroducedAddress = new LoraAddress(introduction.getAddress());
 			
+			if (nodeThingId == null || nodeRegistrationCode == null) {
+				if (logger.isErrorEnabled()) {
+					logger.error("Null thing ID or null registration code.");
+				}
+				
+				return;
+			}
+			
 			if (logger.isInfoEnabled()) {
 				logger.info("Introduction protocol received. Client thing ID: '{}'. Introduced address is '{}'.",
 						introduction.getThingId(), nodeIntroducedAddress.toAddressString());
@@ -234,8 +243,10 @@ public class LoraDacService implements ILoraDacService<LoraAddress>, ICommunicat
 			}
 			
 			Allocation allocation = new Allocation();
-			allocation.setGatewayUplinkAddress(gatewayUplinkAddress.getBytes());
-			allocation.setGatewayDownlinkAddress(gatewayDownlinkAddress.getBytes());
+			allocation.setUplinkChannelBegin(uplinkChannelBegin);
+			allocation.setUplinkChannelEnd(uplinkChannelEnd);
+			allocation.setUplinkAddressHighByte(uplinkAddressHighByte);
+			allocation.setUplinkAddressLowByte(uplinkAddressLowByte);
 			
 			int nodeLanId = concentrator.getBestSuitedNewLanId();
 			nodeAllocatedAddress = new LoraAddress(new byte[] {0x0, Byte.parseByte(String.valueOf(nodeLanId)), thingCommunicationChannel});
@@ -342,8 +353,6 @@ public class LoraDacService implements ILoraDacService<LoraAddress>, ICommunicat
 	public void setCommunicator(ICommunicator<LoraAddress, LoraAddress, byte[]> communicator) {
 		if (communicator != null) {			
 			oldCommunicatorAddress = communicator.getAddress();
-			gatewayUplinkAddress = oldCommunicatorAddress;
-			gatewayDownlinkAddress = oldCommunicatorAddress;
 			thingCommunicationChannel = oldCommunicatorAddress.getChannel();
 			
 			this.communicator = communicator;
@@ -485,26 +494,6 @@ public class LoraDacService implements ILoraDacService<LoraAddress>, ICommunicat
 	}
 	
 	@Override
-	public LoraAddress getGatewayUplinkAddress() {
-		return gatewayUplinkAddress;
-	}
-	
-	@Override
-	public void setGatewayUplinkAddress(LoraAddress gatewayUplinkAddress) {
-		this.gatewayUplinkAddress = gatewayUplinkAddress;
-	}
-	
-	@Override
-	public LoraAddress getGatewayDownlinkAddress() {
-		return gatewayDownlinkAddress;
-	}
-	
-	@Override
-	public void setGatewayDownlinkAddress(LoraAddress gatewayDownloadAddress) {
-		this.gatewayDownlinkAddress = gatewayDownloadAddress;
-	}
-
-	@Override
 	public void setThingCommunicationChannel(byte thingCommunicationChannel) {
 		this.thingCommunicationChannel = thingCommunicationChannel;
 	}
@@ -518,5 +507,28 @@ public class LoraDacService implements ILoraDacService<LoraAddress>, ICommunicat
 	public void setConcentrator(IConcentrator concentrator) {
 		this.concentrator = concentrator;
 	}
+	
+	
+	
+	public int getUplinkChannelBegin() {
+		return uplinkChannelBegin;
+	}
 
+	public void setUplinkChannelBegin(int uplinkChannelBegin) {
+		this.uplinkChannelBegin = uplinkChannelBegin;
+	}
+
+	public int getUplinkChannelEnd() {
+		return uplinkChannelEnd;
+	}
+
+	public void setUplinkChannelEnd(int uplinkChannelEnd) {
+		this.uplinkChannelEnd = uplinkChannelEnd;
+	}
+	
+	@Override
+	public void setUplinkAddress(byte uplinkAddressHighByte, byte uplinkAddressLowByte) {
+		this.uplinkAddressHighByte = uplinkAddressHighByte;
+		this.uplinkAddressLowByte = uplinkAddressLowByte;
+	}
 }

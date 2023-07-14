@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -83,7 +84,7 @@ import okhttp3.Response;
 
 public class LoraGatewayAndCamera extends AbstractEdgeThing implements ISimpleCamera, IFollowProcessor {
 	public static final String THING_MODEL = Lgsc01ModelDescriptor.MODEL_NAME;
-	public static final String SOFTWARE_VERSION = "1.0.0-BETA2";
+	public static final String SOFTWARE_VERSION = "1.0.0-BETA3";
 	
 	private static final String ATTRIBUTE_NAME_REQUESTED_WEBCAM_CAPABILITY = "requested_webcam_capability";
 	private static final Capability DEFAULLT_REQUESTED_WEBCAM_CAPABILITY = new Capability(640, 480, 30);
@@ -239,7 +240,8 @@ public class LoraGatewayAndCamera extends AbstractEdgeThing implements ISimpleCa
 	protected void startLoraGateway() {
 		if (loraGateway == null) {
 			loraGateway = chatClient.createApi(ILoraGateway.class);
-			loraGateway.setCommunicator(communicator);
+			loraGateway.setDownlinkCommunicator(communicator);
+			loraGateway.setUplinkCommunicators(Collections.singletonList(communicator));
 			
 			loraGateway.getConcentrator().registerLanThingModel(new Sl02ModelDescriptor());
 			loraGateway.getConcentrator().registerLanExecutionErrorConverter(getSl02ModelLanExecutionErrorConverter());

@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>com.thefirstlineofcode.sand</groupId>
 		<artifactId>sand-emulators</artifactId>
-		<version>1.0.0-BETA2</version>
+		<version>1.0.0-BETA3</version>
 	</parent>
 
 	<groupId>com.thefirstlineofcode.sand.emulators</groupId>

@@ -8,12 +8,13 @@ import com.thefirstlineofcode.sand.protocols.thing.lora.LoraAddress;
 
 public interface ILoraDacService<OA extends IAddress> extends IAddressConfigurator<ICommunicator<OA, LoraAddress, byte[]>,
 			LoraAddress, byte[]> {
-	public static final byte DEFAULT_THING_COMMUNICATION_CHANNEL = 0x17;
-	
 	public interface Listener {
 		void addressConfigured(String thingId, String registrationCode, LoraAddress address);
 	}
 	
+	void setUplinkChannelBegin(int uplinkChannelBegin);
+	void setUplinkChannelEnd(int uplinkChannelEnd);
+	void setUplinkAddress(byte uplinkAddressHighByte, byte uplinkAddressLowByte);
 	void setConcentrator(IConcentrator concentrator);
 	void start();
 	boolean isStarted();
@@ -24,10 +25,6 @@ public interface ILoraDacService<OA extends IAddress> extends IAddressConfigurat
 	boolean removeListener(Listener listener);
 	void setDacServiceAddress(LoraAddress dacServiceAddress);
 	LoraAddress getDacServiceAddress();
-	void setGatewayUplinkAddress(LoraAddress gatewayUplinkAddress);
-	LoraAddress getGatewayUplinkAddress();
-	void setGatewayDownlinkAddress(LoraAddress gatewayDownlinkAddress);
-	LoraAddress getGatewayDownlinkAddress();
 	void setThingCommunicationChannel(byte thingCommunicationChannel);
 	byte getThingCommunicationChannel();
 }

@@ -7,25 +7,53 @@ import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 public class Allocation {
 	public static final Protocol PROTOCOL = new Protocol("urn:leps:tacp:lora-dac", "allocation");
 	
-	private byte[] gatewayUplinkAddress;
-	private byte[] gatewayDownlinkAddress;
-	
+	private int uplinkChannelBegin;
+	private int uplinkChannelEnd;
+	private byte uplinkAddressHighByte;
+	private byte uplinkAddressLowByte;
 	private byte[] allocatedAddress;
 	
-	public byte[] getGatewayUplinkAddress() {
-		return gatewayUplinkAddress;
-	}
-
-	public void setGatewayUplinkAddress(byte[] gatewayUplinkAddress) {
-		this.gatewayUplinkAddress = gatewayUplinkAddress;
+	public Allocation() {}
+	
+	public Allocation(int uplinkChannelBegin, int uplinkChannelEnd,
+			byte uplinkAddressHighByte, byte uplinkAddressLowByte, byte[] allocatedAddress) {
+		this.uplinkChannelBegin = uplinkChannelBegin;
+		this.uplinkChannelEnd = uplinkChannelEnd;
+		this.uplinkAddressHighByte = uplinkAddressHighByte;
+		this.uplinkAddressLowByte = uplinkAddressLowByte;
+		this.allocatedAddress = allocatedAddress;
 	}
 	
-	public byte[] getGatewayDownlinkAddress() {
-		return gatewayDownlinkAddress;
+	public int getUplinkChannelBegin() {
+		return uplinkChannelBegin;
 	}
-
-	public void setGatewayDownlinkAddress(byte[] gatewayDownlinkAddress) {
-		this.gatewayDownlinkAddress = gatewayDownlinkAddress;
+	
+	public void setUplinkChannelBegin(int uplinkChannelBegin) {
+		this.uplinkChannelBegin = uplinkChannelBegin;
+	}
+	
+	public int getUplinkChannelEnd() {
+		return uplinkChannelEnd;
+	}
+	
+	public void setUplinkChannelEnd(int uplinkChannelEnd) {
+		this.uplinkChannelEnd = uplinkChannelEnd;
+	}
+	
+	public byte getUplinkAddressHighByte() {
+		return uplinkAddressHighByte;
+	}
+	
+	public void setUplinkAddressHighByte(byte uplinkAddressHighByte) {
+		this.uplinkAddressHighByte = uplinkAddressHighByte;
+	}
+	
+	public byte getUplinkAddressLowByte() {
+		return uplinkAddressLowByte;
+	}
+	
+	public void setUplinkAddressLowByte(byte uplinkAddressHighByte) {
+		this.uplinkAddressLowByte = uplinkAddressHighByte;
 	}
 	
 	public byte[] getAllocatedAddress() {
