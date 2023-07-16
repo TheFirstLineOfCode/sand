@@ -4,9 +4,9 @@ import com.thefirstlineofcode.basalt.oxm.coc.annotations.ProtocolObject;
 import com.thefirstlineofcode.basalt.oxm.coc.validation.annotations.NotNull;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 
-@ProtocolObject(namespace = "urn:leps:tacp:operator", localName = "auth-thing")
+@ProtocolObject(namespace = "urn:leps:tuxp:operator", localName = "auth-thing")
 public class AuthorizeThing {
-	public static final Protocol PROTOCOL = new Protocol("urn:leps:tacp:operator", "auth-thing");
+	public static final Protocol PROTOCOL = new Protocol("urn:leps:tuxp:operator", "auth-thing");
 	
 	@NotNull
 	private String thingId;

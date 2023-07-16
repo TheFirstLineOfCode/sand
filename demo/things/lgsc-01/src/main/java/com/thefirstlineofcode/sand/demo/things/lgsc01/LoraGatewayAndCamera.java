@@ -418,7 +418,7 @@ public class LoraGatewayAndCamera extends AbstractEdgeThing implements ISimpleCa
 		};
 	}
 	
-	private IExecutorFactory<?> createResetDacServiceExecutatorFactory(ILoraDacService<?> loraDacService) {
+	private IExecutorFactory<?> createResetDacServiceExecutatorFactory(ILoraDacService loraDacService) {
 		return new IExecutorFactory<ResetLoraDacService>() {
 			private IExecutor<ResetLoraDacService> executor = new ResetLoraDacServiceExecutor(loraDacService);
 

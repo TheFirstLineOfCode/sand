@@ -3,9 +3,9 @@ package com.thefirstlineofcode.sand.protocols.operator;
 import com.thefirstlineofcode.basalt.oxm.coc.annotations.ProtocolObject;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 
-@ProtocolObject(namespace = "urn:leps:tacp:operator", localName = "confirm-concentration")
+@ProtocolObject(namespace = "urn:leps:tuxp:operator", localName = "confirm-concentration")
 public class ConfirmConcentration {
-	public static final Protocol PROTOCOL = new Protocol("urn:leps:tacp:operator", "confirm-concentration");
+	public static final Protocol PROTOCOL = new Protocol("urn:leps:tuxp:operator", "confirm-concentration");
 	
 	private String concentratorThingName;
 	private String nodeThingId;

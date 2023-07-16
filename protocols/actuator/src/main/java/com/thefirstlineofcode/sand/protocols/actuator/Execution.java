@@ -4,9 +4,9 @@ import com.thefirstlineofcode.basalt.oxm.coc.annotations.ProtocolObject;
 import com.thefirstlineofcode.basalt.oxm.coc.validation.annotations.NotNull;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 
-@ProtocolObject(namespace="urn:leps:tacp:actuator", localName="execution")
+@ProtocolObject(namespace="urn:leps:tuxp:actuator", localName="execution")
 public class Execution {
-	public static final Protocol PROTOCOL = new Protocol("urn:leps:tacp:actuator", "execution");
+	public static final Protocol PROTOCOL = new Protocol("urn:leps:tuxp:actuator", "execution");
 	
 	@NotNull
 	private Object action;

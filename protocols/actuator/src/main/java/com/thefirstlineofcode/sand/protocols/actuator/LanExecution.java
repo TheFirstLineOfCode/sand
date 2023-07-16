@@ -5,9 +5,9 @@ import com.thefirstlineofcode.basalt.oxm.coc.validation.annotations.NotNull;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 import com.thefirstlineofcode.sand.protocols.thing.tacp.ILanTraceable;
 
-@ProtocolObject(namespace="urn:leps:tacp:actuator", localName="lan-execution")
+@ProtocolObject(namespace="urn:leps:tuxp:actuator", localName="lan-execution")
 public class LanExecution implements ILanTraceable {
-	public static final Protocol PROTOCOL = new Protocol("urn:leps:tacp:actuator", "lan-execution");
+	public static final Protocol PROTOCOL = new Protocol("urn:leps:tuxp:actuator", "lan-execution");
 	
 	@NotNull
 	private byte[] traceId;

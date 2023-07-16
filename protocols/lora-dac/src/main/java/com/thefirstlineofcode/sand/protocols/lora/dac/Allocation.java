@@ -3,9 +3,9 @@ package com.thefirstlineofcode.sand.protocols.lora.dac;
 import com.thefirstlineofcode.basalt.oxm.coc.annotations.ProtocolObject;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 
-@ProtocolObject(namespace="urn:leps:tacp:lora-dac", localName="allocation")
+@ProtocolObject(namespace="urn:leps:tuxp:lora-dac", localName="allocation")
 public class Allocation {
-	public static final Protocol PROTOCOL = new Protocol("urn:leps:tacp:lora-dac", "allocation");
+	public static final Protocol PROTOCOL = new Protocol("urn:leps:tuxp:lora-dac", "allocation");
 	
 	private int uplinkChannelBegin;
 	private int uplinkChannelEnd;

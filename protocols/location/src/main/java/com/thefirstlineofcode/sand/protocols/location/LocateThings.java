@@ -12,9 +12,9 @@ import com.thefirstlineofcode.basalt.xmpp.core.ProtocolException;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.BadRequest;
 
 @ValidationClass
-@ProtocolObject(namespace = "urn:leps:tacp:location", localName = "locate-things")
+@ProtocolObject(namespace = "urn:leps:tuxp:location", localName = "locate-things")
 public class LocateThings {
-	public static final Protocol PROTOCOL = new Protocol("urn:leps:tacp:location", "locate-things");
+	public static final Protocol PROTOCOL = new Protocol("urn:leps:tuxp:location", "locate-things");
 	
 	@Array(value = String.class, elementName = "thing-id")
 	@TextOnly

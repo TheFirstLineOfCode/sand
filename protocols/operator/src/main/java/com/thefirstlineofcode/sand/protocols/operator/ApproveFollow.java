@@ -7,9 +7,9 @@ import com.thefirstlineofcode.basalt.oxm.coc.validation.annotations.NotNull;
 import com.thefirstlineofcode.basalt.xmpp.core.JabberId;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 
-@ProtocolObject(namespace = "urn:leps:tacp:operator", localName = "approve-follow")
+@ProtocolObject(namespace = "urn:leps:tuxp:operator", localName = "approve-follow")
 public class ApproveFollow {
-	public static final Protocol PROTOCOL = new Protocol("urn:leps:tacp:operator", "approve-follow");
+	public static final Protocol PROTOCOL = new Protocol("urn:leps:tuxp:operator", "approve-follow");
 	
 	@NotNull
 	@String2JabberId

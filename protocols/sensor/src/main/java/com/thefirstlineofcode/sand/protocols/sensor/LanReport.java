@@ -5,9 +5,9 @@ import com.thefirstlineofcode.basalt.oxm.coc.validation.annotations.NotNull;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 import com.thefirstlineofcode.sand.protocols.thing.tacp.ILanTraceable;
 
-@ProtocolObject(namespace="urn:leps:tacp:sensor", localName="lan-report")
+@ProtocolObject(namespace="urn:leps:tuxp:sensor", localName="lan-report")
 public class LanReport implements ILanTraceable {
-	public static final Protocol PROTOCOL = new Protocol("urn:leps:tacp:sensor", "lan-report");
+	public static final Protocol PROTOCOL = new Protocol("urn:leps:tuxp:sensor", "lan-report");
 	
 	@NotNull
 	private byte[] traceId;

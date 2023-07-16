@@ -4,9 +4,9 @@ import com.thefirstlineofcode.basalt.oxm.coc.annotations.ProtocolObject;
 import com.thefirstlineofcode.basalt.oxm.coc.validation.annotations.NotNull;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 
-@ProtocolObject(namespace="urn:leps:tacp:thing", localName="lan-notification")
+@ProtocolObject(namespace="urn:leps:tuxp:thing", localName="lan-notification")
 public class LanNotification implements ILanTraceable {
-	public static final Protocol PROTOCOL = new Protocol("urn:leps:tacp:thing", "lan-notification");
+	public static final Protocol PROTOCOL = new Protocol("urn:leps:tuxp:thing", "lan-notification");
 	
 	@NotNull
 	private byte[] traceId;

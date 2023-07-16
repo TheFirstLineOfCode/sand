@@ -7,9 +7,9 @@ import com.thefirstlineofcode.basalt.oxm.coc.annotations.Array;
 import com.thefirstlineofcode.basalt.oxm.coc.annotations.ProtocolObject;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 
-@ProtocolObject(namespace="urn:leps:tacp:concentrator", localName="lan-follows")
+@ProtocolObject(namespace="urn:leps:tuxp:concentrator", localName="lan-follows")
 public class LanFollows {
-	public static final Protocol PROTOCOL = new Protocol("urn:leps:tacp:concentrator", "lan-follows");
+	public static final Protocol PROTOCOL = new Protocol("urn:leps:tuxp:concentrator", "lan-follows");
 	
 	@Array(value=LanFollow.class, elementName="lan-follow")
 	private List<LanFollow> lanFollows;

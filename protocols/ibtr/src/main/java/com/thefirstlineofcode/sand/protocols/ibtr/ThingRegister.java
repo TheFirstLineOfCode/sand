@@ -5,9 +5,9 @@ import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
 import com.thefirstlineofcode.sand.protocols.thing.UnregisteredThing;
 
-@ProtocolObject(namespace="urn:leps:tacp:ibtr", localName="thing-register")
+@ProtocolObject(namespace="urn:leps:tuxp:ibtr", localName="thing-register")
 public class ThingRegister {
-	public static final Protocol PROTOCOL = new Protocol("urn:leps:tacp:ibtr", "thing-register");
+	public static final Protocol PROTOCOL = new Protocol("urn:leps:tuxp:ibtr", "thing-register");
 	
 	private Object register;
 	

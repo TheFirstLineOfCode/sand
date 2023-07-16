@@ -7,9 +7,9 @@ import com.thefirstlineofcode.sand.client.actuator.IExecutor;
 import com.thefirstlineofcode.sand.protocols.lora.dac.ResetLoraDacService;
 
 public class ResetLoraDacServiceExecutor  implements IExecutor<ResetLoraDacService> {
-	private ILoraDacService<?> loraDacService;
+	private ILoraDacService loraDacService;
 	
-	public ResetLoraDacServiceExecutor(ILoraDacService<?> loraDacService) {
+	public ResetLoraDacServiceExecutor(ILoraDacService loraDacService) {
 		this.loraDacService = loraDacService;
 	}
 	

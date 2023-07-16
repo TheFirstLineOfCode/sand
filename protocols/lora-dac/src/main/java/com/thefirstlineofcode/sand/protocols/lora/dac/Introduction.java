@@ -4,9 +4,9 @@ import com.thefirstlineofcode.basalt.oxm.coc.annotations.ProtocolObject;
 import com.thefirstlineofcode.basalt.oxm.coc.annotations.Text;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 
-@ProtocolObject(namespace="urn:leps:tacp:lora-dac", localName="introduction")
+@ProtocolObject(namespace="urn:leps:tuxp:lora-dac", localName="introduction")
 public class Introduction {
-	public static final Protocol PROTOCOL = new Protocol("urn:leps:tacp:lora-dac", "introduction");
+	public static final Protocol PROTOCOL = new Protocol("urn:leps:tuxp:lora-dac", "introduction");
 	
 	private String thingId;
 	private byte[] address;

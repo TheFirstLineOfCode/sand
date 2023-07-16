@@ -540,8 +540,7 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 		concentrator.registerLanExecutionErrorConverter(getSle01ModelLanExecutionErrorConverter());
 		concentrator.addListener(this);
 		
-		ILoraDacService<LoraAddress> dacService = loraGateway.getDacService();
-		dacService.addListener(this);
+		loraGateway.getDacService().addListener(this);
 	}
 
 	private void doConnect() throws ConnectionException, AuthFailureException {

@@ -30,7 +30,7 @@ public class LoraGateway implements ILoraGateway, ILoraDacService.Listener {
 	private ICommunicator<LoraAddress, LoraAddress, byte[]> downlinkCommunicator;
 	private List<ICommunicator<LoraAddress, LoraAddress, byte[]>> uplinkCommunicators;
 	private IConcentrator concentrator;
-	private ILoraDacService<LoraAddress> dacService;
+	private ILoraDacService dacService;
 	
 	private byte thingCommunicationChannel;
 	
@@ -104,12 +104,12 @@ public class LoraGateway implements ILoraGateway, ILoraDacService.Listener {
 	}
 
 	@Override
-	public ILoraDacService<LoraAddress> getDacService() {
+	public ILoraDacService getDacService() {
 		if (dacService == null) {
 			INotificationService notificationService = chatServices.createApi(INotificationService.class);
 			INotifier notifier = notificationService.getNotifier();
 			dacService = new LoraDacService(downlinkCommunicator, 0, uplinkCommunicators.size() - 1,
-					DEFAULT_UPLINK_ADDRESS_HIGH_BYTE, DEFAULT_UPLINK_ADDRESS_LOW_BYTE,
+					new byte[] {DEFAULT_UPLINK_ADDRESS_HIGH_BYTE, DEFAULT_UPLINK_ADDRESS_LOW_BYTE},
 						getConcentrator(), notifier);
 			dacService.setThingCommunicationChannel(thingCommunicationChannel);
 		}

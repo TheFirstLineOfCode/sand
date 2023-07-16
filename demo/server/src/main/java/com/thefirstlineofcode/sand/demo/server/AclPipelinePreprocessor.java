@@ -103,7 +103,7 @@ public class AclPipelinePreprocessor implements IPipelinePreprocessor {
 		if (pObject == null)
 			throw new ProtocolException(new InternalServerError("Not project object."));
 		
-		return pObject.namespace().equals("urn:leps:tacp:concentrator");
+		return pObject.namespace().equals("urn:leps:tuxp:concentrator");
 	}
 
 	private Object afterParsingPing(JabberId from, Iq iq) {		
@@ -157,7 +157,7 @@ public class AclPipelinePreprocessor implements IPipelinePreprocessor {
 		if (pObject == null)
 			throw new ProtocolException(new InternalServerError("The action isn't a project object."));
 		
-		return pObject.namespace().startsWith("urn:leps:tacp:");
+		return pObject.namespace().startsWith("urn:leps:tuxp:");
 	}
 
 	private Object afterParsingLocateThings(JabberId from, Iq iq, LocateThings locateThings) {

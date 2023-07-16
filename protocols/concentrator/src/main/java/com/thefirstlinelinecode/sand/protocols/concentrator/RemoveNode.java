@@ -4,9 +4,9 @@ import com.thefirstlineofcode.basalt.oxm.coc.annotations.ProtocolObject;
 import com.thefirstlineofcode.basalt.oxm.coc.validation.annotations.NotNull;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 
-@ProtocolObject(namespace="urn:leps:tacp:concentrator", localName="remove-node")
+@ProtocolObject(namespace="urn:leps:tuxp:concentrator", localName="remove-node")
 public class RemoveNode {
-	public static final Protocol PROTOCOL = new Protocol("urn:leps:tacp:concentrator", "remove-node");
+	public static final Protocol PROTOCOL = new Protocol("urn:leps:tuxp:concentrator", "remove-node");
 	
 	@NotNull
 	private Integer lanId;

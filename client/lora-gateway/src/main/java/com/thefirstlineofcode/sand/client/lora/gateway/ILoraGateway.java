@@ -23,7 +23,7 @@ public interface ILoraGateway {
 	void setUplinkCommunicators(List<ICommunicator<LoraAddress, LoraAddress, byte[]>> uplinkCommunicators);
 	void setThingCommunicationChannel(byte thingCommunicationChannel);
 	IConcentrator getConcentrator();
-	ILoraDacService<LoraAddress> getDacService();
+	ILoraDacService getDacService();
 	void start();
 	void stop();
 	boolean isStarted();

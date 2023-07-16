@@ -6,9 +6,9 @@ import com.thefirstlineofcode.basalt.oxm.coc.annotations.Array;
 import com.thefirstlineofcode.basalt.oxm.coc.annotations.ProtocolObject;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 
-@ProtocolObject(namespace="urn:leps:tacp:concentrator", localName="pull-nodes")
+@ProtocolObject(namespace="urn:leps:tuxp:concentrator", localName="pull-nodes")
 public class PullNodes {
-	public static final Protocol PROTOCOL = new Protocol("urn:leps:tacp:concentrator", "pull-nodes");
+	public static final Protocol PROTOCOL = new Protocol("urn:leps:tuxp:concentrator", "pull-nodes");
 	
 	@Array(value = Node.class, elementName = "node")
 	private List<Node> nodes;

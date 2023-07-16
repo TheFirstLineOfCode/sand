@@ -1,12 +1,16 @@
 #include <ArduinoUniqueID.h>
 #include <EEPROM.h>
 
-#include <tacp.h>
+#include <tuxp.h>
 #include <thing.h>
 #include <debug.h>
 #include <radio_module_adaptation.h>
 
 #include "mcu_board_adaptation.h"
+
+#if defined(ARDUINO_UNO) && defined(USE_SOFTWARE_SERIAL)
+SoftwareSerial softwareSerial(SOFTWARE_SERIAL_RX_PIN, SOFTWARE_SERIAL_TX_PIN);
+#endif
 
 static char *modelName;
 
@@ -15,7 +19,7 @@ void debugOutputImpl(const char out[]) {
 }
 
 void printToSerialPort(char title[], uint8_t message[], int size) {
-#ifdef ENABLE_DEBUG
+#if defined(ENABLE_DEBUG)
 
   Serial.print(title);
 
@@ -148,8 +152,10 @@ void loadThingInfoImpl(ThingInfo *thingInfo) {
     thingInfo->thingId = NULL;
     thingInfo->dacState = NONE;
     thingInfo->address = NULL;
-    thingInfo->gatewayDownlinkAddress = NULL;
-    thingInfo->gatewayUplinkAddress = NULL;
+    thingInfo->uplinkChannelBegin = -1;
+	thingInfo->uplinkChannelEnd = -1;
+    thingInfo->uplinkAddressHighByte = 0xff;
+	thingInfo->uplinkAddressLowByte = 0xff;
   } else {
     int position = 1;
     thingInfo->thingId = malloc(sizeof(char) * (thingIdSize + 1));
@@ -165,14 +171,19 @@ void loadThingInfoImpl(ThingInfo *thingInfo) {
     
     if (thingInfo->dacState == ALLOCATED ||
           thingInfo->dacState == CONFIGURED) {
+	  EEPROM.get(position, thingInfo->uplinkChannelBegin);
+	  position += 2;
+	  
+	  EEPROM.get(position, thingInfo->uplinkChannelEnd);
+	  position += 2;
+	  
+	  thingInfo->uplinkAddressHighByte = EEPROM.read(position);
+	  position++;
+	  thingInfo->uplinkAddressLowByte = EEPROM.read(position);
+	  position++;
+	  
       thingInfo->address = malloc(SIZE_RADIO_ADDRESS);
-      position = readAddressFromEepRom(thingInfo->address, position);
-      
-      thingInfo->gatewayDownlinkAddress = malloc(SIZE_RADIO_ADDRESS);
-      position = readAddressFromEepRom(thingInfo->gatewayDownlinkAddress, position);
-
-      thingInfo->gatewayUplinkAddress = malloc(SIZE_RADIO_ADDRESS);
-      position = readAddressFromEepRom(thingInfo->gatewayUplinkAddress, position);
+      readAddressFromEepRom(thingInfo->address, position);
     }
   }
 
@@ -206,9 +217,17 @@ void saveThingInfoImpl(ThingInfo *thingInfo) {
 
   if (thingInfo->dacState == ALLOCATED ||
         thingInfo->dacState == CONFIGURED) {
+	EEPROM.put(position, thingInfo->uplinkChannelBegin);
+	position += 2;
+	EEPROM.put(position, thingInfo->uplinkChannelEnd);
+	position += 2;
+	
+	EEPROM.write(position, thingInfo->uplinkAddressHighByte);
+	position++;
+	EEPROM.write(position, thingInfo->uplinkAddressLowByte);
+	position++;
+	
     position = writeAddressToEepRom(thingInfo->address, position);
-    position = writeAddressToEepRom(thingInfo->gatewayDownlinkAddress, position);
-    writeAddressToEepRom(thingInfo->gatewayUplinkAddress, position);
   }
 
   debugOutThingInfo(thingInfo);
@@ -218,13 +237,14 @@ void resetAll() {
   EEPROM.write(EEPROM.length() - 1, 0);
 }
 
-void configureMcuBoard(char *_modelName) {
+void configureMcuBoard(const char *_modelName) {
   int modelNameLength = strlen(_modelName);
   modelName = malloc(sizeof(char) * (modelNameLength + 1));
   strcpy(modelName, _modelName);
   
 #ifdef ENABLE_DEBUG
   configureSerial();
+  Serial.println("Serial has configured.");
   setDebugOutputter(debugOutputImpl);
 #endif
   
@@ -242,7 +262,9 @@ void configureMcuBoard(char *_modelName) {
   if (lastByteOfEepRom != 0xff ||
         nextToLastByteOfEepRom != 0xfe ||
           theThirdToLastByteOfEepRom != 0xfd) {
+#ifdef ENABLE_DEBUG
     Serial.println(F("EEPROM not initialized. Initlize it now."));
+#endif
     initializeEepRom(eepRomLength);
   }
 }

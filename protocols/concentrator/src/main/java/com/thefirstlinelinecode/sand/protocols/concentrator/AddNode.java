@@ -5,9 +5,9 @@ import com.thefirstlineofcode.basalt.oxm.coc.validation.annotations.IntRange;
 import com.thefirstlineofcode.basalt.oxm.coc.validation.annotations.NotNull;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 
-@ProtocolObject(namespace="urn:leps:tacp:concentrator", localName="add-node")
+@ProtocolObject(namespace="urn:leps:tuxp:concentrator", localName="add-node")
 public class AddNode {
-	public static final Protocol PROTOCOL = new Protocol("urn:leps:tacp:concentrator", "add-node");
+	public static final Protocol PROTOCOL = new Protocol("urn:leps:tuxp:concentrator", "add-node");
 	
 	@NotNull
 	private String thingId;

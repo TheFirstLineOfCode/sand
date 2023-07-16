@@ -3,9 +3,9 @@ package com.thefirstlineofcode.sand.protocols.thing.tacp;
 import com.thefirstlineofcode.basalt.oxm.coc.annotations.ProtocolObject;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 
-@ProtocolObject(namespace="urn:leps:tacp:thing", localName="lan-answer")
+@ProtocolObject(namespace="urn:leps:tuxp:thing", localName="lan-answer")
 public class LanAnswer {
-	public static final Protocol PROTOCOL = new Protocol("urn:leps:tacp:thing", "lan-answer");
+	public static final Protocol PROTOCOL = new Protocol("urn:leps:tuxp:thing", "lan-answer");
 	
 	private byte[] traceId;
 	private Integer errorNumber;

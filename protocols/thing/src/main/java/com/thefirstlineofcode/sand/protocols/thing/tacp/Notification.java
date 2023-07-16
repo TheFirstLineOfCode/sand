@@ -4,9 +4,9 @@ import com.thefirstlineofcode.basalt.oxm.coc.annotations.ProtocolObject;
 import com.thefirstlineofcode.basalt.oxm.coc.validation.annotations.NotNull;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 
-@ProtocolObject(namespace="urn:leps:tacp:thing", localName="notification")
+@ProtocolObject(namespace="urn:leps:tuxp:thing", localName="notification")
 public class Notification {
-	public static final Protocol PROTOCOL = new Protocol("urn:leps:tacp:thing", "notification");
+	public static final Protocol PROTOCOL = new Protocol("urn:leps:tuxp:thing", "notification");
 	
 	@NotNull
 	private Object event;

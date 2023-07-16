@@ -4,9 +4,9 @@ import com.thefirstlineofcode.basalt.oxm.coc.annotations.ProtocolObject;
 import com.thefirstlineofcode.basalt.oxm.coc.validation.annotations.NotNull;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 
-@ProtocolObject(namespace="urn:leps:tacp:sensor", localName="deliver")
+@ProtocolObject(namespace="urn:leps:tuxp:sensor", localName="deliver")
 public class Deliver {
-	public static final Protocol PROTOCOL = new Protocol("urn:leps:tacp:sensor", "deliver");
+	public static final Protocol PROTOCOL = new Protocol("urn:leps:tuxp:sensor", "deliver");
 	
 	@NotNull
 	private String reportId;

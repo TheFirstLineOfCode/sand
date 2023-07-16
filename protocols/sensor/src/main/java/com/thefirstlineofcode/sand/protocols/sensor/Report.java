@@ -5,9 +5,9 @@ import com.thefirstlineofcode.basalt.oxm.coc.conversion.annotations.Int2Enum;
 import com.thefirstlineofcode.basalt.oxm.coc.validation.annotations.NotNull;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 
-@ProtocolObject(namespace="urn:leps:tacp:sensor", localName="report")
+@ProtocolObject(namespace="urn:leps:tuxp:sensor", localName="report")
 public class Report {
-	public static final Protocol PROTOCOL = new Protocol("urn:leps:tacp:sensor", "report");
+	public static final Protocol PROTOCOL = new Protocol("urn:leps:tuxp:sensor", "report");
 	
 	public enum QoS {
 		AT_MOST_ONCE,
