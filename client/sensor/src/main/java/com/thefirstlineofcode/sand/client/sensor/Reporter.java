@@ -23,8 +23,8 @@ public class Reporter implements IReporter {
 	}
 
 	@Override
-	public void registerSupportedDatum(Class<?> datumType) {
-		chatServices.getOxmFactory().register(datumType, new CocTranslatorFactory<>(datumType));
+	public void registerSupportedData(Class<?> dataType) {
+		chatServices.getOxmFactory().register(dataType, new CocTranslatorFactory<>(dataType));
 	}
 
 	@Override

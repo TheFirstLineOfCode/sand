@@ -5,6 +5,7 @@ import java.util.Date;
 
 import com.thefirstlinelinecode.sand.protocols.concentrator.AddNode;
 import com.thefirstlinelinecode.sand.protocols.concentrator.Node;
+import com.thefirstlinelinecode.sand.protocols.concentrator.NodeAdded;
 import com.thefirstlineofcode.basalt.xmpp.core.ProtocolException;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.Iq;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.BadRequest;
@@ -16,21 +17,24 @@ import com.thefirstlineofcode.granite.framework.core.adf.data.IDataObjectFactory
 import com.thefirstlineofcode.granite.framework.core.adf.data.IDataObjectFactoryAware;
 import com.thefirstlineofcode.granite.framework.core.annotations.BeanDependency;
 import com.thefirstlineofcode.granite.framework.core.annotations.Dependency;
+import com.thefirstlineofcode.granite.framework.core.pipeline.stages.event.IEventFirer;
+import com.thefirstlineofcode.granite.framework.core.pipeline.stages.event.IEventFirerAware;
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.processing.IProcessingContext;
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.processing.IXepProcessor;
 import com.thefirstlineofcode.sand.server.things.IThingManager;
 
-public class AddNodeProcessor implements IXepProcessor<Iq, AddNode>, IDataObjectFactoryAware {
+public class AddNodeProcessor implements IXepProcessor<Iq, AddNode>, IDataObjectFactoryAware, IEventFirerAware {
 	@BeanDependency
 	private IThingManager thingManager;
 	
 	@BeanDependency
 	private IConcentratorFactory concentratorFactory;
 	
-	@Dependency("node.addition.delegator")
-	private NodeAdditionDelegator nodeAdditionDelegator;
+	@Dependency("node.confirmation.delegator")
+	private NodeConfirmationDelegator nodeConfirmationDelegator;
 	
 	private IDataObjectFactory dataObjectFactory;
+	private IEventFirer eventFirer;
 	
 	@Override
 	public void process(IProcessingContext context, Iq iq, AddNode xep) {
@@ -71,22 +75,31 @@ public class AddNodeProcessor implements IXepProcessor<Iq, AddNode>, IDataObject
 		node.setLanId(xep.getLanId());
 		node.setCommunicationNet(xep.getCommunicationNet());
 		node.setAddress(xep.getAddress());
+		node.setModel(thingManager.getModel(xep.getThingId()));
 		
 		if (thingManager.isConfirmationRequired()) {
-			requestToConfirm(iq, thingManager.getThingNameByThingId(thingId), node);
+			requestToConfirm(context, iq, thingManager.getThingNameByThingId(thingId), node);
 		} else {
-			addNode(thingId, node);
+			addNode(context, iq, thingId, node);
 		}
 	}
 
-	private void addNode(String concentratorThingId, Node node) {
+	private void addNode(IProcessingContext context, Iq iq, String concentratorThingId, Node node) {
 		IConcentrator concentrator = concentratorFactory.getConcentrator(concentratorThingId);
 		if (concentrator == null) {
 			throw new RuntimeException(String.format("No concentrator which's thing ID is '%s'.", concentratorThingId));
 		}
+		
+		NodeAdded nodeAdded = concentrator.addNode(node);
+		
+		Iq result = Iq.createResult(iq);
+		result.setObject(nodeAdded);
+		context.write(context.getJid(), result);
+		
+		eventFirer.fire(new NodeAddedEvent(nodeAdded));
 	}
 
-	private void requestToConfirm(Iq iq, String concentratorThingName, Node node) {
+	private void requestToConfirm(IProcessingContext context, Iq iq, String concentratorThingName, Node node) {
 		NodeConfirmation confirmation = dataObjectFactory.create(NodeConfirmation.class);
 		confirmation.setRequestId(iq.getId());
 		confirmation.setConcentratorThingName(concentratorThingName);
@@ -94,7 +107,9 @@ public class AddNodeProcessor implements IXepProcessor<Iq, AddNode>, IDataObject
 		Date currentTime = Calendar.getInstance().getTime();
 		confirmation.setRequestedTime(currentTime);
 		
-		nodeAdditionDelegator.requestToConfirm(confirmation);
+		nodeConfirmationDelegator.requestToConfirm(confirmation);
+		
+		eventFirer.fire(new NodeConfirmationRequestEvent(confirmation));
 	}
 	
 	@Override
@@ -102,4 +117,8 @@ public class AddNodeProcessor implements IXepProcessor<Iq, AddNode>, IDataObject
 		this.dataObjectFactory = dataObjectFactory;
 	}
 
+	@Override
+	public void setEventFirer(IEventFirer eventFirer) {
+		this.eventFirer = eventFirer;
+	}
 }

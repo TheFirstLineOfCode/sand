@@ -50,7 +50,7 @@ public class ObxFactory implements IObxFactory {
 	private List<Class<?>> registeredLanActionTypes;
 	private List<Class<?>> registeredLanSupportedEventTypes;
 	private List<Class<?>> registeredLanFollowedEventTypes;
-	private List<Class<?>> registeredLanDatumTypes;
+	private List<Class<?>> registeredLanDataTypes;
 	
 	private ObxFactory() {
 		oxmFactory = OxmService.createStandardOxmFactory();
@@ -58,10 +58,10 @@ public class ObxFactory implements IObxFactory {
 		registeredLanActionTypes = new ArrayList<>();
 		registeredLanSupportedEventTypes = new ArrayList<>();
 		registeredLanFollowedEventTypes = new ArrayList<>();
-		registeredLanDatumTypes = new ArrayList<>();
+		registeredLanDataTypes = new ArrayList<>();
 		
 		String[] sandConfigFiles = loadBxmppExtensionConfigurations("META-INF/sand-bxmpp-extensions.txt");
-		String[] appConfigFiles = loadBxmppExtensionConfigurations("META-INF/app-bxmpp-extensions.txt");
+		String[] appConfigFiles = loadBxmppExtensionConfigurations("META-INF/IoT-LAN-bxmpp-extensions.txt");
 		
 		List<String> allConfigFiles = new ArrayList<>();
 		allConfigFiles.addAll(Arrays.asList(sandConfigFiles));
@@ -371,20 +371,20 @@ public class ObxFactory implements IObxFactory {
 	}
 	
 	@Override
-	public void registerLanDatum(Class<?> lanDatumType) {
-		if (registeredLanDatumTypes.contains(lanDatumType))
+	public void registerLanData(Class<?> lanDataType) {
+		if (registeredLanDataTypes.contains(lanDataType))
 			return;
 		
-		ProtocolObject protocolObject = lanDatumType.getAnnotation(ProtocolObject.class);
+		ProtocolObject protocolObject = lanDataType.getAnnotation(ProtocolObject.class);
 		if (protocolObject == null)
-			throw new IllegalArgumentException(String.format("LAN datum type %s isn't a protocol object type.", lanDatumType.getName()));
+			throw new IllegalArgumentException(String.format("LAN data type %s isn't a protocol object type.", lanDataType.getName()));
 		
-		ProtocolChain lanDatumProtocolChain = new MessageProtocolChain(LanReport.PROTOCOL).
+		ProtocolChain lanDataProtocolChain = new MessageProtocolChain(LanReport.PROTOCOL).
 				next(new Protocol(protocolObject.namespace(), protocolObject.localName()));
-		oxmFactory.register(lanDatumProtocolChain, new CocParserFactory<>(lanDatumType));
-		oxmFactory.register(lanDatumType, new CocTranslatorFactory<>(lanDatumType));
+		oxmFactory.register(lanDataProtocolChain, new CocParserFactory<>(lanDataType));
+		oxmFactory.register(lanDataType, new CocTranslatorFactory<>(lanDataType));
 		
-		registeredLanDatumTypes.add(lanDatumType);
+		registeredLanDataTypes.add(lanDataType);
 	}
 
 	@Override
@@ -474,21 +474,21 @@ public class ObxFactory implements IObxFactory {
 	}
 	
 	@Override
-	public boolean unregisterLanDatum(Class<?> lanDatumType) {
-		if (!registeredLanDatumTypes.contains(lanDatumType))
+	public boolean unregisterLanData(Class<?> lanDataType) {
+		if (!registeredLanDataTypes.contains(lanDataType))
 			return false;
 		
-		ProtocolObject protocolObject = lanDatumType.getAnnotation(ProtocolObject.class);
+		ProtocolObject protocolObject = lanDataType.getAnnotation(ProtocolObject.class);
 		if (protocolObject == null) {
-			throw new IllegalArgumentException(String.format("Type '%s' isn't a protocol object type.", lanDatumType.getName()));
+			throw new IllegalArgumentException(String.format("Type '%s' isn't a protocol object type.", lanDataType.getName()));
 		}
 		
-		oxmFactory.unregister(lanDatumType);
+		oxmFactory.unregister(lanDataType);
 		ProtocolChain lanReportProtocolChain = new MessageProtocolChain(LanReport.PROTOCOL).
 				next(new Protocol(protocolObject.namespace(), protocolObject.localName()));
 		oxmFactory.unregister(lanReportProtocolChain);
 		
-		registeredLanDatumTypes.remove(lanDatumType);
+		registeredLanDataTypes.remove(lanDataType);
 		
 		return true;
 	}

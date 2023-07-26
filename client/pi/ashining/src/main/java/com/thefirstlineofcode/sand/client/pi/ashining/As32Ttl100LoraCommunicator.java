@@ -1,4 +1,4 @@
-package com.thefirstlineofcode.sand.demo.things.lgsc01;
+package com.thefirstlineofcode.sand.client.pi.ashining;
 
 import java.util.Arrays;
 
@@ -38,6 +38,10 @@ public class As32Ttl100LoraCommunicator extends AbstractCommunicator<LoraAddress
 	private static final int DEFAULT_MD1_PIN = 24;
 	private static final int DEFAULT_AUX_PIN = 25;
 	
+	private static final String DEFAULT_SERIAL_ID = "uart";
+	private static final String DEFAULT_SERIAL_NAME = "Serial UART";
+	private static final String DEFAULT_DEVICE = "/dev/serial0";
+	
 	private int md0Pin;
 	private int md1Pin;
 	private int auxPin;
@@ -54,12 +58,20 @@ public class As32Ttl100LoraCommunicator extends AbstractCommunicator<LoraAddress
 	private boolean listening;
 	private Thread dataListeningThread;
 	
+	private String serialId;
+	private String serialName;
+	private String device;
+	
 	public As32Ttl100LoraCommunicator() {
 		super();
 		
 		md0Pin = DEFAULT_MD0_PIN;
 		md1Pin = DEFAULT_MD1_PIN;
 		auxPin = DEFAULT_AUX_PIN;
+		
+		serialId = DEFAULT_SERIAL_ID;
+		serialName = DEFAULT_SERIAL_NAME;
+		device = DEFAULT_DEVICE;
 		
 		listening = false;
 	}
@@ -240,12 +252,36 @@ public class As32Ttl100LoraCommunicator extends AbstractCommunicator<LoraAddress
 		
 		return Arrays.copyOfRange(response, 1, response.length);
 	}
+	
+	public String getSerialId() {
+		return serialId;
+	}
+
+	public void setSerialId(String serialId) {
+		this.serialId = serialId;
+	}
+
+	public String getSerialName() {
+		return serialName;
+	}
+
+	public void setSerialName(String serialName) {
+		this.serialName = serialName;
+	}
+
+	public String getDevice() {
+		return device;
+	}
+
+	public void setDevice(String device) {
+		this.device = device;
+	}
 
 	private void createSerial(Context context) {
 		SerialConfig serialConfig = Serial.newConfigBuilder(context).
-				id("uart").
-				name("Serial UART").
-				device("/dev/serial0").
+				id(serialId).
+				name(serialName).
+				device(device).
 				baud(Baud._9600).
 				dataBits(DataBits._8).
 				parity(Parity.NONE).

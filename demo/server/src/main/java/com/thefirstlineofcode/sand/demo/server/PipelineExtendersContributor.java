@@ -15,7 +15,7 @@ import com.thefirstlineofcode.sand.demo.protocols.NotAuthorizedThingRegistration
 import com.thefirstlineofcode.sand.demo.protocols.RecordedVideos;
 import com.thefirstlineofcode.sand.demo.protocols.ThingRegistration;
 import com.thefirstlineofcode.sand.protocols.things.simple.temperature.reporter.CelsiusDegree;
-import com.thefirstlineofcode.sand.server.concentrator.NodeAdditionEvent;
+import com.thefirstlineofcode.sand.server.concentrator.NodeAddedEvent;
 import com.thefirstlineofcode.sand.server.concentrator.NodeConfirmationRequestEvent;
 import com.thefirstlineofcode.sand.server.ibtr.NotAuthorizedThingRegistrationEvent;
 import com.thefirstlineofcode.sand.server.ibtr.ThingRegistrationEvent;
@@ -45,7 +45,7 @@ public class PipelineExtendersContributor extends PipelineExtendersConfigurator 
 		configurator.registerEventListener(NotAuthorizedThingRegistrationEvent.class, new NotAuthorizedThingRegistrationListener());
 		configurator.registerEventListener(ThingRegistrationEvent.class, new ThingRegistrationListener());
 		configurator.registerEventListener(NodeConfirmationRequestEvent.class, new NodeConfirmationRequestListener());
-		configurator.registerEventListener(NodeAdditionEvent.class, new NodeAdditionListener());
+		configurator.registerEventListener(NodeAddedEvent.class, new NodeAdditionListener());
 		configurator.registerEventListener(ResourceAvailableEvent.class, new EdgeThingAvailableEventListener());
 		
 		configurator.registerPipelinePreprocessor(new AclPipelinePreprocessor());

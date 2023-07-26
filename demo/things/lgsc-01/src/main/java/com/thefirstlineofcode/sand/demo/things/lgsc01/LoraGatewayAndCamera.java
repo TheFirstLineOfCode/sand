@@ -123,10 +123,7 @@ public class LoraGatewayAndCamera extends AbstractEdgeThing implements ISimpleCa
 	}
 	
 	@Override
-	protected boolean doProcessAttributes(Map<String, String> attributes) {
-		uploadUrl = String.format("http://%s:8080/file-upload", this.streamConfig.getHost());
-		downloadUrl = String.format("http://%s:8080/files/", this.streamConfig.getHost());
-		
+	protected boolean doProcessAttributes(Map<String, String> attributes) {		
 		boolean attributesChanged = false;
 		
 		if (!disableLoraGateway) {
@@ -188,6 +185,12 @@ public class LoraGatewayAndCamera extends AbstractEdgeThing implements ISimpleCa
 	
 	@Override
 	protected void startIotComponents() {
+		if (uploadUrl == null)
+			uploadUrl = String.format("http://%s:8080/file-upload", this.streamConfig.getHost());
+		
+		if (downloadUrl == null)
+		downloadUrl = String.format("http://%s:8080/files/", this.streamConfig.getHost());
+		
 		if (!disableCamera)
 			startWebcam();
 		
@@ -612,7 +615,7 @@ public class LoraGatewayAndCamera extends AbstractEdgeThing implements ISimpleCa
 	
 	@Override
 	protected String loadRegistrationCode() {
-		return "abcdefghigkl";
+		return "abcdefghijkl";
 	}
 
 	@Override

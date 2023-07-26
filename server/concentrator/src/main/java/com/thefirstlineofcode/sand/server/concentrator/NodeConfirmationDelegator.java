@@ -11,12 +11,10 @@ import com.thefirstlineofcode.granite.framework.core.annotations.BeanDependency;
 import com.thefirstlineofcode.granite.framework.core.auth.IAccountManager;
 import com.thefirstlineofcode.granite.framework.core.config.IConfiguration;
 import com.thefirstlineofcode.granite.framework.core.config.IConfigurationAware;
-import com.thefirstlineofcode.granite.framework.core.pipeline.stages.event.IEventFirer;
-import com.thefirstlineofcode.granite.framework.core.pipeline.stages.event.IEventFirerAware;
 import com.thefirstlineofcode.sand.server.things.IThingManager;
 
-@AppComponent("node.addition.delegator")
-public class NodeAdditionDelegator implements IEventFirerAware, IConfigurationAware {
+@AppComponent("node.confirmation.delegator")
+public class NodeConfirmationDelegator implements IConfigurationAware {
 	private static final String CONFIGURATION_KEY_NODE_CONFIRMATION_VALIDITY_TIME = "node.confirmation.validity.time";	
 	private static final int DEFAULT_NODE_CONFIRMATION_VALIDITY_TIME = 60 * 5;
 	
@@ -28,8 +26,6 @@ public class NodeAdditionDelegator implements IEventFirerAware, IConfigurationAw
 	
 	@BeanDependency
 	private IConcentratorFactory concentratorFactory;
-	
-	private IEventFirer eventFirer;
 	
 	private int nodeConfirmationValidityTime;
 	
@@ -54,10 +50,6 @@ public class NodeAdditionDelegator implements IEventFirerAware, IConfigurationAw
 		confirmation.setExpiredTime(getExpiredTime(confirmation.getRequestedTime().getTime(),
 				nodeConfirmationValidityTime));
 		concentrator.requestToConfirm(confirmation);
-		
-		eventFirer.fire(new NodeConfirmationRequestEvent(
-				concentratorThingName, confirmation.getNode().getThingId(),
-				confirmation.getNode().getCommunicationNet(), confirmation.getRequestedTime()));
 	}
 	
 	private Date getExpiredTime(long currentTime, int validityTime) {
@@ -67,7 +59,7 @@ public class NodeAdditionDelegator implements IEventFirerAware, IConfigurationAw
 		return expiredTime.getTime();
 	}
 	
-	public NodeAdded confirm(String concentratorThingName, String nodeThingId) {
+	public NodeConfirmed confirm(String concentratorThingName, String nodeThingId) {
 		if (!thingManager.isConfirmationRequired())
 			throw new ProtocolException(new ServiceUnavailable());
 		
@@ -84,26 +76,12 @@ public class NodeAdditionDelegator implements IEventFirerAware, IConfigurationAw
 		if (concentrator == null)
 			throw new RuntimeException("Can't get the concentrator.");
 		
-		NodeAdded nodeAdded = concentrator.confirm(nodeThingId);
-		eventFirer.fire(createNodeAdditionEvent(nodeAdded));
-		
-		return nodeAdded;
-	}
-	
-	private NodeAdditionEvent createNodeAdditionEvent(NodeAdded nodeAdded) {
-		return new NodeAdditionEvent(nodeAdded.getRequestId(), nodeAdded.getConcentratorThingName(),
-				nodeAdded.getNodeThingId(), nodeAdded.getLanId(), nodeAdded.getModel(),
-				nodeAdded.getAddedTime());
+		return concentrator.confirm(nodeThingId);
 	}
 	
 	@Override
 	public void setConfiguration(IConfiguration configuration) {
 		nodeConfirmationValidityTime = configuration.getInteger(CONFIGURATION_KEY_NODE_CONFIRMATION_VALIDITY_TIME,
 				DEFAULT_NODE_CONFIRMATION_VALIDITY_TIME);
-	}
-
-	@Override
-	public void setEventFirer(IEventFirer eventFirer) {
-		this.eventFirer = eventFirer;
 	}
 }

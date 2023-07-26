@@ -28,7 +28,7 @@ public class NodeConfirmationRequestListener implements IEventListener<NodeConfi
 	
 	@Override
 	public void process(IEventContext context, NodeConfirmationRequestEvent event) {
-		String concentratorThingId = thingManager.getThingIdByThingName(event.getConcentratorThingName());
+		String concentratorThingId = thingManager.getThingIdByThingName(event.getConfirmation().getConcentratorThingName());
 		String owner = aclService.getOwner(concentratorThingId);
 		
 		JabberId bareJidOwner = new JabberId(owner, domainName);
@@ -39,8 +39,10 @@ public class NodeConfirmationRequestListener implements IEventListener<NodeConfi
 		
 		for (IResource resource : resources) {
 			context.write(resource.getJid(),
-					new Iq(Iq.Type.SET, new NodeConfirmationRequest(event.getConcentratorThingName(),
-							event.getNodeThingId(), event.getCommunicationNet(), event.getRequestedTime())));
+					new Iq(Iq.Type.SET, new NodeConfirmationRequest(event.getConfirmation().getConcentratorThingName(),
+							event.getConfirmation().getNode().getThingId(),
+							event.getConfirmation().getNode().getCommunicationNet(),
+							event.getConfirmation().getRequestedTime())));
 		}
 	}
 	

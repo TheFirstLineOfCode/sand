@@ -10,10 +10,10 @@ import com.thefirstlineofcode.granite.framework.core.pipeline.stages.event.IEven
 import com.thefirstlineofcode.granite.framework.im.IResource;
 import com.thefirstlineofcode.granite.framework.im.IResourcesService;
 import com.thefirstlineofcode.sand.demo.protocols.NodeAddition;
-import com.thefirstlineofcode.sand.server.concentrator.NodeAdditionEvent;
+import com.thefirstlineofcode.sand.server.concentrator.NodeAddedEvent;
 import com.thefirstlineofcode.sand.server.things.IThingManager;
 
-public class NodeAdditionListener implements IEventListener<NodeAdditionEvent>, IServerConfigurationAware {
+public class NodeAdditionListener implements IEventListener<NodeAddedEvent>, IServerConfigurationAware {
 	@BeanDependency
 	private IThingManager thingManager;
 	
@@ -26,8 +26,8 @@ public class NodeAdditionListener implements IEventListener<NodeAdditionEvent>, 
 	private String domainName;
 	
 	@Override
-	public void process(IEventContext context, NodeAdditionEvent event) {
-		String concentratorThingId = thingManager.getThingIdByThingName(event.getConcentratorThingName());
+	public void process(IEventContext context, NodeAddedEvent event) {
+		String concentratorThingId = thingManager.getThingIdByThingName(event.getNodeAdded().getConcentratorThingName());
 		String owner = aclService.getOwner(concentratorThingId);
 		
 		JabberId bareJidOwner = new JabberId(owner, domainName);
@@ -38,8 +38,9 @@ public class NodeAdditionListener implements IEventListener<NodeAdditionEvent>, 
 		
 		for (IResource resource : resources) {
 			context.write(resource.getJid(),
-					new Iq(Iq.Type.SET, new NodeAddition(event.getConcentratorThingName(),
-							event.getNodeThingId(), event.getLanId(), event.getAdditionTime())));
+					new Iq(Iq.Type.SET, new NodeAddition(event.getNodeAdded().getConcentratorThingName(),
+							event.getNodeAdded().getNodeThingId(), event.getNodeAdded().getLanId(),
+							event.getNodeAdded().getAdditionTime())));
 		}
 	}
 	

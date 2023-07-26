@@ -18,7 +18,6 @@ public class PipelineExtendersContributor extends PipelineExtendersConfigurator 
 		configurator.registerCocParser(new IqProtocolChain(AddNode.PROTOCOL), AddNode.class);
 		configurator.registerSingletonXepProcessor(new IqProtocolChain(AddNode.PROTOCOL), new AddNodeProcessor());
 		configurator.registerCocTranslator(NodeAdded.class);
-		configurator.registerEventListener(NodeAdditionEvent.class, new NodeAdditionListener());
 		
 		configurator.registerCocParser(new IqProtocolChain(PullNodes.PROTOCOL), PullNodes.class);
 		configurator.registerSingletonXepProcessor(new IqProtocolChain(PullNodes.PROTOCOL), new PullNodesProcessor());

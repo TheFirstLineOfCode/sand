@@ -39,7 +39,8 @@ import com.thefirstlineofcode.sand.server.actuator.ExecutionEvent;
 import com.thefirstlineofcode.sand.server.actuator.IExecutionCallback;
 import com.thefirstlineofcode.sand.server.concentrator.IConcentrator;
 import com.thefirstlineofcode.sand.server.concentrator.IConcentratorFactory;
-import com.thefirstlineofcode.sand.server.concentrator.NodeAdditionDelegator;
+import com.thefirstlineofcode.sand.server.concentrator.NodeConfirmationDelegator;
+import com.thefirstlineofcode.sand.server.concentrator.NodeConfirmed;
 import com.thefirstlineofcode.sand.server.ibtr.ThingAuthorizationDelegator;
 import com.thefirstlineofcode.sand.server.notification.IEventListener;
 import com.thefirstlineofcode.sand.server.notification.INotificationDispatcher;
@@ -66,7 +67,7 @@ public class SandCommandsProcessor extends AbstractCommandsProcessor implements 
 	private ThingAuthorizationDelegator thingAuthorizationDelegator;
 	
 	@Dependency("node.addition.delegator")
-	private NodeAdditionDelegator nodeAdditionDelegator;
+	private NodeConfirmationDelegator nodeAdditionDelegator;
 	
 	@BeanDependency
 	private IAccountManager accountManager;
@@ -520,9 +521,9 @@ public class SandCommandsProcessor extends AbstractCommandsProcessor implements 
 			return;
 		}
 		
-		nodeAdditionDelegator.confirm(concentratorThingId, nodeThingId);
+		NodeConfirmed nodeConfirmed = nodeAdditionDelegator.confirm(concentratorThingId, nodeThingId);
 		consoleSystem.printMessageLine(String.format("Concentrator thing which's ID is '%s' has been confirmed to add thing which's ID is '%s' as it's node in server console.",
-			concentratorThingId, nodeThingId));
+				nodeConfirmed.getNodeAdded().getConcentratorThingName(), nodeConfirmed.getNodeAdded().getNodeThingId()));
 	}
 	
 	@Override

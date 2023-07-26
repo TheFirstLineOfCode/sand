@@ -36,6 +36,8 @@ public interface IConcentrator extends IActuator, IFollowService {
 	void addCommunicator(CommunicationNet net, ICommunicator<?, ?, byte[]> communicator);
 	ICommunicator<?, ?, byte[]> getCommunicator(CommunicationNet communicationNet);
 	int getBestSuitedNewLanId();
+	void setAddNodeTimeout(long addNodeTimeout);
+	long getAddNodeTimeout();
 	void requestServerToAddNode(String thingId, String registrationCode, int lanId, IAddress address);
 	void removeNode(int lanId) throws NodeNotFoundException;
 	void cleanNodes();
@@ -62,9 +64,9 @@ public interface IConcentrator extends IActuator, IFollowService {
 	boolean isLanEventFollowed(String model, Protocol protocol);
 	boolean isLanEventFollowed(String model, Class<?> eventType);
 	Class<?> getLanEventType(String model, Protocol protocol);
-	boolean isLanDatumSupported(String model, Protocol protocol);
-	boolean isLanDatumSupported(String model, Class<?> datumType);
-	Class<?> getLanDatumType(String model, Protocol protocol);
+	boolean isLanDataSupported(String model, Protocol protocol);
+	boolean isLanDataSupported(String model, Class<?> dataType);
+	Class<?> getLanDataType(String model, Protocol protocol);
 	void enableLanRouting();
 	void disableLanRouting();
 	boolean isLanRoutingEnabled();
@@ -81,8 +83,8 @@ public interface IConcentrator extends IActuator, IFollowService {
 	long getNotificationRexTimeout();
 	void setDefaultDataQoS(QoS qos);
 	QoS getDefaultDataQoS();
-	void setDatumQoS(Class<?> datumType, QoS qos);
-	QoS getDatumQoS(Class<?> datumType);
+	void setDataQoS(Class<?> dataType, QoS qos);
+	QoS getDataQoS(Class<?> dataType);
 	
 	public interface Listener {
 		void nodeAdded(int lanId, LanNode node);

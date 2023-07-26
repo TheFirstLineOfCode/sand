@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.thefirstlinelinecode.sand.protocols.concentrator.Node;
+import com.thefirstlinelinecode.sand.protocols.concentrator.NodeAdded;
 import com.thefirstlineofcode.basalt.xmpp.core.ProtocolException;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.Conflict;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.InternalServerError;
@@ -21,8 +22,8 @@ import com.thefirstlineofcode.granite.framework.core.adf.data.IDataObjectFactory
 import com.thefirstlineofcode.granite.framework.core.adf.data.IDataObjectFactoryAware;
 import com.thefirstlineofcode.sand.server.concentrator.Concentration;
 import com.thefirstlineofcode.sand.server.concentrator.IConcentrator;
-import com.thefirstlineofcode.sand.server.concentrator.NodeAdded;
 import com.thefirstlineofcode.sand.server.concentrator.NodeConfirmation;
+import com.thefirstlineofcode.sand.server.concentrator.NodeConfirmed;
 import com.thefirstlineofcode.sand.server.things.IThingManager;
 import com.thefirstlineofcode.sand.server.things.Thing;
 
@@ -60,7 +61,7 @@ public class Concentrator implements IConcentrator, IDataObjectFactoryAware {
 	}
 
 	@Override
-	public NodeAdded confirm(String nodeThingId) {
+	public NodeConfirmed confirm(String nodeThingId) {
 		if (containsNode(nodeThingId))
 			throw new ProtocolException(new Conflict(String.format("Reduplicate node which's ID is '%s'.", nodeThingId)));
 		
@@ -100,14 +101,12 @@ public class Concentrator implements IConcentrator, IDataObjectFactoryAware {
 		concentration.setAdditionTime(addedTime);
 		getConcentrationMapper().insert(concentration);
 		
-		return createNodeAdded(confirmation, node, concentration);
+		return new NodeConfirmed(confirmation.getRequestId(), createNodeAdded(node, concentration));
 	}
 
-	private NodeAdded createNodeAdded(NodeConfirmation confirmation, Thing node,
-			D_Concentration concentration) {
-		return new NodeAdded(confirmation.getRequestId(), confirmation.getConcentratorThingName(),
-				node.getThingId(), confirmation.getNode().getLanId(), node.getModel(),
-				concentration.getAdditionTime(), confirmation.getConfirmedTime());
+	private NodeAdded createNodeAdded(Thing node, Concentration concentration) {
+		return new NodeAdded(concentration.getConcentratorThingName(), node.getThingId(), concentration.getLanId(),
+				node.getModel(), concentration.getAdditionTime());
 	}
 	
 	private D_NodeConfirmation getNodeConfirmation(String concentrator, String node) {
@@ -186,7 +185,7 @@ public class Concentrator implements IConcentrator, IDataObjectFactoryAware {
 	}
 
 	@Override
-	public void addNode(Node node) {
+	public NodeAdded addNode(Node node) {
 		Thing thing = dataObjectFactory.create(Thing.class);
 		thing.setThingId(node.getThingId());
 		thing.setRegistrationCode(node.getRegistrationCode());
@@ -203,6 +202,8 @@ public class Concentrator implements IConcentrator, IDataObjectFactoryAware {
 		Date addedTime = Calendar.getInstance().getTime();
 		concentration.setAdditionTime(addedTime);
 		getConcentrationMapper().insert(concentration);
+		
+		return createNodeAdded(thing, concentration);
 	}
 	
 }

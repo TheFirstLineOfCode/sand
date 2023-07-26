@@ -120,7 +120,7 @@ public class LoraAddress implements IAddress, Serializable {
 
 	@Override
 	public String toAddressString() {
-		return String.format("la$%d,%d:%d", addressHighByte, addressLowByte, channel);
+		return String.format("la$%d,%d:%d", addressHighByte & 0xff, addressLowByte & 0xff, channel);
 	}
 
 	@Override

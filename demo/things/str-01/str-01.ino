@@ -1,6 +1,6 @@
 #include <Arduino_BuiltIn.h>
 
-#include <tacp.h>
+#include <tuxp.h>
 #include <thing.h>
 #include <mcu_board_adaptation.h>
 #include <radio_module_adaptation.h>
@@ -18,12 +18,17 @@ void setup() {
   configureMcuBoard(modelName);
   configureRadioModule();
 
-  // resetThing();
-  
+  registerThingIdLoader(generateThingIdUsingUniqueIdLibrary);
+  registerRegistrationCodeLoader(loadRegistrationCode);
+
   registerThingProtocolsConfigurer(configureThingProtocolsImpl);
   toBeAThing();
 
   temperture.begin();
+}
+
+char *loadRegistrationCode() {
+  return "abcdefghigkl";
 }
 
 int8_t processResetThing(Protocol *protocol) {
@@ -45,8 +50,8 @@ int8_t acquireCelsiusDegree(Protocol *protocol) {
 }
 
 void configureThingProtocolsImpl() {
-  ProtocolName pnResetThing = {0xf8, 0x02, 0x0s9};
-  registerActionProtocol(pnResetThing, procesResetThing, false);
+  ProtocolName pnResetThing = {0xf8, 0x02, 0x09};
+  registerActionProtocol(pnResetThing, processResetThing, false);
 
   ProtocolName pnAquireCelsiusDegree = {0xf7, 0x03, 0x00};
   registerDataProtocol(pnAquireCelsiusDegree, acquireCelsiusDegree, 2000);

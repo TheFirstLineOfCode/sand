@@ -19,10 +19,6 @@
 	
 	<dependencies>
 		<dependency>
-			<groupId>com.thefirstlineofcode.chalk</groupId>
-			<artifactId>chalk-logger</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>com.thefirstlineofcode.sand.client</groupId>
 			<artifactId>sand-client-ibtr</artifactId>
 		</dependency>

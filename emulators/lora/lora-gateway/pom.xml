@@ -55,7 +55,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.thefirstlineofcode.sand.demo</groupId>
-			<artifactId>sand-demo-bxmpp-extensions</artifactId>
+			<artifactId>sand-demo-iot-lan-bxmpp-extensions</artifactId>
 		</dependency>
 	</dependencies>
 	

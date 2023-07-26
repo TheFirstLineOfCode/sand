@@ -13,7 +13,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<basalt.version>1.1.0-RELEASE</basalt.version>
-		<chalk.version>1.0.1-RELEASE</chalk.version>
+		<chalk.version>1.0.2-RELEASE</chalk.version>
 		<granite.version>1.0.4-RELEASE</granite.version>
 		<sand.version>1.0.0-BETA3</sand.version>
 		<gem.version>0.2.0-RELEASE</gem.version>
@@ -401,6 +401,12 @@
 				<artifactId>sand-client-sensor</artifactId>
 				<version>${sand.version}</version>
 			</dependency>
+			
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.client.pi</groupId>
+				<artifactId>sand-client-pi-ashining</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
 
 			<dependency>
 				<groupId>com.thefirstlineofcode.sand.client.things</groupId>
@@ -494,7 +500,7 @@
 
 			<dependency>
 				<groupId>com.thefirstlineofcode.sand.demo</groupId>
-				<artifactId>sand-demo-bxmpp-extensions</artifactId>
+				<artifactId>sand-demo-iot-lan-bxmpp-extensions</artifactId>
 				<version>${sand.version}</version>
 			</dependency>
 

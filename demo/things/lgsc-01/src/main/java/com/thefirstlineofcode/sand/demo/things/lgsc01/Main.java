@@ -3,6 +3,7 @@ package com.thefirstlineofcode.sand.demo.things.lgsc01;
 import com.thefirstlineofcode.chalk.core.stream.StandardStreamConfig;
 import com.thefirstlineofcode.chalk.logger.LogConfigurator;
 import com.thefirstlineofcode.chalk.logger.LogConfigurator.LogLevel;
+import com.thefirstlineofcode.sand.client.pi.ashining.As32Ttl100LoraCommunicator;
 import com.thefirstlineofcode.sand.client.thing.commuication.ICommunicator;
 import com.thefirstlineofcode.sand.protocols.thing.lora.LoraAddress;
 

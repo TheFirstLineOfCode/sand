@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
 import java.lang.ProcessBuilder.Redirect;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
@@ -34,7 +35,6 @@ import com.thefirstlineofcode.chalk.core.IChatClient;
 import com.thefirstlineofcode.chalk.core.StandardChatClient;
 import com.thefirstlineofcode.chalk.core.stream.StandardStreamConfig;
 import com.thefirstlineofcode.chalk.core.stream.UsernamePasswordToken;
-import com.thefirstlineofcode.chalk.logger.LogConfigurator;
 import com.thefirstlineofcode.chalk.network.ConnectionException;
 import com.thefirstlineofcode.chalk.network.IConnectionListener;
 import com.thefirstlineofcode.sand.client.ibtr.IRegistration;
@@ -50,7 +50,9 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 	private static final String INTERNET_CONNECTIVITY_TEST_ADDRESS = "http://www.baidu.com";
 	private static final String SAND_EDGE_CONFIG_DIR = ".com.thefirstlineofcode.sand.client.edge";
 	
-	private static final Logger logger = LogConfigurator.isConfigured() ? LoggerFactory.getLogger(AbstractEdgeThing.class) : null;
+	private static final Logger logger = isLogConfiguratorConfigured() ? LoggerFactory.getLogger(AbstractEdgeThing.class) : null;
+	
+	private static Boolean isLogConfiguratorConfigured;
 	
 	protected StandardStreamConfig streamConfig;
 	protected RegisteredThing registeredThing;
@@ -93,8 +95,23 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 		
 		started = false;
 		stopToReconnect = true;
+	}
+	
+	private static boolean isLogConfiguratorConfigured() {
+		if (isLogConfiguratorConfigured != null)
+			return isLogConfiguratorConfigured;
 		
-		processAttributes(attributes);
+		Class<?> logConfiguratorClass;
+		try {			
+			logConfiguratorClass = Class.forName("com.thefirstlineofcode.chalk.logger.LogConfigurator");
+			
+			Method mIsConfigured = logConfiguratorClass.getMethod("isConfigured", new Class<?>[] {});
+			isLogConfiguratorConfigured = Boolean.TRUE.equals(mIsConfigured.invoke(null, new Object[] {}));
+		} catch (Exception e) {
+			isLogConfiguratorConfigured = false;
+		}
+		
+		return isLogConfiguratorConfigured;
 	}
 	
 	private String getStreamConfigString() {
@@ -109,7 +126,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 		
 		StringTokenizer st = new StringTokenizer(sStreamConfig, ",");
 		if (st.countTokens() != 3) {
-			if (LogConfigurator.isConfigured())
+			if (isLogConfiguratorConfigured())
 				logger.error("Can't read stream config. Not a valid stream config string.");
 			
 			throw new IllegalArgumentException("Can't read stream config. Not a valid stream config string.");
@@ -131,24 +148,54 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 	
 	@Override
 	public StandardStreamConfig getStreamConfig() {
+		if (streamConfig != null)
+			return streamConfig;
+		
+		if (attributes == null)
+			attributes = loadThingAttributes();
+		
+		if (attributes == null)
+			return null;
+		
+		streamConfig = getStreamConfig(attributes);
+		
 		return streamConfig;
 	}
 	
 	@Override
 	public void setStreamConfig(StandardStreamConfig streamConfig) {
 		this.streamConfig = streamConfig;
-		Map<String, String> attributes = loadThingAttributes();
-		attributes.put(ATTRIBUTE_NAME_STREAM_CONFIG, getStreamConfigString());
 		
+		if (attributes == null)
+			attributes = loadThingAttributes();
+		
+		if (streamConfig == null) {			
+			if (attributes != null && attributes.containsKey(ATTRIBUTE_NAME_STREAM_CONFIG)) {
+				attributes.remove(ATTRIBUTE_NAME_STREAM_CONFIG);
+				saveAttributes(attributes);
+			}
+			
+			return;
+		}
+
+		if (attributes == null)
+			attributes= new HashMap<>();
+		
+		attributes.put(ATTRIBUTE_NAME_STREAM_CONFIG, getStreamConfigString());
 		saveAttributes(attributes);
+
 	}
 
 	@Override
 	public void start() {
 		try {
+			if (attributes == null)
+				attributes = loadThingAttributes();
+			
+			processAttributes(attributes);
 			doStart();
 		} catch (Exception e) {
-			if (LogConfigurator.isConfigured())
+			if (isLogConfiguratorConfigured())
 				logger.error("Some thing is wrong. The program can't run correctly.", e);
 			
 			throw new RuntimeException("Some thing is wrong. The program can't run correctly.", e);
@@ -182,7 +229,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 		if (streamConfig == null)
 			throw new IllegalStateException("Null stream config.");
 		
-		if (LogConfigurator.isConfigured()) {
+		if (isLogConfiguratorConfigured()) {
 			logger.info("I'm an edge thing[thing_id='{}', host='{}', port='{}', tls_preferred='{}'].",
 					thingId, this.streamConfig.getHost(), this.streamConfig.getPort(), this.streamConfig.isTlsPreferred());
 		} else {
@@ -212,7 +259,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 			connect();
 		}
 		
-		if (LogConfigurator.isConfigured())
+		if (isLogConfiguratorConfigured())
 			logger.info("The thing has started.");
 		else
 			System.out.println("The thing has started.");
@@ -230,7 +277,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 		while (!checkInternetConnectivity()) {
 			i++;
 			
-			if (LogConfigurator.isConfigured())
+			if (isLogConfiguratorConfigured())
 				logger.info("No internet connection. Waiting for a while then trying again....");
 			else
 				System.out.println("No internet connection. Waiting for a while then trying again....");				
@@ -243,7 +290,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 			}
 			
 			if (i == retryTimes) {
-				if (LogConfigurator.isConfigured())
+				if (isLogConfiguratorConfigured())
 					logger.error("No internet connection. The thing can't be started.");
 				else
 					System.out.println("No internet connection. The thing can't be started.");
@@ -335,7 +382,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 			chatClient.addConnectionListener(this);
 		}
 		
-		if (LogConfigurator.isConfigured())
+		if (isLogConfiguratorConfigured())
 			logger.info("The thing tries to connect to server.");
 		else
 			System.out.println("The thing tries to connect to server.");
@@ -408,7 +455,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 		
 		this.registeredThing = registeredThing;
 		
-		if (LogConfigurator.isConfigured())
+		if (isLogConfiguratorConfigured())
 			logger.info("The thing has registered. Thing name is '{}'.", registeredThing.getThingName());
 		else
 			System.out.println(String.format("The thing has registered. Thing name is '%s'.", registeredThing.getThingName()));
@@ -428,7 +475,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 			disconnect();
 		}
 		
-		if (LogConfigurator.isConfigured())
+		if (isLogConfiguratorConfigured())
 			logger.info("The thing has stopped.");
 		else
 			System.out.println("The thing has stopped.");
@@ -479,7 +526,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 		IChatClient chatClient = new StandardChatClient(streamConfig);
 		chatClient.register(IbtrPlugin.class);
 		
-		if (LogConfigurator.isConfigured())
+		if (isLogConfiguratorConfigured())
 			logger.info("The thing tries to register to server.");
 		else
 			System.out.println("The thing tries to register to server.");
@@ -582,7 +629,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 				
 				synchronized (AbstractEdgeThing.this) {
 					if (!isConnected()) {
-						if (LogConfigurator.isConfigured())
+						if (isLogConfiguratorConfigured())
 							logger.info("The thing has disconnected. Try to reconnect to server....");
 						else
 							System.out.println("The thing has disconnected. Try to reconnect to server....");
@@ -606,7 +653,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 	}
 	
 	protected void connected(IChatClient chatClient) {
-		if (LogConfigurator.isConfigured())
+		if (isLogConfiguratorConfigured())
 			logger.info("The thing has connected to server.");
 		else
 			System.out.println("The thing has connected to server.");
@@ -619,7 +666,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 	}
 
 	protected void FailedToConnect(ConnectionException e) {
-		if (LogConfigurator.isConfigured()) {
+		if (isLogConfiguratorConfigured()) {
 			logger.error("The thing failed to connect to server.", e);
 		} else {
 			System.out.println("The thing failed to connect to server.");
@@ -628,7 +675,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 	}
 	
 	protected void failedToAuth(AuthFailureException e) {
-		if (LogConfigurator.isConfigured())
+		if (isLogConfiguratorConfigured())
 			logger.error("The thing failed to auth to server.", e);
 		
 		throw new RuntimeException("Failed to auth to server.", e);
@@ -637,14 +684,14 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 	protected void disconnected() {
 		stopIotComponents();
 		
-		if (LogConfigurator.isConfigured())
+		if (isLogConfiguratorConfigured())
 			logger.info("The thing has disconnected from server.");
 		else
 			System.out.println("The thing has disconnected from server.");
 	}
 	
 	protected void registrationExceptionOccurred(RegistrationException e) {
-		if (LogConfigurator.isConfigured()) {
+		if (isLogConfiguratorConfigured()) {
 			logger.error("Registration exception occurred.", e);
 		} else {
 			System.out.println("Registration exception occurred.");
@@ -727,7 +774,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 		Path attributesFilePath = getAttributesFilePath();
 		
 		if (!Files.exists(attributesFilePath, LinkOption.NOFOLLOW_LINKS)) {
-			if (LogConfigurator.isConfigured())
+			if (isLogConfiguratorConfigured())
 				logger.info("Attributes file not existed. Ignore to load attributes.");
 			else
 				System.out.println("Attributes file not existed. Ignore to load attributes.");
@@ -741,7 +788,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 			reader = Files.newBufferedReader(attributesFilePath, Charset.forName(Constants.DEFAULT_CHARSET));
 			properties.load(reader);			
 		} catch (Exception e) {
-			if (LogConfigurator.isConfigured())
+			if (isLogConfiguratorConfigured())
 				logger.error("Can't load attributes from file '{}'.", attributesFilePath.toAbsolutePath(), e);
 			
 			throw new RuntimeException(String.format("Can't load attributes from file '%s'.",
@@ -777,7 +824,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 			try {
 				Files.move(attributesFilePath, attributesBakFilePath);
 			} catch (IOException e) {
-				if (LogConfigurator.isConfigured())
+				if (isLogConfiguratorConfigured())
 					logger.error("Can't backup attributes file.", e);
 				
 				throw new RuntimeException("Can't backup attributes file.", e);
@@ -788,7 +835,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 			try {
 				Files.createDirectories(attributesFilePath.getParent());
 			} catch (IOException e) {
-				if (LogConfigurator.isConfigured())
+				if (isLogConfiguratorConfigured())
 					logger.error("Can't create directory {}.", attributesFilePath.getParent().toAbsolutePath(), e);
 				
 				throw new RuntimeException(String.format("Can't create directory %s.", attributesFilePath.getParent().toAbsolutePath()), e);
@@ -801,12 +848,12 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 					StandardOpenOption.CREATE, StandardOpenOption.WRITE);
 			properties.store(writer, null);
 			
-			if (LogConfigurator.isConfigured())
+			if (isLogConfiguratorConfigured())
 				logger.info("Attributes are saved to {}.", attributesFilePath.toAbsolutePath());
 			else
 				System.out.println(String.format("Attributes are saved to %s.", attributesFilePath.toAbsolutePath()));
 		} catch (Exception e) {
-			if (LogConfigurator.isConfigured())
+			if (isLogConfiguratorConfigured())
 				logger.error("Can't save attributes to file '{}'.", attributesFilePath.toAbsolutePath(), e);
 			
 			throw new RuntimeException(String.format("Can't save attributes to file '%s'.",
@@ -825,7 +872,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 			try {
 				Files.delete(attributesBakFilePath);
 			} catch (IOException e) {
-				if (LogConfigurator.isConfigured())
+				if (isLogConfiguratorConfigured())
 					logger.error("Can't delete attributes backup file.", e);
 				
 				throw new RuntimeException("Can't delete attributes backup file.", e);

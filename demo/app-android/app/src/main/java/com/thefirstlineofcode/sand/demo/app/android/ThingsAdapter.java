@@ -130,7 +130,7 @@ public class ThingsAdapter extends BaseExpandableListAdapter {
 	
 	@NonNull
 	private String[] getAuthorizedThingActions(String model) {
-		if (model.startsWith("LGE-")) {
+		if (model.startsWith("LGE-") || model.equals("HLG")) {
 			return new String[] {"Change Working Mode"};
 		} else if ("LGSC-01".equals(model)) {
 			return new String[] {
@@ -169,6 +169,8 @@ public class ThingsAdapter extends BaseExpandableListAdapter {
 			return new String[] {"Flash", "Turn On", "Turn Off", "Follow It", "Reset Thing", "Remove Node"};
 		} else if (model.startsWith("STR-")) {
 			return new String[] {"Watch Temperature", "Reset Thing", "Remove Node"};
+		} else if (model.equals("HLT")) {
+			return new String[] {"Flash", "Turn On", "Turn Off"};
 		} else {
 			throw new RuntimeException(String.format("Unknown thing model: %s.", model));
 		}

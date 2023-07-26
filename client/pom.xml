@@ -31,6 +31,7 @@
 		<module>lora-gateway</module>
 		<module>friends</module>
 		<module>sensor</module>
+		<module>pi</module>
 	</modules>
 	
 	<build>

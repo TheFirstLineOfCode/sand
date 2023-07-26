@@ -78,7 +78,7 @@ public class Concentrator extends Actuator implements IConcentrator {
 	private static final long DEFAULT_VALUE_OF_DEFAULT_LAN_EXECUTION_TIMEOUT = 1000 * 10;
 	private static final int DEFAULT_LAN_EXECUTION_TIMEOUT_CHECK_INTERVAL = 500;
 	
-	private static final int DEFAULT_NODE_ADDITION_TIMEOUT = 1000 * 60 * 5;
+	private static final long DEFAULT_ADD_NODE_TIMEOUT = 1000 * 60 * 5;
 	
 	private static final int DEFAULT_ACK_REQUIRED_LAN_NOTIFICATIONS_POOL_SIZE = 512;
 	
@@ -100,6 +100,7 @@ public class Concentrator extends Actuator implements IConcentrator {
 	protected Map<Integer, LanNode> nodes;
 	protected Map<String, LanNode> confirmingNodes;
 	protected Object nodesLock;
+	protected long addNodeTimeout;
 		
 	protected Map<String, IThingModelDescriptor> lanThingModelDescriptors = new HashMap<>();
 	
@@ -127,7 +128,7 @@ public class Concentrator extends Actuator implements IConcentrator {
 	protected IFollowProcessor followProcessor;
 	
 	protected QoS defaultDataQoS;
-	protected Map<Class<?>, QoS> datumTypeToQoSs;
+	protected Map<Class<?>, QoS> dataTypeToQoSs;
 	
 	public Concentrator(IChatServices chatServices)  {
 		super(chatServices);
@@ -145,6 +146,8 @@ public class Concentrator extends Actuator implements IConcentrator {
 		confirmingNodes = new LinkedHashMap<>();
 		nodesLock = new Object();
 		
+		addNodeTimeout = DEFAULT_ADD_NODE_TIMEOUT;
+		
 		lanRouting = false;
 		
 		ackRequiredLanNotificationsPoolSize = DEFAULT_ACK_REQUIRED_LAN_NOTIFICATIONS_POOL_SIZE;
@@ -160,7 +163,7 @@ public class Concentrator extends Actuator implements IConcentrator {
 		lanReportPreprocessors = new ArrayList<>();
 		
 		defaultDataQoS = QoS.AT_MOST_ONCE;
-		datumTypeToQoSs = new HashMap<>();
+		dataTypeToQoSs = new HashMap<>();
 		
 		INotificationService notificationService = chatServices.createApi(INotificationService.class);
 		notifier = notificationService.getNotifier();
@@ -240,7 +243,7 @@ public class Concentrator extends Actuator implements IConcentrator {
 		}
 		
 		for (Entry<Protocol, Class<?>> entry : modelDescriptor.getSupportedData().entrySet()) {
-			registerLanDatum(entry.getValue());
+			registerLanData(entry.getValue());
 		}
 		
 		if (logger.isInfoEnabled())
@@ -267,10 +270,10 @@ public class Concentrator extends Actuator implements IConcentrator {
 		ObxFactory.getInstance().registerLanFollowedEvent(eventType);
 	}
 	
-	protected void registerLanDatum(Class<?> datumType) {
-		ObxFactory.getInstance().registerLanDatum(datumType);
+	protected void registerLanData(Class<?> dataType) {
+		ObxFactory.getInstance().registerLanData(dataType);
 		
-		reporter.registerSupportedDatum(datumType);
+		reporter.registerSupportedData(dataType);
 	}
 	
 	@Override
@@ -502,7 +505,7 @@ public class Concentrator extends Actuator implements IConcentrator {
 			ackRequiredLanReportsPool.put(traceId, null);
 		}
 		
-		QoS qos = getDatumQoS(lanReport.getData().getClass());
+		QoS qos = getDataQoS(lanReport.getData().getClass());
 		if (qos == null)
 			qos = defaultDataQoS;
 		
@@ -754,10 +757,10 @@ public class Concentrator extends Actuator implements IConcentrator {
 			
 			if (nodes.size() > (MAX_LAN_SIZE - 1)) {
 				if (logger.isErrorEnabled()) {
-					logger.error("Node size overflow.");
+					logger.error("Nodes size overflow.");
 				}
 				
-				processNodeAdditionError(AddNodeError.SIZE_OVERFLOW, node);
+				processAddNodeError(AddNodeError.SIZE_OVERFLOW, node);
 				
 				return;
 			}
@@ -768,7 +771,7 @@ public class Concentrator extends Actuator implements IConcentrator {
 						logger.error("Reduplicate thing ID: {}.", node.getThingId());
 					}
 					
-					processNodeAdditionError(AddNodeError.REDUPLICATE_THING_ID, node);					
+					processAddNodeError(AddNodeError.REDUPLICATE_THING_ID, node);					
 					return;
 				}
 				
@@ -777,7 +780,7 @@ public class Concentrator extends Actuator implements IConcentrator {
 						logger.error("Reduplicate thing address: {}.", node.getAddress());
 					}
 					
-					processNodeAdditionError(AddNodeError.REDUPLICATE_THING_ADDRESS, node);
+					processAddNodeError(AddNodeError.REDUPLICATE_THING_ADDRESS, node);
 					return;
 				}
 				
@@ -786,24 +789,24 @@ public class Concentrator extends Actuator implements IConcentrator {
 						logger.error("Reduplicate thing LAN ID: {}.", node.getLanId());
 					}
 					
-					processNodeAdditionError(AddNodeError.REDUPLICATE_LAN_ID, node);
+					processAddNodeError(AddNodeError.REDUPLICATE_LAN_ID, node);
 					return;
 				}
 			}
 			
-			chatServices.getTaskService().execute(new NodeAdditionTask(node));
+			chatServices.getTaskService().execute(new AddNodeTask(node));
 			
 			if (logger.isInfoEnabled()) {
-				logger.info("Node addition request for node which's thingID is '{}' and address is '{}' has sent.",
+				logger.info("Add node request for node which's thingID is '{}' and address is '{}' has sent.",
 						thingId, address);
 			}
 		}
 	}
 	
-	private class NodeAdditionTask implements ITask<Iq> {
+	private class AddNodeTask implements ITask<Iq> {
 		private LanNode node;
 		
-		public NodeAdditionTask(LanNode node) {
+		public AddNodeTask(LanNode node) {
 			this.node = node;
 		}
 
@@ -817,13 +820,13 @@ public class Concentrator extends Actuator implements IConcentrator {
 			addNode.setAddress(node.getAddress());
 			
 			Iq iq = new Iq(Iq.Type.SET, addNode);
-			stream.send(iq, DEFAULT_NODE_ADDITION_TIMEOUT);
+			stream.send(iq, addNodeTimeout);
 			
 			synchronized (nodesLock) {
 				confirmingNodes.put(iq.getId(), node);
 			}
 		}
-
+		
 		@Override
 		public void processResponse(IUnidirectionalStream<Iq> stream, Iq iq) {
 			NodeAdded nodeAdded = iq.getObject();
@@ -834,7 +837,7 @@ public class Concentrator extends Actuator implements IConcentrator {
 					logger.error("Confirming node which's thing ID is '{}' not found.", nodeAdded.getNodeThingId());
 				}
 				
-				processNodeAdditionError(IConcentrator.AddNodeError.ADDED_NODE_NOT_FOUND, node);
+				processAddNodeError(IConcentrator.AddNodeError.ADDED_NODE_NOT_FOUND, node);
 				return;
 			}
 			
@@ -847,7 +850,7 @@ public class Concentrator extends Actuator implements IConcentrator {
 							getThingName(), confirmingNode.getThingId(), nodeAdded.getNodeThingId(), nodeAdded.getConcentratorThingName());
 				}
 				
-				processNodeAdditionError(IConcentrator.AddNodeError.BAD_NODE_ADDITION_RESPONSE, node);			
+				processAddNodeError(IConcentrator.AddNodeError.BAD_NODE_ADDITION_RESPONSE, node);			
 				return;
 			}
 			
@@ -856,7 +859,7 @@ public class Concentrator extends Actuator implements IConcentrator {
 					logger.error("Bad node addition response. The server changed LAN ID of node to {}.", nodeAdded.getLanId());
 				}
 				
-				processNodeAdditionError(IConcentrator.AddNodeError.SERVER_CHANGED_LAN_ID, node);
+				processAddNodeError(IConcentrator.AddNodeError.SERVER_CHANGED_LAN_ID, node);
 				return;
 			}
 			
@@ -888,15 +891,15 @@ public class Concentrator extends Actuator implements IConcentrator {
 				}
 				
 				if (ItemNotFound.DEFINED_CONDITION.equals(error.getDefinedCondition())) {
-					processNodeAdditionError(IConcentrator.AddNodeError.NO_SUCH_CONCENTRATOR, node);
+					processAddNodeError(IConcentrator.AddNodeError.NO_SUCH_CONCENTRATOR, node);
 				} else if (ServiceUnavailable.DEFINED_CONDITION.equals(error.getDefinedCondition())) {
-					processNodeAdditionError(IConcentrator.AddNodeError.NOT_CONCENTRATOR, node);
+					processAddNodeError(IConcentrator.AddNodeError.NOT_CONCENTRATOR, node);
 				} else if (Conflict.DEFINED_CONDITION.equals(error.getDefinedCondition())) {
-					processNodeAdditionError(IConcentrator.AddNodeError.REDUPLICATE_NODE_OR_LAN_ID, node);
+					processAddNodeError(IConcentrator.AddNodeError.REDUPLICATE_NODE_OR_LAN_ID, node);
 				} else if (NotAcceptable.DEFINED_CONDITION.equals(error.getDefinedCondition())) {
-					processNodeAdditionError(IConcentrator.AddNodeError.NOT_UNREGISTERED_THING, node);
+					processAddNodeError(IConcentrator.AddNodeError.NOT_UNREGISTERED_THING, node);
 				} else {
-					processNodeAdditionError(IConcentrator.AddNodeError.UNKNOWN_ERROR, node);
+					processAddNodeError(IConcentrator.AddNodeError.UNKNOWN_ERROR, node);
 				}
 			} finally {				
 				synchronized (nodesLock) {
@@ -915,7 +918,7 @@ public class Concentrator extends Actuator implements IConcentrator {
 			
 			nodes.remove(node.getLanId());
 			
-			processNodeAdditionError(IConcentrator.AddNodeError.REMOTE_SERVER_TIMEOUT, node);
+			processAddNodeError(IConcentrator.AddNodeError.REMOTE_SERVER_TIMEOUT, node);
 			
 			return true;
 		}
@@ -934,7 +937,7 @@ public class Concentrator extends Actuator implements IConcentrator {
 		}
 	}
 	
-	private void processNodeAdditionError(IConcentrator.AddNodeError error, LanNode node) {
+	private void processAddNodeError(IConcentrator.AddNodeError error, LanNode node) {
 		for (IConcentrator.Listener listener : listeners) {
 			listener.occurred(error, node);
 		}
@@ -1108,7 +1111,7 @@ public class Concentrator extends Actuator implements IConcentrator {
 	}
 	
 	@Override
-	public boolean isLanDatumSupported(String model, Protocol protocol) {
+	public boolean isLanDataSupported(String model, Protocol protocol) {
 		if (!lanThingModelDescriptors.containsKey(model))
 			throw new IllegalArgumentException(String.format("Unsupported model: '%s'", model));
 		
@@ -1116,12 +1119,12 @@ public class Concentrator extends Actuator implements IConcentrator {
 	}
 	
 	@Override
-	public Class<?> getLanDatumType(String model, Protocol protocol) {
+	public Class<?> getLanDataType(String model, Protocol protocol) {
 		if (!lanThingModelDescriptors.containsKey(model))
 			throw new IllegalArgumentException(String.format("Unsupported model: '%s'", model));
 		
 		if (!lanThingModelDescriptors.get(model).getSupportedData().containsKey(protocol)) {			
-			throw new IllegalArgumentException(String.format("Unsupported datum which's protocol is '%s' for thing which's model is '%s'.", protocol, model));
+			throw new IllegalArgumentException(String.format("Unsupported data which's protocol is '%s' for thing which's model is '%s'.", protocol, model));
 		}
 		
 		return lanThingModelDescriptors.get(model).getSupportedData().get(protocol);
@@ -1176,11 +1179,11 @@ public class Concentrator extends Actuator implements IConcentrator {
 	}
 	
 	@Override
-	public boolean isLanDatumSupported(String model, Class<?> datumType) {
+	public boolean isLanDataSupported(String model, Class<?> dataType) {
 		if (!lanThingModelDescriptors.containsKey(model))
 			throw new IllegalArgumentException(String.format("Unsupported model: '%s'", model));
 		
-		return lanThingModelDescriptors.get(model).getSupportedData().containsValue(datumType);
+		return lanThingModelDescriptors.get(model).getSupportedData().containsValue(dataType);
 	}
 	
 	@Override
@@ -1564,12 +1567,22 @@ public class Concentrator extends Actuator implements IConcentrator {
 	}
 
 	@Override
-	public void setDatumQoS(Class<?> datumType, QoS qos) {
-		datumTypeToQoSs.put(datumType, qos);
+	public void setDataQoS(Class<?> dataType, QoS qos) {
+		dataTypeToQoSs.put(dataType, qos);
 	}
 
 	@Override
-	public QoS getDatumQoS(Class<?> datumType) {
-		return datumTypeToQoSs.get(datumType);
+	public QoS getDataQoS(Class<?> dataType) {
+		return dataTypeToQoSs.get(dataType);
+	}
+
+	@Override
+	public void setAddNodeTimeout(long addNodeTimeout) {
+		this.addNodeTimeout = addNodeTimeout;
+	}
+
+	@Override
+	public long getAddNodeTimeout() {
+		return addNodeTimeout;
 	}
 }

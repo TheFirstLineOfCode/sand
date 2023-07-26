@@ -13,8 +13,8 @@
 	</parent>
 
 	<groupId>com.thefirstlineofcode.sand.demo</groupId>
-	<artifactId>sand-demo-bxmpp-extensions</artifactId>
-	<name>Sand demo BXMPP extensions</name>
+	<artifactId>sand-demo-iot-lan-bxmpp-extensions</artifactId>
+	<name>Sand demo IoT LAN BXMPP extensions</name>
 	
 </project>
 

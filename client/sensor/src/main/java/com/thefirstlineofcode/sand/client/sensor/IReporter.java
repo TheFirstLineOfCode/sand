@@ -8,7 +8,7 @@ public interface IReporter {
 		void reported(String id, JabberId reporter, Object data);
 	}
 	
-	void registerSupportedDatum(Class<?> datumType);
+	void registerSupportedData(Class<?> dataType);
 	
 	void setDefaultQos(QoS qos);
 	QoS getDefaultQos();

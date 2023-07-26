@@ -114,7 +114,7 @@ public class Operator implements IOperator {
 				}
 				
 				if (iq.getObject() == null) {
-					throw new RuntimeException("Null node addition object.");
+					throw new RuntimeException("Null node added object.");
 				}
 				
 				NodeAdded nodeAdded = iq.getObject();

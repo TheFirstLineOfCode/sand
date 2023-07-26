@@ -12,8 +12,8 @@ public interface IObxFactory {
 	boolean unregisterLanSupportedEvent(Class<?> lanSupportedEventType);
 	void registerLanFollowedEvent(Class<?> lanFollowedEventType);
 	boolean unregisterLanFollowedEvent(Class<?> lanFollowedEventType);
-	void registerLanDatum(Class<?> lanDatumType);
-	boolean unregisterLanDatum(Class<?> lanDatumType);
+	void registerLanData(Class<?> lanDataType);
+	boolean unregisterLanData(Class<?> lanDataType);
 	Protocol readProtocol(byte[] data);
 	byte[] toBinary(Object obj);
 	String toXml(byte[] data) throws BxmppConversionException;

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.thefirstlineofcode.basalt.oxm.coc.annotations.ProtocolObject;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 import com.thefirstlineofcode.basalt.xmpp.core.ProtocolException;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.BadRequest;
@@ -393,20 +394,21 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 	}
 
 	@Override
-	public boolean isActionSupported(String mode, Class<?> actionType) {
-		IThingModelDescriptor modelDescriptor = getModelDescriptor(mode);
+	public boolean isActionSupported(String model, Class<?> actionType) {
+		ProtocolObject protocolObject = actionType.getAnnotation(ProtocolObject.class);
+		if (protocolObject == null)
+			throw new RuntimeException("Isn't a protocol object?");
 		
-		if (!modelDescriptor.isActuator())
-			throw new RuntimeException(String.format("Thing which's model is '%s' isn't an actuator.", mode));
-		
-		return modelDescriptor.getSupportedActions().containsValue(actionType);
+		return isActionSupported(model, new Protocol(protocolObject.namespace(), protocolObject.localName()));
 	}
 
 	@Override
 	public boolean isEventSupported(String model, Class<?> eventType) {
-		IThingModelDescriptor modelDescriptor = getModelDescriptor(model);
+		ProtocolObject protocolObject = eventType.getAnnotation(ProtocolObject.class);
+		if (protocolObject == null)
+			throw new RuntimeException("Isn't a protocol object?");
 		
-		return modelDescriptor.getSupportedEvents().containsValue(eventType);
+		return isEventSupported(model, new Protocol(protocolObject.namespace(), protocolObject.localName()));
 	}
 
 	@Override
@@ -428,9 +430,11 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 
 	@Override
 	public boolean isEventFollowed(String model, Class<?> eventType) {
-		IThingModelDescriptor modelDescriptor = getModelDescriptor(model);
+		ProtocolObject protocolObject = eventType.getAnnotation(ProtocolObject.class);
+		if (protocolObject == null)
+			throw new RuntimeException("Isn't a protocol object?");
 		
-		return modelDescriptor.getFollowedEvents().containsValue(eventType);
+		return isEventFollowed(model, new Protocol(protocolObject.namespace(), protocolObject.localName()));
 	}
 
 	@Override
@@ -449,7 +453,7 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 	
 	@Override
 	public boolean isUnregisteredThing(String thingId, String registrationCode) {
-		if (registrationCustomizer != null) {			
+		if (registrationCustomizer != null) {
 			return registrationCustomizer.isUnregisteredThing(thingId, registrationCode);
 		} else {
 			if (isRegistered(thingId)) {

@@ -6,24 +6,18 @@
 	
 	<parent>
 		<groupId>com.thefirstlineofcode.sand</groupId>
-		<artifactId>com.thefirstlineofcode.sand</artifactId>
+		<artifactId>sand-client</artifactId>
 		<version>1.0.0-BETA3</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<groupId>com.thefirstlineofcode.sand</groupId>
-	<artifactId>sand-demo</artifactId>
+	<groupId>com.thefirstlineofcode.sand.client</groupId>
+	<artifactId>sand-client-pi</artifactId>
 	<packaging>pom</packaging>
-	<name>Sand IoT Demo Projects</name>
+	<name>Sand IoT client plugins for Raspberry Pi</name>
 
 	<modules>
-		<module>protocol</module>
-		<module>client</module>
-		<module>server</module>
-		<module>server-lite</module>
-		<module>server-web-fileupload</module>
-		<module>things</module>
-		<module>iot-lan-bxmpp-extensions</module>
+		<module>ashining</module>
 	</modules>
-
+	
 </project>
