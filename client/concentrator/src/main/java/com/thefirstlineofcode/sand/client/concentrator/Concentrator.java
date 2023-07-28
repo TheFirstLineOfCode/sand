@@ -305,7 +305,7 @@ public class Concentrator extends Actuator implements IConcentrator {
 		}
 		
 		try {
-			if (lanTraceable) {			
+			if (lanTraceable) {
 				LanExecution lanExecution = new LanExecution(ThingsTinyId.createRequestId(0), action);
 				traceLanExecution(iq.getFrom(), iq.getTo(), iq.getId(), node, lanExecution, lanTimeout);
 				communicator.send((PA)node.getCommunicationNet().parse(node.getAddress()), ObxFactory.getInstance().toBinary(lanExecution));

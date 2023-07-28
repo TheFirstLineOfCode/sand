@@ -112,8 +112,7 @@ public class LoraDacClient implements ILoraDacClient, ICommunicationListener<Lor
 				try {
 					Allocation allocation = (Allocation)obxFactory.toObject(data);
 					LoraAddress[] uplinkAddresses = getUplinkAddresses(allocation.getUplinkChannelBegin(),
-							allocation.getUplinkChannelEnd(), allocation.getUplinkAddressHighByte(),
-							allocation.getUplinkAddressLowByte());
+							allocation.getUplinkChannelEnd(), allocation.getUplinkAddress());
 					if (listener != null) {
 						listener.allocated(uplinkAddresses,
 								new LoraAddress(allocation.getAllocatedAddress()));
@@ -164,13 +163,13 @@ public class LoraDacClient implements ILoraDacClient, ICommunicationListener<Lor
 	}
 	
 	private LoraAddress[] getUplinkAddresses(int gatewayUplinkChannelBegin, int gatewayUplinkChannelEnd,
-			byte gatewayUplinkAddressHighByte, byte gatewayUplinkAddressLowByte) {
+			byte[] gatewayUplinkAddress) {
 		int uplinkAddressesSize = gatewayUplinkChannelEnd - gatewayUplinkChannelBegin + 1;
 		LoraAddress[] addresses = new LoraAddress[uplinkAddressesSize];
 		
 		for (int i = 0; i < uplinkAddressesSize; i++) {
-			addresses[i] = new LoraAddress(gatewayUplinkAddressHighByte,
-					gatewayUplinkAddressLowByte, (byte)(gatewayUplinkChannelBegin + i));
+			addresses[i] = new LoraAddress(gatewayUplinkAddress[0],
+					gatewayUplinkAddress[1], (byte)(gatewayUplinkChannelBegin + i));
 		}
 		
 		return addresses;

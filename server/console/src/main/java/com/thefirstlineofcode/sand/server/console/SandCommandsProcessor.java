@@ -41,8 +41,8 @@ import com.thefirstlineofcode.sand.server.concentrator.IConcentrator;
 import com.thefirstlineofcode.sand.server.concentrator.IConcentratorFactory;
 import com.thefirstlineofcode.sand.server.concentrator.NodeConfirmationDelegator;
 import com.thefirstlineofcode.sand.server.concentrator.NodeConfirmed;
+import com.thefirstlineofcode.sand.server.concentrator.NodeConfirmedEvent;
 import com.thefirstlineofcode.sand.server.ibtr.ThingAuthorizationDelegator;
-import com.thefirstlineofcode.sand.server.notification.IEventListener;
 import com.thefirstlineofcode.sand.server.notification.INotificationDispatcher;
 import com.thefirstlineofcode.sand.server.things.IThingManager;
 
@@ -66,8 +66,11 @@ public class SandCommandsProcessor extends AbstractCommandsProcessor implements 
 	@Dependency("thing.authorization.delegator")
 	private ThingAuthorizationDelegator thingAuthorizationDelegator;
 	
-	@Dependency("node.addition.delegator")
-	private NodeConfirmationDelegator nodeAdditionDelegator;
+	@Dependency("node.confirmation.delegator")
+	private NodeConfirmationDelegator nodeConfirmationDelegator;
+	
+	@Dependency("node.confirmed.listener")
+	private NodeConfirmedListener nodeConfirmedListener;
 	
 	@BeanDependency
 	private IAccountManager accountManager;
@@ -521,7 +524,10 @@ public class SandCommandsProcessor extends AbstractCommandsProcessor implements 
 			return;
 		}
 		
-		NodeConfirmed nodeConfirmed = nodeAdditionDelegator.confirm(concentratorThingId, nodeThingId);
+		nodeConfirmedListener.addConfirmedConcentration(new ConfirmedConcentration(concentratorThingId, nodeThingId));
+		
+		NodeConfirmed nodeConfirmed = nodeConfirmationDelegator.confirm(concentratorThingId, nodeThingId);
+		eventFirer.fire(new NodeConfirmedEvent(nodeConfirmed));
 		consoleSystem.printMessageLine(String.format("Concentrator thing which's ID is '%s' has been confirmed to add thing which's ID is '%s' as it's node in server console.",
 				nodeConfirmed.getNodeAdded().getConcentratorThingName(), nodeConfirmed.getNodeAdded().getNodeThingId()));
 	}
@@ -609,7 +615,7 @@ public class SandCommandsProcessor extends AbstractCommandsProcessor implements 
 		notificationDispatcher.addEventListener(Reconfigure.class, new ReconfigureListener(consoleSystem));
 	}
 	
-	private class LanDeliveryIsDisabledListener implements IEventListener<LanDeliveryIsDisabled> {		
+	private class LanDeliveryIsDisabledListener implements com.thefirstlineofcode.sand.server.notification.IEventListener<LanDeliveryIsDisabled> {		
 		private IConsoleSystem consoleSystem;
 		
 		public LanDeliveryIsDisabledListener(IConsoleSystem consoleSystem) {
@@ -624,7 +630,7 @@ public class SandCommandsProcessor extends AbstractCommandsProcessor implements 
 		
 	}
 	
-	private class ReconfigureListener implements IEventListener<Reconfigure> {		
+	private class ReconfigureListener implements com.thefirstlineofcode.sand.server.notification.IEventListener<Reconfigure> {		
 		private IConsoleSystem consoleSystem;
 		
 		public ReconfigureListener(IConsoleSystem consoleSystem) {
@@ -637,5 +643,5 @@ public class SandCommandsProcessor extends AbstractCommandsProcessor implements 
 					event.getThingId()));
 		}
 		
-	}
+	}	
 }

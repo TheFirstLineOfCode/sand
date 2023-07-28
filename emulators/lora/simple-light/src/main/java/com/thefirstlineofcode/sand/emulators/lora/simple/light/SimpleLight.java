@@ -17,6 +17,8 @@ import com.thefirstlineofcode.sand.protocols.thing.tacp.ThingsTinyId;
 import com.thefirstlineofcode.sand.protocols.things.simple.light.Flash;
 import com.thefirstlineofcode.sand.protocols.things.simple.light.SwitchState;
 import com.thefirstlineofcode.sand.protocols.things.simple.light.SwitchStateChanged;
+import com.thefirstlineofcode.sand.protocols.things.simple.light.TurnOff;
+import com.thefirstlineofcode.sand.protocols.things.simple.light.TurnOn;
 
 public class SimpleLight extends AbstractLoraThingEmulator implements ISimpleLightEmulator {
 	private static final SwitchState DEFAULT_SWITCH_STATE = SwitchState.OFF;
@@ -124,12 +126,28 @@ public class SimpleLight extends AbstractLoraThingEmulator implements ISimpleLig
 	@Override
 	protected void processAction(Object action) throws ExecutionException {
 		if (action instanceof Flash) {
-			if (switchState != SwitchState.CONTROL)
-				throw new ExecutionException(ISimpleLight.ERROR_CODE_NOT_REMOTE_CONTROL_STATE);
-			
-			flash(((Flash)action).getRepeat());
+			processSimpleLightAction(action);
+		} else if (action instanceof TurnOn) {
+			processSimpleLightAction(action);
+		} else if (action instanceof TurnOff) {
+			processSimpleLightAction(action);
 		} else {
 			super.processAction(action);
+		}
+	}
+
+	private void processSimpleLightAction(Object action) throws ExecutionException {
+		if (switchState != SwitchState.CONTROL)
+			throw new ExecutionException(ISimpleLight.ERROR_CODE_NOT_REMOTE_CONTROL_STATE);
+		
+		if (action instanceof Flash) {
+			flash(((Flash)action).getRepeat());
+		} else if (action instanceof TurnOn) {
+			turnOn();
+		} else if (action instanceof TurnOff) {
+			turnOff();
+		} else {
+			throw new RuntimeException(String.format("Not a simple light action. Action type: %s.", action.getClass().getName()));
 		}
 	}
 	

@@ -35,11 +35,15 @@
 		</dependency>
 		<dependency>
 			<groupId>com.thefirstlineofcode.sand.server</groupId>
+			<artifactId>sand-server-notification</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.thefirstlineofcode.sand.server</groupId>
 			<artifactId>sand-server-actuator</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.thefirstlineofcode.sand.server</groupId>
-			<artifactId>sand-server-notification</artifactId>
+			<artifactId>sand-server-concentrator</artifactId>
 		</dependency>
 	</dependencies>
 	

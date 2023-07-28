@@ -250,8 +250,9 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 	
 	protected LoraCommunicator createGatewayCommunicator() {
 		ILoraChip chip = null;
-		chip = network.createChip(new LoraAddress(new byte[] {ILoraGateway.DEFAULT_UPLINK_ADDRESS_HIGH_BYTE,
-				ILoraGateway.DEFAULT_UPLINK_ADDRESS_LOW_BYTE,
+		chip = network.createChip(new LoraAddress(new byte[] {
+				ILoraGateway.DEFAULT_UPLINK_ADDRESS[0],
+				ILoraGateway.DEFAULT_UPLINK_ADDRESS[1],
 				ILoraGateway.DEFAULT_THING_COMMUNICATION_CHANNEL}));
 		
 		return new LoraCommunicator(chip);

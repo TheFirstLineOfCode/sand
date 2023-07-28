@@ -16,9 +16,9 @@ import com.thefirstlineofcode.granite.framework.core.pipeline.stages.processing.
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.processing.IXepProcessor;
 import com.thefirstlineofcode.sand.protocols.operator.ConfirmConcentration;
 import com.thefirstlineofcode.sand.server.concentrator.IConcentrator;
-import com.thefirstlineofcode.sand.server.concentrator.NodeAddedEvent;
 import com.thefirstlineofcode.sand.server.concentrator.NodeConfirmationDelegator;
 import com.thefirstlineofcode.sand.server.concentrator.NodeConfirmed;
+import com.thefirstlineofcode.sand.server.concentrator.NodeConfirmedEvent;
 
 public class ConcentrationConfirmationProcessor implements IXepProcessor<Iq, ConfirmConcentration>,
 		IEventFirerAware, IServerConfigurationAware {
@@ -50,7 +50,7 @@ public class ConcentrationConfirmationProcessor implements IXepProcessor<Iq, Con
 		resultToOperator.setObject(nodeConfirmed.getNodeAdded());
 		context.write(context.getJid(), resultToOperator);
 		
-		eventFirer.fire(new NodeAddedEvent(nodeConfirmed.getNodeAdded()));
+		eventFirer.fire(new NodeConfirmedEvent(nodeConfirmed));
 	}
 
 	private JabberId getConcentratorJid(String concentratorThingName) {

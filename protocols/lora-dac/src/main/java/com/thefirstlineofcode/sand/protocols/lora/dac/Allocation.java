@@ -9,18 +9,16 @@ public class Allocation {
 	
 	private int uplinkChannelBegin;
 	private int uplinkChannelEnd;
-	private byte uplinkAddressHighByte;
-	private byte uplinkAddressLowByte;
+	private byte[] uplinkAddress;
 	private byte[] allocatedAddress;
 	
 	public Allocation() {}
 	
 	public Allocation(int uplinkChannelBegin, int uplinkChannelEnd,
-			byte uplinkAddressHighByte, byte uplinkAddressLowByte, byte[] allocatedAddress) {
+			byte[] uplinkAddress, byte[] allocatedAddress) {
 		this.uplinkChannelBegin = uplinkChannelBegin;
 		this.uplinkChannelEnd = uplinkChannelEnd;
-		this.uplinkAddressHighByte = uplinkAddressHighByte;
-		this.uplinkAddressLowByte = uplinkAddressLowByte;
+		this.uplinkAddress = uplinkAddress;
 		this.allocatedAddress = allocatedAddress;
 	}
 	
@@ -40,20 +38,12 @@ public class Allocation {
 		this.uplinkChannelEnd = uplinkChannelEnd;
 	}
 	
-	public byte getUplinkAddressHighByte() {
-		return uplinkAddressHighByte;
+	public byte[] getUplinkAddress() {
+		return uplinkAddress;
 	}
 	
-	public void setUplinkAddressHighByte(byte uplinkAddressHighByte) {
-		this.uplinkAddressHighByte = uplinkAddressHighByte;
-	}
-	
-	public byte getUplinkAddressLowByte() {
-		return uplinkAddressLowByte;
-	}
-	
-	public void setUplinkAddressLowByte(byte uplinkAddressHighByte) {
-		this.uplinkAddressLowByte = uplinkAddressHighByte;
+	public void setUplinkAddress(byte[] uplinkAddress) {
+		this.uplinkAddress = uplinkAddress;
 	}
 	
 	public byte[] getAllocatedAddress() {

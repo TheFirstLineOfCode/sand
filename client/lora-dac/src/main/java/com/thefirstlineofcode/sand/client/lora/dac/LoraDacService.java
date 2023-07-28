@@ -58,8 +58,7 @@ public class LoraDacService implements ILoraDacService, ICommunicationListener<L
 	
 	private int uplinkChannelBegin;
 	private int uplinkChannelEnd;
-	private byte uplinkAddressHighByte;
-	private byte uplinkAddressLowByte;
+	private byte[] uplinkAddress;
 	
 	private LoraAddress dacServiceAddress;
 	private byte thingCommunicationChannel;
@@ -302,8 +301,7 @@ public class LoraDacService implements ILoraDacService, ICommunicationListener<L
 		Allocation allocation = new Allocation();
 		allocation.setUplinkChannelBegin(uplinkChannelBegin);
 		allocation.setUplinkChannelEnd(uplinkChannelEnd);
-		allocation.setUplinkAddressHighByte(uplinkAddressHighByte);
-		allocation.setUplinkAddressLowByte(uplinkAddressLowByte);
+		allocation.setUplinkAddress(uplinkAddress);
 		
 		int nodeLanId = concentrator.getBestSuitedNewLanId();
 		nodeAllocatedAddress = new LoraAddress(new byte[] {0x0, Byte.parseByte(String.valueOf(nodeLanId)), thingCommunicationChannel});
@@ -543,13 +541,12 @@ public class LoraDacService implements ILoraDacService, ICommunicationListener<L
 		if (uplinkAddress == null || uplinkAddress.length != 2)
 			throw new IllegalArgumentException("Null or illegal uplink address.");
 		
-		this.uplinkAddressHighByte = uplinkAddress[0];
-		this.uplinkAddressLowByte = uplinkAddress[1];
+		this.uplinkAddress = uplinkAddress;
 	}
 
 	@Override
 	public byte[] getUplinkAddress() {
-		return new byte[] {uplinkAddressHighByte, uplinkAddressLowByte};
+		return uplinkAddress;
 	}
 
 	@Override

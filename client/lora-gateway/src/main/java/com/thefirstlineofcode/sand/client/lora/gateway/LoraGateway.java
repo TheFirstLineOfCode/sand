@@ -108,10 +108,15 @@ public class LoraGateway implements ILoraGateway, ILoraDacService.Listener {
 		if (dacService == null) {
 			INotificationService notificationService = chatServices.createApi(INotificationService.class);
 			INotifier notifier = notificationService.getNotifier();
-			dacService = new LoraDacService(downlinkCommunicator, 0, uplinkCommunicators.size() - 1,
-					new byte[] {DEFAULT_UPLINK_ADDRESS_HIGH_BYTE, DEFAULT_UPLINK_ADDRESS_LOW_BYTE},
-						getConcentrator(), notifier);
-			dacService.setThingCommunicationChannel(thingCommunicationChannel);
+			
+			if (uplinkCommunicators.size() == 1 && downlinkCommunicator == uplinkCommunicators.get(0)) {
+				dacService = new LoraDacService(downlinkCommunicator, thingCommunicationChannel, thingCommunicationChannel,
+						DEFAULT_UPLINK_ADDRESS, getConcentrator(), notifier);
+			} else {
+				dacService = new LoraDacService(downlinkCommunicator, 0, uplinkCommunicators.size() - 1,
+						DEFAULT_UPLINK_ADDRESS, getConcentrator(), notifier);
+				dacService.setThingCommunicationChannel(thingCommunicationChannel);
+			}
 		}
 		
 		return dacService;
@@ -140,17 +145,16 @@ public class LoraGateway implements ILoraGateway, ILoraDacService.Listener {
 		
 		try {
 			if (uplinkCommunicators.size() == 1 && downlinkCommunicator.equals(uplinkCommunicators.get(0))) {
-				downlinkCommunicator.changeAddress(new LoraAddress(
-						new byte[] {DEFAULT_UPLINK_ADDRESS_HIGH_BYTE, DEFAULT_UPLINK_ADDRESS_LOW_BYTE, 0x00}), false);
+				downlinkCommunicator.changeAddress(new LoraAddress(new byte[] {DEFAULT_DOWNLINK_ADDRESS[0],
+						DEFAULT_DOWNLINK_ADDRESS[1], thingCommunicationChannel}), false);
 			} else {
 				downlinkCommunicator.changeAddress(new LoraAddress(
-						new byte[] {DEFAULT_UPLINK_ADDRESS_HIGH_BYTE,
-								DEFAULT_UPLINK_ADDRESS_LOW_BYTE, thingCommunicationChannel}), false);
+						new byte[] {DEFAULT_DOWNLINK_ADDRESS[0], DEFAULT_DOWNLINK_ADDRESS[1],
+								thingCommunicationChannel}), false);
 				
 				for (int i = 0; i < uplinkCommunicators.size(); i++) {
 					uplinkCommunicators.get(i).changeAddress(new LoraAddress(
-							new byte[] {DEFAULT_UPLINK_ADDRESS_HIGH_BYTE,
-									DEFAULT_UPLINK_ADDRESS_LOW_BYTE, (byte)i}), false);
+							new byte[] {DEFAULT_UPLINK_ADDRESS[0], DEFAULT_UPLINK_ADDRESS[1], (byte)i}), false);
 				}
 			}
 		} catch (CommunicationException e) {
@@ -230,8 +234,7 @@ public class LoraGateway implements ILoraGateway, ILoraDacService.Listener {
 		LoraAddress[] addresses = new LoraAddress[uplinkCommunicators.size()];
 		
 		for (int i = 0; i < uplinkCommunicators.size(); i++) {
-			addresses[i] = new LoraAddress(DEFAULT_UPLINK_ADDRESS_HIGH_BYTE,
-					DEFAULT_UPLINK_ADDRESS_LOW_BYTE, (byte)i);
+			addresses[i] = new LoraAddress(DEFAULT_DOWNLINK_ADDRESS[0], DEFAULT_DOWNLINK_ADDRESS[0], (byte)i);
 		}
 		
 		return addresses;

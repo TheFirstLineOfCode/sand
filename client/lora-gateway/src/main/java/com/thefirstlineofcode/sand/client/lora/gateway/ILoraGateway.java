@@ -9,8 +9,8 @@ import com.thefirstlineofcode.sand.protocols.lora.gateway.WorkingMode;
 import com.thefirstlineofcode.sand.protocols.thing.lora.LoraAddress;
 
 public interface ILoraGateway {
-	public static final byte DEFAULT_UPLINK_ADDRESS_HIGH_BYTE = 0x00;
-	public static final byte DEFAULT_UPLINK_ADDRESS_LOW_BYTE = 0x00;
+	public static final byte[] DEFAULT_DOWNLINK_ADDRESS = new byte[] {0x00, 0x00};
+	public static final byte[] DEFAULT_UPLINK_ADDRESS = new byte[] {0x00, 0x00};
 	public static final byte DEFAULT_THING_COMMUNICATION_CHANNEL = 0x17;
 	
 	public enum Mode {

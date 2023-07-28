@@ -11,7 +11,6 @@ import com.thefirstlineofcode.granite.framework.core.pipeline.stages.IPipelineEx
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.PipelineExtendersConfigurator;
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.parsing.ProtocolParserFactory;
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.routing.ProtocolTranslatorFactory;
-import com.thefirstlineofcode.granite.framework.core.repository.IInitializable;
 import com.thefirstlineofcode.sand.protocols.actuator.Execution;
 import com.thefirstlineofcode.sand.protocols.actuator.oxm.ExecutionParserFactory;
 import com.thefirstlineofcode.sand.protocols.actuator.oxm.ExecutionTranslatorFactory;
@@ -19,12 +18,10 @@ import com.thefirstlineofcode.sand.protocols.thing.IThingModelDescriptor;
 import com.thefirstlineofcode.sand.server.things.IThingManager;
 
 @Extension
-public class PipelineExtendersContributor extends PipelineExtendersConfigurator implements IInitializable {
+public class PipelineExtendersContributor extends PipelineExtendersConfigurator {
 	@BeanDependency
 	private IThingManager thingManager;
-	
-	private IPipelineExtendersConfigurator configurator;
-	
+		
 	@Override
 	protected void configure(IPipelineExtendersConfigurator configurator) {
 		ExecutionListener executionListener = new ExecutionListener();
@@ -41,11 +38,6 @@ public class PipelineExtendersContributor extends PipelineExtendersConfigurator 
 			registerIqResultProcessor(
 					executionListener);
 		
-		this.configurator = configurator;
-	}
-
-	@Override
-	public void init() {
 		for (String model : thingManager.getModels()) {
 			IThingModelDescriptor modelDescriptor = thingManager.getModelDescriptor(model);
 			if (modelDescriptor.isActuator()) {
