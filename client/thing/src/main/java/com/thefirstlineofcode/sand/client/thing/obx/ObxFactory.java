@@ -61,7 +61,7 @@ public class ObxFactory implements IObxFactory {
 		registeredLanDataTypes = new ArrayList<>();
 		
 		String[] sandConfigFiles = loadBxmppExtensionConfigurations("META-INF/sand-bxmpp-extensions.txt");
-		String[] appConfigFiles = loadBxmppExtensionConfigurations("META-INF/IoT-LAN-bxmpp-extensions.txt");
+		String[] appConfigFiles = loadBxmppExtensionConfigurations("META-INF/iot-lan-bxmpp-extensions.txt");
 		
 		List<String> allConfigFiles = new ArrayList<>();
 		allConfigFiles.addAll(Arrays.asList(sandConfigFiles));
