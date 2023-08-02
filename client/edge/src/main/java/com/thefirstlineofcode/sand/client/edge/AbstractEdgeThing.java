@@ -882,7 +882,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 	
 	protected Path getAttributesFilePath() {
 		String userHome = System.getProperty("user.home");
-		Path attributesFilePath = Paths.get(userHome, SAND_EDGE_CONFIG_DIR + "/" + model + "-" + "attribute.properties");
+		Path attributesFilePath = Paths.get(userHome, SAND_EDGE_CONFIG_DIR + "/" + model + "-" + "attributes.properties");
 		
 		return attributesFilePath;
 	}
