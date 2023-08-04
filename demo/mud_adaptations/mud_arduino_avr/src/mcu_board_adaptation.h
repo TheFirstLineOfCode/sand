@@ -25,5 +25,6 @@
 void configureMcuBoard(const char *modelName);
 void printToSerialPort(char title[], uint8_t message[], int size);
 void resetAll();
+char *generateThingIdUsingUniqueIdLibrary();
 
 #endif

@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -19,22 +18,17 @@ import org.slf4j.LoggerFactory;
 import com.thefirstlinelinecode.sand.protocols.concentrator.ResetNode;
 import com.thefirstlinelinecode.sand.protocols.concentrator.SyncNodes;
 import com.thefirstlinelinecode.sand.protocols.concentrator.friends.PullLanFollows;
-import com.thefirstlineofcode.basalt.xmpp.core.IError;
 import com.thefirstlineofcode.basalt.xmpp.core.JabberId;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 import com.thefirstlineofcode.basalt.xmpp.core.ProtocolException;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.Iq;
-import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.BadRequest;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.StanzaError;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.UndefinedCondition;
-import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.UnexpectedRequest;
 import com.thefirstlineofcode.chalk.core.stream.StandardStreamConfig;
 import com.thefirstlineofcode.sand.client.actuator.IActuator;
 import com.thefirstlineofcode.sand.client.actuator.IExecutor;
 import com.thefirstlineofcode.sand.client.actuator.IExecutorFactory;
-import com.thefirstlineofcode.sand.client.concentrator.ErrorCodeToXmppErrorsConverter;
 import com.thefirstlineofcode.sand.client.concentrator.IConcentrator;
-import com.thefirstlineofcode.sand.client.concentrator.ILanExecutionErrorConverter;
 import com.thefirstlineofcode.sand.client.concentrator.PullLanFollowsExecutor;
 import com.thefirstlineofcode.sand.client.concentrator.ResetNodeExecutor;
 import com.thefirstlineofcode.sand.client.concentrator.SyncNodesExecutor;
@@ -55,7 +49,6 @@ import com.thefirstlineofcode.sand.client.thing.ThingsUtils;
 import com.thefirstlineofcode.sand.client.thing.commuication.ICommunicator;
 import com.thefirstlineofcode.sand.client.things.simple.camera.ISimpleCamera;
 import com.thefirstlineofcode.sand.client.things.simple.camera.SimpleCameraPlugin;
-import com.thefirstlineofcode.sand.client.things.simple.light.ISimpleLight;
 import com.thefirstlineofcode.sand.client.webcam.IWebcam.Capability;
 import com.thefirstlineofcode.sand.client.webcam.Webcam;
 import com.thefirstlineofcode.sand.client.webcam.WebcamPlugin;
@@ -247,25 +240,10 @@ public class LoraGatewayAndCamera extends AbstractEdgeThing implements ISimpleCa
 			loraGateway.setUplinkCommunicators(Collections.singletonList(communicator));
 			
 			loraGateway.getConcentrator().registerLanThingModel(new Sl02ModelDescriptor());
-			loraGateway.getConcentrator().registerLanExecutionErrorConverter(getSl02ModelLanExecutionErrorConverter());
 			loraGateway.getConcentrator().registerLanThingModel(new Str01ModelDescriptor());
 		}
 		
 		loraGateway.start();
-	}
-	
-	private ILanExecutionErrorConverter getSl02ModelLanExecutionErrorConverter() {
-		return new ErrorCodeToXmppErrorsConverter(Sl02ModelDescriptor.MODEL_NAME, getSl02ModelErrorCodeToErrorTypes());
-	}
-	
-	private Map<Integer, Class<? extends IError>> getSl02ModelErrorCodeToErrorTypes() {
-		Map<Integer, Class<? extends IError>> errorCodeToXmppErrors = new HashMap<>();
-		errorCodeToXmppErrors.put(ISimpleLight.ERROR_CODE_NOT_REMOTE_CONTROL_STATE,
-				UnexpectedRequest.class);
-		errorCodeToXmppErrors.put(ISimpleLight.ERROR_CODE_INVALID_REPEAT_ATTRIBUTE_VALUE,
-				BadRequest.class);
-		
-		return errorCodeToXmppErrors;
 	}
 	
 	private void registerExecutors(IActuator actuator) {

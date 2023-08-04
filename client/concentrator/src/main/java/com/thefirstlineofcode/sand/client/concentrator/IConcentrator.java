@@ -49,7 +49,6 @@ public interface IConcentrator extends IActuator, IFollowService {
 	void pullLanFollows(PullLanFollowsListener pullLanFollowsListener);
 	String getThingName();
 	void registerLanThingModel(IThingModelDescriptor modelDescriptor);
-	void registerLanExecutionErrorConverter(ILanExecutionErrorConverter lanActionErrorConverter);
 	void setDefaultLanExecutionTimeout(long timeout);
 	long getDefaultLanExecutionTimeout();
 	void setLanExecutionTimeoutCheckInterval(int interval);

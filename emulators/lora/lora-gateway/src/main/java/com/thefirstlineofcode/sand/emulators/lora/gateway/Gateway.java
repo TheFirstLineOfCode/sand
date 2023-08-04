@@ -56,13 +56,10 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.thefirstlinelinecode.sand.protocols.concentrator.SyncNodes;
-import com.thefirstlineofcode.basalt.xmpp.core.IError;
 import com.thefirstlineofcode.basalt.xmpp.core.JabberId;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 import com.thefirstlineofcode.basalt.xmpp.core.ProtocolException;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.Iq;
-import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.BadRequest;
-import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.UnexpectedRequest;
 import com.thefirstlineofcode.chalk.core.AuthFailureException;
 import com.thefirstlineofcode.chalk.core.IChatClient;
 import com.thefirstlineofcode.chalk.core.StandardChatClient;
@@ -73,10 +70,8 @@ import com.thefirstlineofcode.chalk.network.IConnectionListener;
 import com.thefirstlineofcode.sand.client.actuator.IActuator;
 import com.thefirstlineofcode.sand.client.actuator.IExecutor;
 import com.thefirstlineofcode.sand.client.actuator.IExecutorFactory;
-import com.thefirstlineofcode.sand.client.concentrator.ErrorCodeToXmppErrorsConverter;
 import com.thefirstlineofcode.sand.client.concentrator.IConcentrator;
 import com.thefirstlineofcode.sand.client.concentrator.IConcentrator.AddNodeError;
-import com.thefirstlineofcode.sand.client.concentrator.ILanExecutionErrorConverter;
 import com.thefirstlineofcode.sand.client.concentrator.LanNode;
 import com.thefirstlineofcode.sand.client.concentrator.SyncNodesExecutor;
 import com.thefirstlineofcode.sand.client.friends.FriendsPlugin;
@@ -93,7 +88,6 @@ import com.thefirstlineofcode.sand.client.thing.AbstractThing;
 import com.thefirstlineofcode.sand.client.thing.IBatteryPowerListener;
 import com.thefirstlineofcode.sand.client.thing.ThingsUtils;
 import com.thefirstlineofcode.sand.client.thing.commuication.ICommunicator;
-import com.thefirstlineofcode.sand.client.things.simple.light.ISimpleLight;
 import com.thefirstlineofcode.sand.emulators.commons.Constants;
 import com.thefirstlineofcode.sand.emulators.commons.IThingEmulator;
 import com.thefirstlineofcode.sand.emulators.commons.IThingEmulatorFactory;
@@ -538,7 +532,6 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 		
 		IConcentrator concentrator = loraGateway.getConcentrator();
 		concentrator.registerLanThingModel(new Sle01ModelDescriptor());
-		concentrator.registerLanExecutionErrorConverter(getSle01ModelLanExecutionErrorConverter());
 		concentrator.addListener(this);
 		
 		loraGateway.getDacService().addListener(this);
@@ -656,20 +649,6 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 			return null;
 		}
 		
-	}
-	
-	public ILanExecutionErrorConverter getSle01ModelLanExecutionErrorConverter() {
-		return new ErrorCodeToXmppErrorsConverter(Sle01ModelDescriptor.MODEL_NAME, getSle01ModelErrorCodeToErrorTypes());
-	}
-
-	private Map<Integer, Class<? extends IError>> getSle01ModelErrorCodeToErrorTypes() {
-		Map<Integer, Class<? extends IError>> errorCodeToXmppErrors = new HashMap<>();
-		errorCodeToXmppErrors.put(ISimpleLight.ERROR_CODE_NOT_REMOTE_CONTROL_STATE,
-				UnexpectedRequest.class);
-		errorCodeToXmppErrors.put(ISimpleLight.ERROR_CODE_INVALID_REPEAT_ATTRIBUTE_VALUE,
-				BadRequest.class);
-		
-		return errorCodeToXmppErrors;
 	}
 	
 	private void registerPlugins(IChatClient chatClient) {

@@ -109,9 +109,9 @@ DacState getDacStateByByte(uint8_t iDacState) {
     return NONE;
 }
 
-char *generateThingIdImpl() {
+char *generateThingIdUsingUniqueIdLibrary() {
   int modelNameLength = strlen(modelName);
-  char *thingId = malloc(sizeof(char) * (modelNameLength + 8 + 1));
+  char *thingId = malloc(sizeof(char) * (modelNameLength + 1 + 8 + 1));
   sprintf(thingId, "%s-%x%x%x%x%x%x%x%x", modelName,
       UniqueID8[0] / 16, UniqueID8[1] / 16, UniqueID8[2] / 16, UniqueID8[3] / 16,
       UniqueID8[4] / 16, UniqueID8[5] / 16, UniqueID8[6] / 16, UniqueID8[7] / 16);
@@ -186,7 +186,10 @@ void loadThingInfoImpl(ThingInfo *thingInfo) {
       readAddressFromEepRom(thingInfo->address, position);
     }
   }
-
+  
+  #ifdef ENABLE_DEBUG
+    Serial.println(F("ThingInfo loaded."));
+  #endif
   debugOutThingInfo(thingInfo);
 }
 
@@ -229,6 +232,10 @@ void saveThingInfoImpl(ThingInfo *thingInfo) {
 	
     position = writeAddressToEepRom(thingInfo->address, position);
   }
+  
+  #ifdef ENABLE_DEBUG
+    Serial.println(F("ThingInfo saved."));
+  #endif
 
   debugOutThingInfo(thingInfo);
 }
@@ -249,7 +256,6 @@ void configureMcuBoard(const char *_modelName) {
 #endif
   
   registerThingInfoLoader(loadThingInfoImpl);
-  registerThingIdGenerator(generateThingIdImpl);
   registerThingInfoSaver(saveThingInfoImpl);
   registerResetter(resetImpl);
   registerTimer(getTimeImpl);

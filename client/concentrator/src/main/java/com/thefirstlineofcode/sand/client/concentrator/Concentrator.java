@@ -27,7 +27,6 @@ import com.thefirstlineofcode.basalt.oxm.coc.annotations.ProtocolObject;
 import com.thefirstlineofcode.basalt.xmpp.core.IError;
 import com.thefirstlineofcode.basalt.xmpp.core.IqProtocolChain;
 import com.thefirstlineofcode.basalt.xmpp.core.JabberId;
-import com.thefirstlineofcode.basalt.xmpp.core.LangText;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 import com.thefirstlineofcode.basalt.xmpp.core.ProtocolException;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.Iq;
@@ -42,7 +41,6 @@ import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.ServiceUnavailable;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.StanzaError;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.UndefinedCondition;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.UnexpectedRequest;
-import com.thefirstlineofcode.basalt.xmpp.core.stream.error.StreamError;
 import com.thefirstlineofcode.chalk.core.IChatServices;
 import com.thefirstlineofcode.chalk.core.ITask;
 import com.thefirstlineofcode.chalk.core.IUnidirectionalStream;
@@ -92,7 +90,6 @@ public class Concentrator extends Actuator implements IConcentrator {
 	protected Map<CommunicationNet, ICommunicator<?, ? extends IAddress, byte[]>> communicators;
 	protected Map<CommunicationNet, LanCommunicationListener<?, ?>> netToLanCommunicationListeners;
 	protected Map<Integer, List<LanExecutionTraceInfo>> lanNodeToLanExecutionTraceInfos;
-	protected Map<String, ILanExecutionErrorConverter> modelToLanExecutionErrorConverters;
 	protected long defaultLanExecutionTimeout;
 	protected int lanExecutionTimeoutCheckInterval;
 	protected ExpiredLanExecutionsChecker expiredLanExecutionsChecker;
@@ -130,6 +127,8 @@ public class Concentrator extends Actuator implements IConcentrator {
 	protected QoS defaultDataQoS;
 	protected Map<Class<?>, QoS> dataTypeToQoSs;
 	
+	private StandardErrorCodeMapping standardErrorCodeMapping;
+	
 	public Concentrator(IChatServices chatServices)  {
 		super(chatServices);
 		
@@ -138,7 +137,6 @@ public class Concentrator extends Actuator implements IConcentrator {
 		communicators = new HashMap<>();
 		netToLanCommunicationListeners = new HashMap<>();
 		lanNodeToLanExecutionTraceInfos = new HashMap<>();
-		modelToLanExecutionErrorConverters = new HashMap<>();
 		defaultLanExecutionTimeout = DEFAULT_VALUE_OF_DEFAULT_LAN_EXECUTION_TIMEOUT;
 		lanExecutionTimeoutCheckInterval = DEFAULT_LAN_EXECUTION_TIMEOUT_CHECK_INTERVAL;
 		
@@ -170,6 +168,8 @@ public class Concentrator extends Actuator implements IConcentrator {
 		
 		IReportService reportService = chatServices.createApi(IReportService.class);
 		reporter = reportService.getReporter();
+		
+		standardErrorCodeMapping = new StandardErrorCodeMapping();
 	}
 	
 	private class AckRequiredLanNotificationsLruPool<K, V> extends LinkedHashMap<K, V> {
@@ -274,14 +274,6 @@ public class Concentrator extends Actuator implements IConcentrator {
 		ObxFactory.getInstance().registerLanData(dataType);
 		
 		reporter.registerSupportedData(dataType);
-	}
-	
-	@Override
-	public void registerLanExecutionErrorConverter(ILanExecutionErrorConverter lanExecutionErrorConverter) {
-		modelToLanExecutionErrorConverters.put(lanExecutionErrorConverter.getModel(), lanExecutionErrorConverter);
-		
-		if (logger.isInfoEnabled())
-			logger.info("Execution error converter for model '{}' has registered.", lanExecutionErrorConverter.getModel());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -609,37 +601,11 @@ public class Concentrator extends Actuator implements IConcentrator {
 		if (error.getErrorNumber() == null)
 			throw new RuntimeException("Null error number.");
 		
-		if (Math.abs(error.getErrorNumber()) > 99) {
-			logger.error("Error number must be in range of -99~99. Mode of answer node: {}.", traceInfo.node.getModel());
-			throw new RuntimeException(String.format("Error number must be in range of -99~99. Mode of answer node: {}.", traceInfo.node.getModel()));
-		}
+		StanzaError e = errorCodeToError(traceInfo.node.getModel(), error.getErrorNumber());
+		e.setId(traceInfo.sanzaId);
+		setFromToAddresses(traceInfo.from, traceInfo.to, e);
 		
-		Integer errorNumber = error.getErrorNumber();
-		ILanExecutionErrorConverter lanExecutionErrorConverter = modelToLanExecutionErrorConverters.get(traceInfo.node.getModel());
-		if (lanExecutionErrorConverter != null) {
-			IError e = lanExecutionErrorConverter.convertErrorNumberToError(errorNumber);
-			
-			if (e instanceof StreamError) {
-				chatServices.getStream().send(e);
-				if (e.closeStream())
-					chatServices.getStream().close();
-			} else {
-				StanzaError se = (StanzaError)e;
-				
-				se.setId(traceInfo.sanzaId);
-				setFromToAddresses(traceInfo.from, traceInfo.to, se);
-				
-				chatServices.getStream().send(e);
-			}
-		} else {
-			StanzaError e = new UndefinedCondition(StanzaError.Type.CANCEL);
-			e.setId(traceInfo.sanzaId);
-			setFromToAddresses(traceInfo.from, traceInfo.to, e);
-			e.setText(new LangText(ThingsUtils.getExecutionErrorDescription(traceInfo.node.getModel(), errorNumber)));
-			
-			chatServices.getStream().send((IError)e);
-		}
-		
+		chatServices.getStream().send((IError)e);
 	}
 
 	protected void processLanExecutionResponse(JabberId from, JabberId to, String stanzaId) {
@@ -1584,5 +1550,14 @@ public class Concentrator extends Actuator implements IConcentrator {
 	@Override
 	public long getAddNodeTimeout() {
 		return addNodeTimeout;
+	}
+	
+	protected StanzaError errorCodeToError(String modelName, int errorCode) {
+		StanzaError error = standardErrorCodeMapping.codeToError(errorCode);
+		if (error != null)
+			return error;
+		
+		String errorDescription = ThingsUtils.getExecutionErrorDescription(modelName, errorCode);	
+		return new UndefinedCondition(StanzaError.Type.CANCEL, errorDescription);
 	}
 }
