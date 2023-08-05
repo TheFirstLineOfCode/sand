@@ -24,9 +24,12 @@ import com.thefirstlineofcode.basalt.oxm.binary.ReplacementBytes;
 import com.thefirstlineofcode.basalt.oxm.coc.CocParserFactory;
 import com.thefirstlineofcode.basalt.oxm.coc.CocTranslatorFactory;
 import com.thefirstlineofcode.basalt.oxm.coc.annotations.ProtocolObject;
+import com.thefirstlineofcode.basalt.oxm.parsing.FlawedProtocolObject;
 import com.thefirstlineofcode.basalt.xmpp.core.MessageProtocolChain;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 import com.thefirstlineofcode.basalt.xmpp.core.ProtocolChain;
+import com.thefirstlineofcode.basalt.xmpp.core.ProtocolException;
+import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.ServiceUnavailable;
 import com.thefirstlineofcode.basalt.xmpp.im.stanza.Message;
 import com.thefirstlineofcode.sand.protocols.actuator.Execution;
 import com.thefirstlineofcode.sand.protocols.actuator.LanExecution;
@@ -303,7 +306,13 @@ public class ObxFactory implements IObxFactory {
 	public <T> T toObject(Class<T> type, byte[] data) throws BxmppConversionException {
 		registerObjectTypeIfNeed(type);
 		
-		return getMessage(data).getObject();
+		T obj = getMessage(data).getObject();
+		if (FlawedProtocolObject.isFlawed(obj)) {
+			throw new ProtocolException(new ServiceUnavailable(String.format(
+					"Flawed protocol object: %s.", obj.toString())));
+		}
+		
+		return obj;
 	}
 	
 	@Override
@@ -389,7 +398,13 @@ public class ObxFactory implements IObxFactory {
 
 	@Override
 	public Object toObject(byte[] data) throws BxmppConversionException {
-		return getMessage(data).getObject();
+		Object obj = getMessage(data).getObject();
+		if (FlawedProtocolObject.isFlawed(obj)) {
+			throw new ProtocolException(new ServiceUnavailable(String.format(
+					"Flawed protocol object: %s.", obj.toString())));
+		}
+		
+		return obj;
 	}
 
 	private Message getMessage(byte[] data) throws BxmppConversionException {

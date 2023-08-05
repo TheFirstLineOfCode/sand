@@ -18,7 +18,6 @@ import com.thefirstlineofcode.sand.client.thing.INotifier;
 import com.thefirstlineofcode.sand.client.thing.commuication.CommunicationException;
 import com.thefirstlineofcode.sand.client.thing.commuication.ICommunicationListener;
 import com.thefirstlineofcode.sand.client.thing.commuication.ICommunicator;
-import com.thefirstlineofcode.sand.client.thing.obx.IObxFactory;
 import com.thefirstlineofcode.sand.client.thing.obx.ObxFactory;
 import com.thefirstlineofcode.sand.protocols.lora.dac.Allocated;
 import com.thefirstlineofcode.sand.protocols.lora.dac.Allocation;
@@ -324,8 +323,7 @@ public class LoraDacService implements ILoraDacService, ICommunicationListener<L
 	}
 
 	private void processIsConfigured(byte[] data) throws CommunicationException, BxmppConversionException {
-		IObxFactory obxFactory = ObxFactory.getInstance();
-		IsConfigured isConfigured = (IsConfigured)obxFactory.toObject(data);
+		IsConfigured isConfigured = ObxFactory.getInstance().toObject(IsConfigured.class, data);
 		
 		if (logger.isInfoEnabled()) {
 			logger.info("IsConfigured protocol received. Client thing ID: {}.", isConfigured.getThingId());
@@ -339,13 +337,13 @@ public class LoraDacService implements ILoraDacService, ICommunicationListener<L
 				logger.info("Client which's thing ID is {} has been configured. Sending Configured protocol to it.", isConfigured.getThingId() );
 			}
 			
-			communicator.send(address, obxFactory.toBinary(new Configured()));
+			communicator.send(address, ObxFactory.getInstance().toBinary(new Configured()));
 		} else {
 			if (logger.isInfoEnabled()) {
 				logger.info("Client which's thing ID is {} hasn't been configured. Sending NotConfigured protocol to it.", isConfigured.getThingId() );
 			}
 			
-			communicator.send(address, obxFactory.toBinary(new NotConfigured()));
+			communicator.send(address, ObxFactory.getInstance().toBinary(new NotConfigured()));
 		}
 	}
 	
