@@ -1,4 +1,4 @@
-package com.thefirstlineofcode.sand.demo.app.android;
+package com.thefirstlineofcode.sand.client.android.webcam;
 
 import android.content.Context;
 import android.util.JsonWriter;
@@ -54,6 +54,7 @@ public class WebcamWatcher extends AbstractWatcher implements IWebrtcPeer.Listen
 	protected List<Listener> watchListeners;
 	protected ExecutorService executorService;
 	protected Context appContext;
+	protected List<PeerConnection.IceServer> iceServers;
 	protected PeerConnectionFactory peerConnectionFactory;
 	protected PeerConnection peerConnection;
 	protected PeerConnectionObserver peerConnectionObserver;
@@ -67,10 +68,12 @@ public class WebcamWatcher extends AbstractWatcher implements IWebrtcPeer.Listen
 	}
 	
 	public WebcamWatcher(IChatServices chatServices, Context appContext,
-						 JabberId peer, SurfaceViewRenderer videoRenderer) {
+						 JabberId peer, List<PeerConnection.IceServer> iceServers,
+						 SurfaceViewRenderer videoRenderer) {
 		super(chatServices, peer);
 		
 		this.appContext = appContext;
+		this.iceServers = iceServers;
 		this.videoRenderer = videoRenderer;
 		
 		executorService = Executors.newSingleThreadExecutor();
@@ -211,7 +214,7 @@ public class WebcamWatcher extends AbstractWatcher implements IWebrtcPeer.Listen
 			createPeerConnectionFactory();
 		
 		PeerConnection.RTCConfiguration rtcConfiguration =
-				new PeerConnection.RTCConfiguration(MainApplication.ICE_SERVERS);
+				new PeerConnection.RTCConfiguration(iceServers);
 		rtcConfiguration.disableIpv6 = true;
 		rtcConfiguration.disableIPv6OnWifi = true;
 		rtcConfiguration.sdpSemantics = PeerConnection.SdpSemantics.UNIFIED_PLAN;

@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.thefirstlineofcode.basalt.xmpp.core.JabberId;
+import com.thefirstlineofcode.sand.client.android.webcam.WebcamWatcher;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

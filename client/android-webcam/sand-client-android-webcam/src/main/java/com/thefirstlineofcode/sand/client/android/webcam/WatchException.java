@@ -1,4 +1,4 @@
-package com.thefirstlineofcode.sand.demo.app.android;
+package com.thefirstlineofcode.sand.client.android.webcam;
 
 public class WatchException extends Exception {
 	public WatchException() {
