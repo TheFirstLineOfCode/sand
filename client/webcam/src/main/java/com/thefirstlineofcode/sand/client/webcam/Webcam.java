@@ -64,9 +64,10 @@ public class Webcam extends AbstractWebrtcPeer implements IWebcam, IWebrtcPeer.L
 		
 		logger.info("Try to connect to WebRTC native service.");
 		nativeClient.connect();
-		
-		started = true;
 		logger.info("Webcam has connected to WebRTC native service.");
+		
+		started = true;		
+		logger.info("Webcam has started.");
 	}
 
 	@Override
@@ -86,6 +87,8 @@ public class Webcam extends AbstractWebrtcPeer implements IWebcam, IWebrtcPeer.L
 		
 		opened = false;
 		started = false;
+		
+		logger.info("Webcam has stopped.");
 	}
 	
 	@Override
@@ -179,8 +182,12 @@ public class Webcam extends AbstractWebrtcPeer implements IWebcam, IWebrtcPeer.L
 	}
 
 	protected void askToOpen(JabberId asker) {
-		if (requestedCapability == null)
+		if (requestedCapability == null) {
+			if (logger.isErrorEnabled())
+				logger.error("Null requested capability.");
+			
 			throw new IllegalArgumentException("Null requested capability.");
+		}
 		
 		if (peer != null && !peer.equals(asker)) {
 			Iq closed = new Iq(Iq.Type.SET);

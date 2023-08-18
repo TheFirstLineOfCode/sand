@@ -158,6 +158,10 @@ public class ThingsAdapter extends BaseExpandableListAdapter {
 			return new String[] {"Flash", "Turn On", "Turn Off", "Stop", "Shutdown System"};
 		} else if ("HAT".equals(model)) {
 			return new String[] {"Flash", "Turn On", "Turn Off"};
+		} else if ("HWT".equals(model)) {
+			return new String[] {
+					"Open Live Streaming"
+			};
 		} else {
 			throw new RuntimeException(String.format("Unknown thing model: %s.", model));
 		}

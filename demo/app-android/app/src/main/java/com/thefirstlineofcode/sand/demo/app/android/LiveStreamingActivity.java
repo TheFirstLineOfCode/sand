@@ -1,7 +1,6 @@
 package com.thefirstlineofcode.sand.demo.app.android;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -16,7 +15,10 @@ import com.thefirstlineofcode.sand.client.android.webcam.WebcamWatcher;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.webrtc.PeerConnection;
 import org.webrtc.SurfaceViewRenderer;
+
+import java.util.List;
 
 public class LiveStreamingActivity extends AppCompatActivity {
 	private static final Logger logger = LoggerFactory.getLogger(LiveStreamingActivity.class);
@@ -51,8 +53,8 @@ public class LiveStreamingActivity extends AppCompatActivity {
 		
 		SurfaceViewRenderer videoRenderer = findViewById(R.id.video_renderer);
 		watcher = ChatClientSingleton.get(this).createApiImpl(WebcamWatcher.class,
-				new Class<?>[] {Context.class, JabberId.class, SurfaceViewRenderer.class},
-				new Object[] {this.getApplicationContext(), cameraJid, videoRenderer});
+				new Class<?>[] {Context.class, JabberId.class, List.class, SurfaceViewRenderer.class},
+				new Object[] {this.getApplicationContext(), cameraJid, MainApplication.ICE_SERVERS, videoRenderer});
 		watcher.watch();
 	}
 	

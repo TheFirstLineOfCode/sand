@@ -124,11 +124,11 @@ public class AclPipelinePreprocessor implements IPipelinePreprocessor {
 	}
 	
 	private boolean isUser(JabberId to) {
-		return accountManager.exists(to.getBareIdString());
+		return accountManager.exists(to.getNode());
 	}
 
 	private boolean isThing(JabberId from) {
-		return thingManager.thingIdExists(from.getBareIdString());
+		return thingManager.thingNameExists(from.getNode());
 	}
 
 	private Object afterParsingExecution(JabberId from, Iq iq) {
@@ -139,9 +139,9 @@ public class AclPipelinePreprocessor implements IPipelinePreprocessor {
 		String thingId = getThingId(iq.getTo());
 		
 		Execution execution = iq.getObject();
-		if (isTacpAction(execution.getAction())) {
+		if (isTuxpAction(execution.getAction())) {
 			if (!isOwner(sender, thingId))
-				throw new ProtocolException(new NotAuthorized("TACP actions can be sent by owner only."));
+				throw new ProtocolException(new NotAuthorized("TUXP actions can be sent by owner only."));
 			
 			return iq;
 		}
@@ -152,7 +152,7 @@ public class AclPipelinePreprocessor implements IPipelinePreprocessor {
 		return iq;
 	}
 
-	private boolean isTacpAction(Object action) {
+	private boolean isTuxpAction(Object action) {
 		ProtocolObject pObject = action.getClass().getAnnotation(ProtocolObject.class);
 		if (pObject == null)
 			throw new ProtocolException(new InternalServerError("The action isn't a project object."));

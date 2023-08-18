@@ -84,21 +84,20 @@ public class WebcamWatcher extends AbstractWatcher implements IWebrtcPeer.Listen
 	
 	@Override
 	public void watch() {
-		super.watch();
+		if (status == Status.WATCHING)
+			return;
 		
-		if (eglBase == null)
+		if (eglBase == null) {
 			eglBase = EglBase.create();
-		
-		videoRenderer.init(eglBase.getEglBaseContext(), null);
+			videoRenderer.init(eglBase.getEglBaseContext(), null);
+		}
 		
 		if (peerConnection == null)
 			createPeerConnection();
 		
 		addListener(this);
 		
-		if (!isOpened()) {
-			processSignal(Signal.ID.OPEN);
-		}
+		super.watch();
 	}
 	
 	@Override
