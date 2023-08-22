@@ -87,13 +87,22 @@ public class Main {
 		WebcamConfig webcamConfig = new WebcamConfig(dontRunWebrtcNativeService, webrtcNativeServicePath, requestedWebcamCapability);
 		ICommunicator<LoraAddress, LoraAddress, byte[]> communicator = null;
 		if (!disableLoraGateway)
-			communicator = new As32Ttl100LoraCommunicator();
+			communicator = createLoraCommunicator();
 		
 		gatewayAndCamera = new LoraGatewayAndCamera(webcamConfig, communicator, disableCamera, disableLoraGateway, startConsole);
 		StandardStreamConfig mergedStreamConfig = mergeStreamConfig(gatewayAndCamera.getStreamConfig(), host, port, tlsPreferred);
 		gatewayAndCamera.setStreamConfig(mergedStreamConfig);
 		
 		gatewayAndCamera.start();
+	}
+
+	private ICommunicator<LoraAddress, LoraAddress, byte[]> createLoraCommunicator() {
+		As32Ttl100LoraCommunicator loraCommunicator = new As32Ttl100LoraCommunicator();
+		loraCommunicator.setMd0Pin(2);
+		loraCommunicator.setMd1Pin(3);
+		loraCommunicator.setAuxPin(4);
+		
+		return loraCommunicator;
 	}
 
 	private StandardStreamConfig mergeStreamConfig(StandardStreamConfig streamConfig, String host, Integer port,

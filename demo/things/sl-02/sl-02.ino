@@ -5,6 +5,7 @@
 #include <debug.h>
 #include <mcu_board_adaptation.h>
 #include <radio_module_adaptation.h>
+#include <arduino_unique_id_generator.h>
 
 // For my Arduino Micro board.
 /*#define LED_PIN 5
@@ -25,6 +26,8 @@
 };
 enum SwitchState lastSwitchState;*/
 
+#define MODEL_NAME "SL-02"
+
 #define SWITCH_STATE_RED 0
 #define SWITCH_STATE_YELLOW 1
 #define SWITCH_STATE_GREEN 2
@@ -32,8 +35,11 @@ enum SwitchState lastSwitchState;*/
 uint8_t lastSwitchState;
 
 void setup() {
-  configureMcuBoard("SL-02");
+  configureMcuBoard(MODEL_NAME);
   configureRadioModule();
+  
+  registerThingIdLoader(loadThingId);
+  registerRegistrationCodeLoader(loadRegistrationCode);
 
   registerThingProtocolsConfigurer(configureThingProtocolsImpl);
   
@@ -42,6 +48,14 @@ void setup() {
   configureSwitchModule();
   
   toBeAThing();
+}
+
+char *loadThingId() {
+  return generateThingIdUsingUniqueIdLibrary(MODEL_NAME);
+}
+
+char *loadRegistrationCode() {
+  return "abcdefghigkl";
 }
 
 bool isRedSwitchPressed() {

@@ -34,9 +34,9 @@ public class As32Ttl100LoraCommunicator extends AbstractCommunicator<LoraAddress
 	private static final String PROVIDER_PIGPIO_DIGITAL_OUTPUT = "pigpio-digital-output";
 	private static final String PROVIDER_PIGPIO_SERIAL = "pigpio-serial";
 	
-	private static final int DEFAULT_MD0_PIN = 23;
-	private static final int DEFAULT_MD1_PIN = 24;
-	private static final int DEFAULT_AUX_PIN = 25;
+	private static final int DEFAULT_MD0_PIN = 2;
+	private static final int DEFAULT_MD1_PIN = 3;
+	private static final int DEFAULT_AUX_PIN = 4;
 	
 	private static final String DEFAULT_SERIAL_ID = "uart";
 	private static final String DEFAULT_SERIAL_NAME = "Serial UART";
