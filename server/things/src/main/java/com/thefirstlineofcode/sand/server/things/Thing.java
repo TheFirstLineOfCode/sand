@@ -2,13 +2,24 @@ package com.thefirstlineofcode.sand.server.things;
 
 import java.util.Date;
 
-public class Thing {
+import com.thefirstlineofcode.granite.framework.core.adf.data.IIdProvider;
+
+public class Thing implements IIdProvider<String> {
+	private String id;
 	private String thingId;
 	private String registrationCode;
 	private String model;
 	private String softwareVersion;
 	private Date registrationTime;
 	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	public String getThingId() {
 		return thingId;
 	}

@@ -2,6 +2,7 @@ package com.thefirstlineofcode.sand.server.concentrator;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 
 import com.thefirstlinelinecode.sand.protocols.concentrator.AddNode;
 import com.thefirstlinelinecode.sand.protocols.concentrator.Node;
@@ -13,8 +14,6 @@ import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.Conflict;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.ItemNotFound;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.NotAcceptable;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.ServiceUnavailable;
-import com.thefirstlineofcode.granite.framework.core.adf.data.IDataObjectFactory;
-import com.thefirstlineofcode.granite.framework.core.adf.data.IDataObjectFactoryAware;
 import com.thefirstlineofcode.granite.framework.core.annotations.BeanDependency;
 import com.thefirstlineofcode.granite.framework.core.annotations.Dependency;
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.event.IEventFirer;
@@ -23,7 +22,7 @@ import com.thefirstlineofcode.granite.framework.core.pipeline.stages.processing.
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.processing.IXepProcessor;
 import com.thefirstlineofcode.sand.server.things.IThingManager;
 
-public class AddNodeProcessor implements IXepProcessor<Iq, AddNode>, IDataObjectFactoryAware, IEventFirerAware {
+public class AddNodeProcessor implements IXepProcessor<Iq, AddNode>, IEventFirerAware {
 	@BeanDependency
 	private IThingManager thingManager;
 	
@@ -33,7 +32,6 @@ public class AddNodeProcessor implements IXepProcessor<Iq, AddNode>, IDataObject
 	@Dependency("node.confirmation.delegator")
 	private NodeConfirmationDelegator nodeConfirmationDelegator;
 	
-	private IDataObjectFactory dataObjectFactory;
 	private IEventFirer eventFirer;
 	
 	@Override
@@ -100,7 +98,8 @@ public class AddNodeProcessor implements IXepProcessor<Iq, AddNode>, IDataObject
 	}
 
 	private void requestToConfirm(IProcessingContext context, Iq iq, String concentratorThingName, Node node) {
-		NodeConfirmation confirmation = dataObjectFactory.create(NodeConfirmation.class);
+		NodeConfirmation confirmation = new NodeConfirmation();
+		confirmation.setId(UUID.randomUUID().toString());
 		confirmation.setRequestId(iq.getId());
 		confirmation.setConcentratorThingName(concentratorThingName);
 		confirmation.setNode(node);
@@ -112,11 +111,6 @@ public class AddNodeProcessor implements IXepProcessor<Iq, AddNode>, IDataObject
 		eventFirer.fire(new NodeConfirmationRequestEvent(confirmation));
 	}
 	
-	@Override
-	public void setDataObjectFactory(IDataObjectFactory dataObjectFactory) {
-		this.dataObjectFactory = dataObjectFactory;
-	}
-
 	@Override
 	public void setEventFirer(IEventFirer eventFirer) {
 		this.eventFirer = eventFirer;

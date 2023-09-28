@@ -7,7 +7,7 @@
 	<groupId>com.thefirstlineofcode.sand</groupId>
 	<artifactId>com.thefirstlineofcode.sand</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0.0-BETA3</version>
+	<version>1.0.0-BETA4</version>
 	<name>Sand IoT Plugins</name>
 
 	<properties>

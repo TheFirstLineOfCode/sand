@@ -3,8 +3,10 @@ package com.thefirstlineofcode.sand.server.concentrator;
 import java.util.Date;
 
 import com.thefirstlinelinecode.sand.protocols.concentrator.Node;
+import com.thefirstlineofcode.granite.framework.core.adf.data.IIdProvider;
 
-public class NodeConfirmation {
+public class NodeConfirmation implements IIdProvider<String> {
+	private String id;
 	private String requestId;
 	private String concentratorThingName;
 	private Node node;
@@ -13,6 +15,14 @@ public class NodeConfirmation {
 	private Date expiredTime;
 	private boolean canceled;
 	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	public String getRequestId() {
 		return requestId;
 	}

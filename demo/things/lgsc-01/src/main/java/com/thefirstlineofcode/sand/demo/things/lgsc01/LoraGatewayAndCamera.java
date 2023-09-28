@@ -77,7 +77,7 @@ import okhttp3.Response;
 
 public class LoraGatewayAndCamera extends AbstractEdgeThing implements ISimpleCamera, IFollowProcessor {
 	public static final String THING_MODEL = Lgsc01ModelDescriptor.MODEL_NAME;
-	public static final String SOFTWARE_VERSION = "1.0.0-BETA3";
+	public static final String SOFTWARE_VERSION = "1.0.0-BETA4";
 	
 	private static final String ATTRIBUTE_NAME_REQUESTED_WEBCAM_CAPABILITY = "requested_webcam_capability";
 	private static final Capability DEFAULLT_REQUESTED_WEBCAM_CAPABILITY = new Capability(640, 480, 30);
