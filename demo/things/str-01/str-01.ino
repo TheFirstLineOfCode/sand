@@ -39,7 +39,7 @@ char *loadRegistrationCode() {
   return "abcdefghigkl";
 }
 
-int8_t processResetThing(Protocol *protocol) {
+int8_t executeResetThing(Protocol *protocol) {
   resetThing();
 
 #ifdef ENABLE_DEBUG
@@ -49,7 +49,7 @@ int8_t processResetThing(Protocol *protocol) {
   return 0;
 }
 
-int8_t acquireCelsiusDegree(Protocol *protocol) {
+int8_t reportCelsiusDegree(Protocol *protocol) {
   temperture.requestTemperatures();
   float celsiusDegree = temperture.getTempCByIndex(0);
   addFloatAttribute(protocol, 0x01, celsiusDegree);
@@ -59,10 +59,10 @@ int8_t acquireCelsiusDegree(Protocol *protocol) {
 
 void configureThingProtocolsImpl() {
   ProtocolName pnResetThing = {0xf8, 0x02, 0x09};
-  registerActionProtocol(pnResetThing, processResetThing, false);
+  registerExecutionProtocol(pnResetThing, executeResetThing, false);
 
   ProtocolName pnAquireCelsiusDegree = {0xf7, 0x03, 0x00};
-  registerDataProtocol(pnAquireCelsiusDegree, acquireCelsiusDegree, 2000);
+  registerReportProtocol(pnAquireCelsiusDegree, reportCelsiusDegree, 2000);
 }
 
 void loop() {

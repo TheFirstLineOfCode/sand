@@ -160,7 +160,7 @@ void flashLed() {
   digitalWrite(LED_PIN, LOW);
 }
 
-int8_t processFlash(Protocol *protocol) {
+int8_t executeFlash(Protocol *protocol) {
   if (lastSwitchState != SWITCH_STATE_YELLOW)
     return -1;
 
@@ -180,7 +180,7 @@ int8_t processFlash(Protocol *protocol) {
   return 0;
 }
 
-int8_t processTurnOn(Protocol *protocol) {
+int8_t executeTurnOn(Protocol *protocol) {
   if (lastSwitchState != SWITCH_STATE_YELLOW)
     return -1;
     
@@ -188,7 +188,7 @@ int8_t processTurnOn(Protocol *protocol) {
   return 0;
 }
 
-int8_t processTurnOff(Protocol *protocol) {
+int8_t executeTurnOff(Protocol *protocol) {
   if (lastSwitchState != SWITCH_STATE_YELLOW)
     return -1;
   
@@ -196,7 +196,7 @@ int8_t processTurnOff(Protocol *protocol) {
   return 0;
 }
 
-int8_t processResetThing(Protocol *protocol) {
+int8_t executeResetThing(Protocol *protocol) {
   resetThing();
 
 #ifdef ENABLE_DEBUG
@@ -208,16 +208,16 @@ int8_t processResetThing(Protocol *protocol) {
 
 void configureThingProtocolsImpl() {
   ProtocolName pnResetThing = {0xf8, 0x02, 0x09};
-  registerActionProtocol(pnResetThing, processResetThing, false);
+  registerExecutionProtocol(pnResetThing, executeResetThing, false);
 
   ProtocolName pnFlash = {0xf7, 0x01, 0x00};
-  registerActionProtocol(pnFlash, processFlash, false);
+  registerExecutionProtocol(pnFlash, executeFlash, false);
 
   ProtocolName pnTurnOn = {0xf7, 0x01, 0x02};
-  registerActionProtocol(pnTurnOn, processTurnOn, false);
+  registerExecutionProtocol(pnTurnOn, executeTurnOn, false);
 
   ProtocolName pnTurnOff = {0xf7, 0x01, 0x03};
-  registerActionProtocol(pnTurnOff, processTurnOff, false);
+  registerExecutionProtocol(pnTurnOff, executeTurnOff, false);
 }
 
 void controlLedByLastSwitchState() {
