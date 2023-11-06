@@ -30,6 +30,7 @@
 		<module>friends</module>
 		<module>sensor</module>
 		<module>lite</module>
+		<!-- <module>pack</module> -->
 	</modules>
 
 	<build>

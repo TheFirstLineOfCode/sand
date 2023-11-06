@@ -49,7 +49,7 @@ int8_t executeResetThing(Protocol *protocol) {
   return 0;
 }
 
-int8_t reportCelsiusDegree(Protocol *protocol) {
+int8_t aquiresCelsiusDegree(Protocol *protocol) {
   temperture.requestTemperatures();
   float celsiusDegree = temperture.getTempCByIndex(0);
   addFloatAttribute(protocol, 0x01, celsiusDegree);
@@ -61,8 +61,8 @@ void configureThingProtocolsImpl() {
   ProtocolName pnResetThing = {0xf8, 0x02, 0x09};
   registerExecutionProtocol(pnResetThing, executeResetThing, false);
 
-  ProtocolName pnAquireCelsiusDegree = {0xf7, 0x03, 0x00};
-  registerReportProtocol(pnAquireCelsiusDegree, reportCelsiusDegree, 2000);
+  ProtocolName pnCelsiusDegree = {0xf7, 0x03, 0x00};
+  registerReportProtocol(pnCelsiusDegree, aquiresCelsiusDegree, 2000);
 }
 
 void loop() {

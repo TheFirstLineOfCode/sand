@@ -49,7 +49,7 @@ afterEvaluate {
                 from components.release
                 groupId 'com.thefirstlineofcode.sand.client'
                 artifactId = 'sand-client-android-webcam'
-                version ='1.0.0-BETA3'
+                version ='1.0.0-BETA4'
                 println configurations.implementation.allDependencies
             }
         }
