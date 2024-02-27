@@ -26,13 +26,14 @@ import com.thefirstlineofcode.granite.framework.core.adf.IApplicationComponentSe
 import com.thefirstlineofcode.granite.framework.core.adf.IApplicationComponentServiceAware;
 import com.thefirstlineofcode.granite.framework.core.repository.IInitializable;
 import com.thefirstlineofcode.sand.protocols.thing.IThingModelDescriptor;
-import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredEdgeThing;
+import com.thefirstlineofcode.sand.server.things.EdgeThingRegistered;
+import com.thefirstlineofcode.sand.server.things.IEdgeThingManager;
 import com.thefirstlineofcode.sand.server.things.IThingManager;
 import com.thefirstlineofcode.sand.server.things.IThingModelsProvider;
 import com.thefirstlineofcode.sand.server.things.IThingRegistrationCustomizer;
 import com.thefirstlineofcode.sand.server.things.Thing;
 import com.thefirstlineofcode.sand.server.things.ThingAuthorization;
-import com.thefirstlineofcode.sand.server.things.ThingRegistered;
 
 @Transactional
 @Component
@@ -48,8 +49,11 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 	
 	private Map<String, IThingModelDescriptor> modelDescriptors;
 	
+	private IEdgeThingManager edgeThingManager;
+	
 	public ThingManager() {
 		modelDescriptors = new HashMap<>();
+		edgeThingManager = new EdgeThingManager();
 	}
 	
 	@Override
@@ -119,55 +123,6 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 		getThingAuthorizationMapper().updateCanceled(thingId, true);
 	}
 	
-	@Override
-	public ThingRegistered register(String thingId, String registrationCode) {
-		if (thingId == null)
-			throw new ProtocolException(new BadRequest("Null thing ID."));
-		
-		if (registrationCode == null)
-			throw new ProtocolException(new BadRequest("Null registration code."));
-		
-		if (!isUnregisteredThing(thingId, registrationCode))
-			throw new ProtocolException(new NotAcceptable(
-					String.format("Not a unregistered thing. Thing ID: %s. Regisration code: %s.",
-							thingId, registrationCode)));
-		
-		String authorizer = null;
-		if (registrationCustomizer == null || registrationCustomizer.isAuthorizationRequired()) {			
-			ThingAuthorization authorization = getAuthorization(thingId);
-			if (authorization == null || authorization.isCanceled() || isExpired(authorization)) {
-				throw new ProtocolException(new NotAuthorized());
-			}
-			
-			authorizer = authorization.getAuthorizer();
-		}
-		
-		D_Thing thing = new D_Thing();
-		thing.setId(UUID.randomUUID().toString());
-		thing.setThingId(thingId);
-		thing.setRegistrationCode(registrationCode);
-		thing.setModel(getModel(thingId));
-		thing.setRegistrationTime(Calendar.getInstance().getTime());
-		create(thing);
-		
-		D_RegisteredThing registeredThing = new D_RegisteredThing();
-		registeredThing.setId(UUID.randomUUID().toString());
-		registeredThing.setThingId(thingId);
-		registeredThing.setThingName(getThingName(thingId));
-		registeredThing.setCredentials(createCredentials());
-		registeredThing.setSecretKey(createSecurityKey());
-		
-		getThingIdentityMapper().insert(registeredThing);
-		
-		return new ThingRegistered(thingId,
-				new RegisteredThing(
-						registeredThing.getThingName(),
-						registeredThing.getCredentials(),
-						registeredThing.getSecretKey()),
-						authorizer,
-						thing.getRegistrationTime());
-	}
-	
 	private byte[] createSecurityKey() {
 		if (registrationCustomizer != null)
 			return registrationCustomizer.createSecurityKey();
@@ -231,11 +186,6 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 		return getThingMapper().selectCountByThingId(thingId) != 0;
 	}
 	
-	@Override
-	public boolean thingNameExists(String thingName) {
-		return getThingMapper().selectCountByThingName(thingName) != 0;
-	}
-	
 	private ThingAuthorizationMapper getThingAuthorizationMapper() {
 		return (ThingAuthorizationMapper)sqlSession.getMapper(ThingAuthorizationMapper.class);
 	}
@@ -244,8 +194,8 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 		return (ThingMapper)sqlSession.getMapper(ThingMapper.class);
 	}
 	
-	private RegisteredThingMapper getThingIdentityMapper() {
-		return (RegisteredThingMapper)sqlSession.getMapper(RegisteredThingMapper.class);
+	private RegisteredEdgeThingMapper getRegisteredEdgeThingMapper() {
+		return (RegisteredEdgeThingMapper)sqlSession.getMapper(RegisteredEdgeThingMapper.class);
 	}
 	
 	private String generateRandomCredentials(int length) {
@@ -303,15 +253,6 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 	@Override
 	public Thing getByThingId(String thingId) {
 		return getThingMapper().selectByThingId(thingId);
-	}
-
-	@Override
-	public Thing getByThingName(String thingName) {
-		D_RegisteredThing identity = (D_RegisteredThing)getThingIdentityMapper().selectByThingName(thingName);
-		if (identity == null)
-			return null;
-		
-		return getThingMapper().selectByThingId(identity.getThingId());
 	}
 
 	@Override
@@ -377,20 +318,6 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 			throw new RuntimeException(String.format("Thing which's model is '%s' isn't an actuator.", model));
 		
 		return modelDescriptor.getSupportedActions().get(protocol);
-	}
-	
-	@Override
-	public String getThingNameByThingId(String thingId) {
-		RegisteredThing registeredThing = getThingIdentityMapper().selectByThingId(thingId);
-		if (registeredThing != null)
-			return registeredThing.getThingName();
-		
-		return null;
-	}
-	
-	@Override
-	public String getThingIdByThingName(String thingName) {
-		return getThingIdentityMapper().selectThingIdByThingName(thingName);
 	}
 
 	@Override
@@ -483,5 +410,91 @@ public class ThingManager implements IThingManager, IInitializable, IApplication
 			return registrationCustomizer.isConfirmationRequired();
 		
 		return true;
+	}
+	
+	@Override
+	public IEdgeThingManager getEdgeThingManager() {
+		return edgeThingManager;
+	}
+	
+	private class EdgeThingManager implements IEdgeThingManager {
+
+		@Override
+		public EdgeThingRegistered register(String thingId, String registrationCode) {
+			if (thingId == null)
+				throw new ProtocolException(new BadRequest("Null thing ID."));
+			
+			if (registrationCode == null)
+				throw new ProtocolException(new BadRequest("Null registration code."));
+			
+			if (!isUnregisteredThing(thingId, registrationCode))
+				throw new ProtocolException(new NotAcceptable(
+						String.format("Not a unregistered thing. Thing ID: %s. Regisration code: %s.",
+								thingId, registrationCode)));
+			
+			String authorizer = null;
+			if (registrationCustomizer == null || registrationCustomizer.isAuthorizationRequired()) {			
+				ThingAuthorization authorization = getAuthorization(thingId);
+				if (authorization == null || authorization.isCanceled() || isExpired(authorization)) {
+					throw new ProtocolException(new NotAuthorized());
+				}
+				
+				authorizer = authorization.getAuthorizer();
+			}
+			
+			D_Thing thing = new D_Thing();
+			thing.setId(UUID.randomUUID().toString());
+			thing.setThingId(thingId);
+			thing.setRegistrationCode(registrationCode);
+			thing.setModel(getModel(thingId));
+			thing.setRegistrationTime(Calendar.getInstance().getTime());
+			create(thing);
+			
+			D_RegisteredEdgeThing registeredEdgeThing = new D_RegisteredEdgeThing();
+			registeredEdgeThing.setId(UUID.randomUUID().toString());
+			registeredEdgeThing.setThingId(thingId);
+			registeredEdgeThing.setThingName(getThingName(thingId));
+			registeredEdgeThing.setCredentials(createCredentials());
+			registeredEdgeThing.setSecretKey(createSecurityKey());
+			
+			getRegisteredEdgeThingMapper().insert(registeredEdgeThing);
+			
+			return new EdgeThingRegistered(thingId,
+					new RegisteredEdgeThing(
+							registeredEdgeThing.getThingName(),
+							registeredEdgeThing.getCredentials(),
+							registeredEdgeThing.getSecretKey()),
+							authorizer,
+							thing.getRegistrationTime());
+		}
+
+		@Override
+		public Thing getByThingName(String thingName) {
+			D_RegisteredEdgeThing edgeThing = (D_RegisteredEdgeThing)getRegisteredEdgeThingMapper().selectByThingName(thingName);
+			if (edgeThing == null)
+				return null;
+			
+			return getThingMapper().selectByThingId(edgeThing.getThingId());
+		}
+
+		@Override
+		public boolean thingNameExists(String thingName) {
+			return getRegisteredEdgeThingMapper().selectCountByThingName(thingName) != 0;
+		}
+
+		@Override
+		public String getThingNameByThingId(String thingId) {
+			RegisteredEdgeThing registeredEdgeThing = getRegisteredEdgeThingMapper().selectByThingId(thingId);
+			if (registeredEdgeThing != null)
+				return registeredEdgeThing.getThingName();
+			
+			return null;
+		}
+
+		@Override
+		public String getThingIdByThingName(String thingName) {
+			return getRegisteredEdgeThingMapper().selectThingIdByThingName(thingName);
+		}
+
 	}
 }

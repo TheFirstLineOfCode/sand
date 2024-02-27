@@ -5,18 +5,18 @@ import java.util.Date;
 import com.thefirstlineofcode.basalt.oxm.coc.annotations.ProtocolObject;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 
-@ProtocolObject(namespace = "http://thefirstlineofcode.com/sand-demo", localName = "thing-registration")
-public class ThingRegistration {
-	public static final Protocol PROTOCOL = new Protocol("http://thefirstlineofcode.com/sand-demo", "thing-registration");
+@ProtocolObject(namespace = "http://thefirstlineofcode.com/sand-demo", localName = "edge-thing-registration")
+public class EdgeThingRegistration {
+	public static final Protocol PROTOCOL = new Protocol("http://thefirstlineofcode.com/sand-demo", "edge-thing-registration");
 	
 	private String thingId;
 	private String thingName;
 	private String authorizer;
 	private Date registrationTime;
 	
-	public ThingRegistration() {}
+	public EdgeThingRegistration() {}
 	
-	public ThingRegistration(String thingId, String thingName, String authorizer, Date registrationTime) {
+	public EdgeThingRegistration(String thingId, String thingName, String authorizer, Date registrationTime) {
 		this.thingId = thingId;
 		this.thingName = thingName;
 		this.authorizer = authorizer;

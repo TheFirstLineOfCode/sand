@@ -7,7 +7,7 @@
 	<groupId>com.thefirstlineofcode.sand</groupId>
 	<artifactId>com.thefirstlineofcode.sand</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0.0-BETA4</version>
+	<version>1.1.0-BETA1</version>
 	<name>Sand IoT Plugins</name>
 
 	<properties>
@@ -15,7 +15,7 @@
 		<basalt.version>1.1.0-RELEASE</basalt.version>
 		<chalk.version>1.0.2-RELEASE</chalk.version>
 		<granite.version>1.0.5-RELEASE</granite.version>
-		<sand.version>1.0.0-BETA4</sand.version>
+		<sand.version>1.1.0-BETA1</sand.version>
 		<gem.version>0.2.0-RELEASE</gem.version>
 	</properties>
 

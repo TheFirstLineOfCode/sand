@@ -27,7 +27,7 @@ public class NodeAdditionListener implements IEventListener<NodeAddedEvent>, ISe
 	
 	@Override
 	public void process(IEventContext context, NodeAddedEvent event) {
-		String concentratorThingId = thingManager.getThingIdByThingName(event.getNodeAdded().getConcentratorThingName());
+		String concentratorThingId = thingManager.getEdgeThingManager().getThingIdByThingName(event.getNodeAdded().getConcentratorThingName());
 		String owner = aclService.getOwner(concentratorThingId);
 		
 		JabberId bareJidOwner = new JabberId(owner, domainName);

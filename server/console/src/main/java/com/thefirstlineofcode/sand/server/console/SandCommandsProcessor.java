@@ -151,8 +151,8 @@ public class SandCommandsProcessor extends AbstractCommandsProcessor implements 
 		if (thingLocation == null)
 			return;
 		
-		if (!thingManager.thingNameExists(thingLocation.thingName)) {
-			consoleSystem.printMessageLine(String.format("Error: Thing which's thing name is '%s' not existed.", thingLocation.thingName));	
+		if (!thingManager.getEdgeThingManager().thingNameExists(thingLocation.thingName)) {
+			consoleSystem.printMessageLine(String.format("Error: Edge thing which's thing name is '%s' not existed.", thingLocation.thingName));	
 			return;
 		}
 		
@@ -174,9 +174,9 @@ public class SandCommandsProcessor extends AbstractCommandsProcessor implements 
 			}
 		}
 		
-		String thingId = thingManager.getThingIdByThingName(thingLocation.thingName);
+		String thingId = thingManager.getEdgeThingManager().getThingIdByThingName(thingLocation.thingName);
 		if (!thingManager.isRegistered(thingId)) {
-			consoleSystem.printMessageLine(String.format("Error: Thing which's thing ID is '%s' isn't a registered thing.",
+			consoleSystem.printMessageLine(String.format("Error: Edge thing which's thing ID is '%s' isn't a registered thing.",
 					thingLocation.thingName));
 			return;
 		}
@@ -564,14 +564,14 @@ public class SandCommandsProcessor extends AbstractCommandsProcessor implements 
 			return;
 		}
 		
-		if (!thingManager.thingNameExists(thingLocation.thingName)) {
-			consoleSystem.printMessageLine(String.format("Error: Thing which's name is '%s' not existed.", thingLocation.thingName));
+		if (!thingManager.getEdgeThingManager().thingNameExists(thingLocation.thingName)) {
+			consoleSystem.printMessageLine(String.format("Error: Edge thing which's name is '%s' not existed.", thingLocation.thingName));
 			return;
 		}
 		
-		String thingId = thingManager.getThingIdByThingName(thingLocation.thingName);
+		String thingId = thingManager.getEdgeThingManager().getThingIdByThingName(thingLocation.thingName);
 		if (!thingManager.getModelDescriptor(thingManager.getModel(thingId)).isConcentrator())
-			consoleSystem.printMessageLine(String.format("Error: Thing which's name is '%s' isn't a concentrator.", thingLocation.thingName));
+			consoleSystem.printMessageLine(String.format("Error: Edge thing which's name is '%s' isn't a concentrator.", thingLocation.thingName));
 		
 		eventFirer.fire(new ExecutionEvent(thingId, null, new Execution(new SyncNodes()) ,
 				new ExecutionCallback(thingLocation.thingName, SyncNodes.PROTOCOL, consoleSystem)));
@@ -587,14 +587,14 @@ public class SandCommandsProcessor extends AbstractCommandsProcessor implements 
 			return;
 		}
 		
-		if (!thingManager.thingNameExists(thingLocation.thingName)) {
+		if (!thingManager.getEdgeThingManager().thingNameExists(thingLocation.thingName)) {
 			consoleSystem.printMessageLine(String.format("Error: Thing which's name is '%s' not existed.", thingLocation.thingName));
 			return;
 		}
 		
-		String concentratorThingId = thingManager.getThingIdByThingName(thingLocation.thingName);
+		String concentratorThingId = thingManager.getEdgeThingManager().getThingIdByThingName(thingLocation.thingName);
 		if (!concentratorFactory.isConcentrator(concentratorThingId)) {
-			consoleSystem.printMessageLine(String.format("Error: Thing which's name is '%s' isn't a concentrator.", thingLocation.thingName));
+			consoleSystem.printMessageLine(String.format("Error: Edge thing which's name is '%s' isn't a concentrator.", thingLocation.thingName));
 			return;
 		}
 		

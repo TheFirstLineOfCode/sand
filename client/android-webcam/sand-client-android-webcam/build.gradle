@@ -34,7 +34,7 @@ android {
 
 dependencies {
     implementation 'org.webrtc:google-webrtc:1.0.32006@aar'
-	implementation 'com.thefirstlineofcode.sand.client:sand-client-webcam:1.0.0-BETA3'
+	implementation 'com.thefirstlineofcode.sand.client:sand-client-webcam:1.1.0-BETA1'
 }
 
 task androidSourcesJar(type: Jar) {
@@ -49,7 +49,7 @@ afterEvaluate {
                 from components.release
                 groupId 'com.thefirstlineofcode.sand.client'
                 artifactId = 'sand-client-android-webcam'
-                version ='1.0.0-BETA4'
+                version ='1.1.0-BETA1'
                 println configurations.implementation.allDependencies
             }
         }

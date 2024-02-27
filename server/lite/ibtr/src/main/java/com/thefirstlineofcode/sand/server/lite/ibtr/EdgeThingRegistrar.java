@@ -9,15 +9,15 @@ import com.thefirstlineofcode.granite.framework.core.annotations.AppComponent;
 import com.thefirstlineofcode.granite.framework.core.annotations.BeanDependency;
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.event.IEventFirer;
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.event.IEventFirerAware;
-import com.thefirstlineofcode.sand.server.ibtr.IThingRegistrar;
+import com.thefirstlineofcode.sand.server.ibtr.IEdgeThingRegistrar;
 import com.thefirstlineofcode.sand.server.ibtr.NotAuthorizedThingRegistrationEvent;
-import com.thefirstlineofcode.sand.server.ibtr.ThingRegistrationEvent;
+import com.thefirstlineofcode.sand.server.ibtr.EdgeThingRegistrationEvent;
+import com.thefirstlineofcode.sand.server.things.EdgeThingRegistered;
 import com.thefirstlineofcode.sand.server.things.IThingManager;
-import com.thefirstlineofcode.sand.server.things.ThingRegistered;
 
-@AppComponent("thing.registrar")
-public class ThingRegistrar implements IThingRegistrar, IEventFirerAware {
-	private static final Logger logger = LoggerFactory.getLogger(ThingRegistrar.class);
+@AppComponent("edge.thing.registrar")
+public class EdgeThingRegistrar implements IEdgeThingRegistrar, IEventFirerAware {
+	private static final Logger logger = LoggerFactory.getLogger(EdgeThingRegistrar.class);
 	
 	@BeanDependency
 	private IThingManager thingManager;
@@ -25,21 +25,21 @@ public class ThingRegistrar implements IThingRegistrar, IEventFirerAware {
 	private IEventFirer eventFirer;
 	
 	@Override
-	public ThingRegistered register(String thingId, String registrationCode) {
+	public EdgeThingRegistered register(String thingId, String registrationCode) {
 		try {
-			ThingRegistered registered = thingManager.register(thingId, registrationCode);
+			EdgeThingRegistered registered = thingManager.getEdgeThingManager().register(thingId, registrationCode);
 			if (logger.isInfoEnabled())
-				logger.info("Thing which's thing ID is '{}' has registered. It's thing name is assigned to '{}'.",
-						thingId, registered.registeredThing.getThingName());
+				logger.info("Edge thing which's thing ID is '{}' has registered. It's thing name is assigned to '{}'.",
+						thingId, registered.registeredEdgeThing.getThingName());
 			
-			eventFirer.fire(new ThingRegistrationEvent(registered.thingId, registered.registeredThing.getThingName(),
+			eventFirer.fire(new EdgeThingRegistrationEvent(registered.thingId, registered.registeredEdgeThing.getThingName(),
 						registered.authorizer, registered.registrationTime));
 			
 			return registered;
 		} catch (ProtocolException e) {
 			if (e.getError() instanceof NotAuthorized) {
 				if (logger.isWarnEnabled())
-					logger.warn("Thing which's thing ID is '{}' tried to register without authorization.", thingId);
+					logger.warn("Edge thing which's thing ID is '{}' tried to register without authorization.", thingId);
 				
 				eventFirer.fire(new NotAuthorizedThingRegistrationEvent(thingId));
 			}

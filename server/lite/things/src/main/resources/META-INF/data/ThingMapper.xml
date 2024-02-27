@@ -14,15 +14,7 @@
 		SELECT * FROM THINGS WHERE thing_id=#{0}
     </select>
     
-	<select id="selectByThingName" resultType="com.thefirstlineofcode.sand.server.lite.things.D_Thing">
-		SELECT things.* FROM THINGS AS things LEFT JOIN REGISTERED_THINGS as registered_things ON things.thing_id = registered_things.thing_id WHERE registered_things.thing_name=#{0}
-    </select>
-    
 	<select id="selectCountByThingId" resultType="int">
 		SELECT count(*) FROM THINGS WHERE thing_id=#{0}
-    </select>
-    
-	<select id="selectCountByThingName" resultType="int">
-		SELECT count(*) FROM THINGS AS things LEFT JOIN REGISTERED_THINGS as registered_things ON things.thing_id = registered_things.thing_id WHERE registered_things.thing_name=#{0}
     </select>
 </mapper>

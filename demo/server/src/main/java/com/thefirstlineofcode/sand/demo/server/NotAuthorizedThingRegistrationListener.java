@@ -9,7 +9,7 @@ import com.thefirstlineofcode.granite.framework.core.pipeline.stages.event.IEven
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.event.IEventListener;
 import com.thefirstlineofcode.granite.framework.im.IResource;
 import com.thefirstlineofcode.granite.framework.im.IResourcesService;
-import com.thefirstlineofcode.sand.demo.protocols.NotAuthorizedThingRegistration;
+import com.thefirstlineofcode.sand.demo.protocols.NotAuthorizedEdgeThingRegistration;
 import com.thefirstlineofcode.sand.server.ibtr.NotAuthorizedThingRegistrationEvent;
 
 public class NotAuthorizedThingRegistrationListener implements IEventListener<NotAuthorizedThingRegistrationEvent>,
@@ -30,7 +30,7 @@ public class NotAuthorizedThingRegistrationListener implements IEventListener<No
 			
 			for (IResource resource : resources) {
 				context.write(resource.getJid(),
-						new Iq(Iq.Type.SET, new NotAuthorizedThingRegistration(event.getThingId())));
+						new Iq(Iq.Type.SET, new NotAuthorizedEdgeThingRegistration(event.getThingId())));
 			}
 		}
 	}

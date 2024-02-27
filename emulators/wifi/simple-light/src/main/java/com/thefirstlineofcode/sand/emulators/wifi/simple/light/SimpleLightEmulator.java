@@ -26,7 +26,7 @@ import com.thefirstlineofcode.sand.emulators.commons.ui.LightEmulatorPanel;
 import com.thefirstlineofcode.sand.emulators.commons.ui.UiUtils;
 import com.thefirstlineofcode.sand.emulators.models.Sle02ModelDescriptor;
 import com.thefirstlineofcode.sand.protocols.actuator.ExecutionException;
-import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredEdgeThing;
 import com.thefirstlineofcode.sand.protocols.things.simple.light.SwitchState;
 
 public class SimpleLightEmulator extends AbstractThingEmulator implements ISimpleLightEmulator, IEdgeThingListener {	
@@ -184,7 +184,7 @@ public class SimpleLightEmulator extends AbstractThingEmulator implements ISimpl
 	}
 	
 	@Override
-	public void registered(RegisteredThing identity) {
+	public void registered(RegisteredEdgeThing registeredEdgeThing) {
 		if (logger.isInfoEnabled())
 			logger.info("Registered on the host.");
 		
@@ -198,7 +198,7 @@ public class SimpleLightEmulator extends AbstractThingEmulator implements ISimpl
 		if (logger.isErrorEnabled())
 			logger.error("Can't connect to host. Failed to auth.", e);
 		
-		JOptionPane.showMessageDialog(mainWindow, "Can't register thing. Error: " +
+		JOptionPane.showMessageDialog(mainWindow, "Can't register edge thing. Error: " +
 				e.getError(), "Registration Error", JOptionPane.ERROR_MESSAGE);
 	}
 	

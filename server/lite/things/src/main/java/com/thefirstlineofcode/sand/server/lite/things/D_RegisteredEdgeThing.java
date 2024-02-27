@@ -1,9 +1,9 @@
 package com.thefirstlineofcode.sand.server.lite.things;
 
 import com.thefirstlineofcode.granite.framework.core.adf.data.IIdProvider;
-import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredEdgeThing;
 
-public class D_RegisteredThing extends RegisteredThing implements IIdProvider<String> {
+public class D_RegisteredEdgeThing extends RegisteredEdgeThing implements IIdProvider<String> {
 	private static final long serialVersionUID = 6554323836858199250L;
 	
 	private String id;

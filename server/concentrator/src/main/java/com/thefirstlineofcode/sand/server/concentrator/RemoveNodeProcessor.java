@@ -37,10 +37,10 @@ public class RemoveNodeProcessor implements IXepProcessor<Iq, RemoveNode> {
 			throw new ProtocolException(new BadRequest("Not a concentrator."));
 		
 		String concentratorThingName = target.getNode();
-		if (!thingManager.thingNameExists(concentratorThingName))
+		if (!thingManager.getEdgeThingManager().thingNameExists(concentratorThingName))
 			throw new ProtocolException(new ItemNotFound());
 		
-		String concentratorThingId = thingManager.getThingIdByThingName(concentratorThingName);
+		String concentratorThingId = thingManager.getEdgeThingManager().getThingIdByThingName(concentratorThingName);
 		if (!concentratorFactory.isConcentrator(concentratorThingId))
 			throw new ProtocolException(new BadRequest("Not a concentrator."));
 		

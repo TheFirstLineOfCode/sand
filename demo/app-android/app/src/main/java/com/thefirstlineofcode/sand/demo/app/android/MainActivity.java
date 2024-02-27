@@ -71,7 +71,7 @@ import com.thefirstlineofcode.sand.protocols.edge.Stop;
 import com.thefirstlineofcode.sand.protocols.lora.dac.ResetLoraDacService;
 import com.thefirstlineofcode.sand.protocols.lora.gateway.ChangeWorkingMode;
 import com.thefirstlineofcode.sand.protocols.lora.gateway.WorkingMode;
-import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredEdgeThing;
 import com.thefirstlineofcode.sand.protocols.things.simple.camera.TakePhoto;
 import com.thefirstlineofcode.sand.protocols.things.simple.camera.TakeVideo;
 import com.thefirstlineofcode.sand.protocols.things.simple.light.Flash;
@@ -559,10 +559,10 @@ public class MainActivity extends AppCompatActivity implements IOperator.Listene
 	}
 	
 	@Override
-	public void thingRegistered(String thingId, String thingName, String authorizer, Date registrationTime) {
+	public void edgeThingRegistered(String thingId, String thingName, String authorizer, Date registrationTime) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
 		builder.setTitle("Thing Registered").setMessage(
-						String.format("A thing which's thing ID is '%s' has registered. Do you want to refresh things?", thingId)).
+						String.format("A edge thing which's thing ID is '%s' has registered. Do you want to refresh things?", thingId)).
 				setPositiveButton(R.string.yes_refresh_things, new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -953,7 +953,7 @@ public class MainActivity extends AppCompatActivity implements IOperator.Listene
 						
 						logger.info("Reset thing {}.", target);
 						JabberId jidConcentrator = new JabberId(target.getNode(),
-								target.getDomain(), RegisteredThing.DEFAULT_RESOURCE_NAME);
+								target.getDomain(), RegisteredEdgeThing.DEFAULT_RESOURCE_NAME);
 						controlThing(jidConcentrator, new ResetNode(target.getResource()), "Reset thing");
 					}
 				}).
@@ -987,7 +987,7 @@ public class MainActivity extends AppCompatActivity implements IOperator.Listene
 							@Override
 							public void trigger(IUnidirectionalStream<Iq> stream) {
 								JabberId jidConcentrator = new JabberId(target.getNode(),
-										target.getDomain(), RegisteredThing.DEFAULT_RESOURCE_NAME);
+										target.getDomain(), RegisteredEdgeThing.DEFAULT_RESOURCE_NAME);
 								
 								Iq removeNode = new Iq(Iq.Type.SET, new RemoveNode(Integer.parseInt(target.getResource())));
 								removeNode.setTo(jidConcentrator);
@@ -1077,7 +1077,7 @@ public class MainActivity extends AppCompatActivity implements IOperator.Listene
 							operator.addListener(MainActivity.this);
 						
 						JabberId follower = new JabberId(friend.getNode(),
-								friend.getDomain(), RegisteredThing.DEFAULT_RESOURCE_NAME);
+								friend.getDomain(), RegisteredEdgeThing.DEFAULT_RESOURCE_NAME);
 						operator.approve(friend, SwitchStateChanged.PROTOCOL, follower);
 					}
 				}).setNegativeButton(string.cancel, new DialogInterface.OnClickListener() {

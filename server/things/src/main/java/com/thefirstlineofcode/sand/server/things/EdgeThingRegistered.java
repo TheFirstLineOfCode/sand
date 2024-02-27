@@ -2,18 +2,18 @@ package com.thefirstlineofcode.sand.server.things;
 
 import java.util.Date;
 
-import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredEdgeThing;
 
-public class ThingRegistered {
+public class EdgeThingRegistered {
 	public String thingId;
-	public RegisteredThing registeredThing;
+	public RegisteredEdgeThing registeredEdgeThing;
 	public String authorizer;
 	public Date registrationTime;
 	
-	public ThingRegistered(String thingId, RegisteredThing registeredThing,
+	public EdgeThingRegistered(String thingId, RegisteredEdgeThing registeredEdgeThing,
 			String authorizer, Date registrationTime) {
 		this.thingId = thingId;
-		this.registeredThing = registeredThing;
+		this.registeredEdgeThing = registeredEdgeThing;
 		this.authorizer = authorizer;
 		this.registrationTime = registrationTime;
 	}

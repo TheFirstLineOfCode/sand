@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thefirstlineofcode.sand.server.lite.things.RegisteredEdgeThingMapper">
+    <insert id="insert" parameterType="com.thefirstlineofcode.sand.server.lite.things.D_RegisteredEdgeThing">
+        INSERT INTO REGISTERED_EDGE_THINGS(id, thing_id, thing_name, credentials, secret_key) VALUES(#{id}, #{thingId}, #{thingName}, #{credentials}, #{secretKey})
+    </insert>
+    
+	<select id="selectByThingName" resultType="com.thefirstlineofcode.sand.server.lite.things.D_RegisteredEdgeThing">
+		SELECT * FROM REGISTERED_EDGE_THINGS WHERE thing_name = #{0}
+    </select>
+    
+	<select id="selectThingIdByThingName" resultType="string">
+		SELECT thing_id FROM REGISTERED_EDGE_THINGS WHERE thing_name = #{0}
+    </select>
+    
+	<select id="selectByThingId" resultType="com.thefirstlineofcode.sand.server.lite.things.D_RegisteredEdgeThing">
+		SELECT * FROM REGISTERED_EDGE_THINGS WHERE thing_id = #{0}
+    </select>
+    
+	<select id="selectCountByThingName" resultType="int">
+		SELECT count(*) FROM REGISTERED_EDGE_THINGS WHERE thing_name = #{0}
+    </select>
+</mapper>

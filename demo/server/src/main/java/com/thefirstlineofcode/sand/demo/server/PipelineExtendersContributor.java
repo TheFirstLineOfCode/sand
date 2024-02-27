@@ -11,22 +11,22 @@ import com.thefirstlineofcode.sand.demo.protocols.AuthorizedThings;
 import com.thefirstlineofcode.sand.demo.protocols.DeliverTemperatureToOwner;
 import com.thefirstlineofcode.sand.demo.protocols.NodeAddition;
 import com.thefirstlineofcode.sand.demo.protocols.NodeConfirmationRequest;
-import com.thefirstlineofcode.sand.demo.protocols.NotAuthorizedThingRegistration;
+import com.thefirstlineofcode.sand.demo.protocols.NotAuthorizedEdgeThingRegistration;
 import com.thefirstlineofcode.sand.demo.protocols.RecordedVideos;
-import com.thefirstlineofcode.sand.demo.protocols.ThingRegistration;
+import com.thefirstlineofcode.sand.demo.protocols.EdgeThingRegistration;
 import com.thefirstlineofcode.sand.protocols.things.simple.temperature.reporter.CelsiusDegree;
 import com.thefirstlineofcode.sand.server.concentrator.NodeAddedEvent;
 import com.thefirstlineofcode.sand.server.concentrator.NodeConfirmationRequestEvent;
 import com.thefirstlineofcode.sand.server.ibtr.NotAuthorizedThingRegistrationEvent;
-import com.thefirstlineofcode.sand.server.ibtr.ThingRegistrationEvent;
+import com.thefirstlineofcode.sand.server.ibtr.EdgeThingRegistrationEvent;
 
 @Extension
 public class PipelineExtendersContributor extends PipelineExtendersConfigurator {
 
 	@Override
 	protected void configure(IPipelineExtendersConfigurator configurator) {
-		configurator.registerCocTranslator(NotAuthorizedThingRegistration.class);
-		configurator.registerCocTranslator(ThingRegistration.class);
+		configurator.registerCocTranslator(NotAuthorizedEdgeThingRegistration.class);
+		configurator.registerCocTranslator(EdgeThingRegistration.class);
 		configurator.registerCocTranslator(NodeConfirmationRequest.class);
 		configurator.registerCocTranslator(NodeAddition.class);
 		
@@ -43,7 +43,7 @@ public class PipelineExtendersContributor extends PipelineExtendersConfigurator 
 				new AuthorizedThingsProcessor());
 		
 		configurator.registerEventListener(NotAuthorizedThingRegistrationEvent.class, new NotAuthorizedThingRegistrationListener());
-		configurator.registerEventListener(ThingRegistrationEvent.class, new ThingRegistrationListener());
+		configurator.registerEventListener(EdgeThingRegistrationEvent.class, new EdgeThingRegistrationListener());
 		configurator.registerEventListener(NodeConfirmationRequestEvent.class, new NodeConfirmationRequestListener());
 		configurator.registerEventListener(NodeAddedEvent.class, new NodeAdditionListener());
 		configurator.registerEventListener(ResourceAvailableEvent.class, new EdgeThingAvailableEventListener());

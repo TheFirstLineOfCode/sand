@@ -16,14 +16,14 @@ import com.thefirstlineofcode.granite.framework.im.IResource;
 import com.thefirstlineofcode.granite.framework.im.IResourcesService;
 import com.thefirstlineofcode.sand.demo.protocols.AccessControlEntry;
 import com.thefirstlineofcode.sand.demo.protocols.AccessControlList.Role;
-import com.thefirstlineofcode.sand.demo.protocols.ThingRegistration;
-import com.thefirstlineofcode.sand.server.ibtr.ThingRegistrationEvent;
+import com.thefirstlineofcode.sand.demo.protocols.EdgeThingRegistration;
+import com.thefirstlineofcode.sand.server.ibtr.EdgeThingRegistrationEvent;
 
-public class ThingRegistrationListener implements IEventListener<ThingRegistrationEvent>,
+public class EdgeThingRegistrationListener implements IEventListener<EdgeThingRegistrationEvent>,
 		IServerConfigurationAware, IDataObjectFactoryAware {
 	private static final String USER_NAME_SAND_DEMO = "sand-demo";
 
-	private static final Logger logger = LoggerFactory.getLogger(ThingRegistrationListener.class);
+	private static final Logger logger = LoggerFactory.getLogger(EdgeThingRegistrationListener.class);
 	
 	@BeanDependency
 	private IAclService aclService;
@@ -35,7 +35,7 @@ public class ThingRegistrationListener implements IEventListener<ThingRegistrati
 	private String domainName;
 	
 	@Override
-	public void process(IEventContext context, ThingRegistrationEvent event) {
+	public void process(IEventContext context, EdgeThingRegistrationEvent event) {
 		String authorizer = event.getAuthorizer();
 		if (authorizer == null)
 			authorizer = USER_NAME_SAND_DEMO;
@@ -44,14 +44,14 @@ public class ThingRegistrationListener implements IEventListener<ThingRegistrati
 		
 		IResource[] resources = resourceService.getResources(JabberId.parse(String.format("%s@%s", event.getAuthorizer(), domainName)));	
 		if (resources == null || resources.length == 0 && logger.isWarnEnabled()) {
-			logger.warn("Can't find any resource for authorizer '{}'. Ignore to pass thing registration stanza to the owner.", authorizer);
+			logger.warn("Can't find any resource for authorizer '{}'. Ignore to pass edge thing registration stanza to the owner.", authorizer);
 			return;
 		}
 			
 		for (IResource resource : resources) {			
 			Iq iq = new Iq(Iq.Type.SET);
 			iq.setTo(resource.getJid());	
-			iq.setObject(new ThingRegistration(event.getThingId(), event.getThingName(),
+			iq.setObject(new EdgeThingRegistration(event.getThingId(), event.getThingName(),
 					event.getAuthorizer(), event.getRegistrationTime()));
 			
 			context.write(iq);

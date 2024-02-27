@@ -24,8 +24,8 @@ import com.thefirstlineofcode.granite.pipeline.stages.stream.negotiants.InitialS
 import com.thefirstlineofcode.sand.protocols.ibtr.ThingRegister;
 import com.thefirstlineofcode.sand.protocols.ibtr.oxm.ThingRegisterParserFactory;
 import com.thefirstlineofcode.sand.protocols.ibtr.oxm.ThingRegisterTranslatorFactory;
-import com.thefirstlineofcode.sand.protocols.thing.UnregisteredThing;
-import com.thefirstlineofcode.sand.server.things.ThingRegistered;
+import com.thefirstlineofcode.sand.protocols.thing.UnregisteredEdgeThing;
+import com.thefirstlineofcode.sand.server.things.EdgeThingRegistered;
 
 public class IbtrNegotiant extends InitialStreamNegotiant {
 	public static final Object KEY_IBTR_REGISTERED = new Object();
@@ -55,9 +55,9 @@ public class IbtrNegotiant extends InitialStreamNegotiant {
 		translatingFactory.register(Stream.class, new StreamTranslatorFactory());
 	}
 	
-	private IThingRegistrar registrar;
+	private IEdgeThingRegistrar registrar;
 	
-	public IbtrNegotiant(String domainName, List<Feature> features, IThingRegistrar registrar) {
+	public IbtrNegotiant(String domainName, List<Feature> features, IEdgeThingRegistrar registrar) {
 		super(domainName, features);
 		
 		this.registrar = registrar;
@@ -111,14 +111,14 @@ public class IbtrNegotiant extends InitialStreamNegotiant {
 		
 		try {
 			Object register = thingRegister.getRegister();
-			if (register == null || !(register instanceof UnregisteredThing))
+			if (register == null || !(register instanceof UnregisteredEdgeThing))
 				throw new ProtocolException(new BadRequest("Register object isn't a string."));
 			
-			UnregisteredThing unregisteredThing = (UnregisteredThing)register;
-			ThingRegistered registered = registrar.register(unregisteredThing.getThingId(),
+			UnregisteredEdgeThing unregisteredThing = (UnregisteredEdgeThing)register;
+			EdgeThingRegistered registered = registrar.register(unregisteredThing.getThingId(),
 					unregisteredThing.getRegistrationCode());
 			Iq result = new Iq(Iq.Type.RESULT, iq.getId());
-			result.setObject(new ThingRegister(registered.registeredThing));
+			result.setObject(new ThingRegister(registered.registeredEdgeThing));
 			
 			context.write(translatingFactory.translate(result));
 		} catch (RuntimeException e) {

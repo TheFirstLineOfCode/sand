@@ -194,7 +194,7 @@ public class Concentrator implements IConcentrator, IDataObjectFactoryAware {
 		thingManager.create(thing);
 		
 		Concentration concentration = dataObjectFactory.create(Concentration.class);
-		concentration.setConcentratorThingName(thingManager.getThingIdByThingName(thingName));
+		concentration.setConcentratorThingName(thingManager.getEdgeThingManager().getThingIdByThingName(thingName));
 		concentration.setNodeThingId(node.getThingId());
 		concentration.setLanId(node.getLanId());
 		concentration.setCommunicationNet(node.getCommunicationNet());

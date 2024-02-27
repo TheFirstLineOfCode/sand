@@ -10,8 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.thefirstlineofcode.sand.server.concentrator.IConcentrator;
 import com.thefirstlineofcode.sand.server.concentrator.IConcentratorFactory;
-import com.thefirstlineofcode.sand.server.things.Thing;
 import com.thefirstlineofcode.sand.server.things.IThingManager;
+import com.thefirstlineofcode.sand.server.things.Thing;
 
 @Component
 @Transactional
@@ -38,7 +38,7 @@ public class ConcentratorFactory implements IConcentratorFactory, ApplicationCon
 		if (!isConcentrator(thingId))
 			throw new IllegalArgumentException(String.format("Thing[%s] isn't a concentrator.", thingId));
 		
-		String concentratorThingName = thingManager.getThingNameByThingId(thingId);
+		String concentratorThingName = thingManager.getEdgeThingManager().getThingNameByThingId(thingId);
 		
 		return applicationContext.getBean(Concentrator.class, concentratorThingName, sqlSession);
 	}

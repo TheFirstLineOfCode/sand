@@ -4,13 +4,13 @@ import java.util.Date;
 
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.event.IEvent;
 
-public class ThingRegistrationEvent implements IEvent {
+public class EdgeThingRegistrationEvent implements IEvent {
 	private String thingId;
 	private String thingName;
 	private String authorizer;
 	private Date registrationTime;
 	
-	public ThingRegistrationEvent(String thingId, String thingName, String authorizer, Date registrationTime) {
+	public EdgeThingRegistrationEvent(String thingId, String thingName, String authorizer, Date registrationTime) {
 		this.thingId = thingId;
 		this.thingName = thingName;
 		this.authorizer = authorizer;
@@ -35,6 +35,6 @@ public class ThingRegistrationEvent implements IEvent {
 	
 	@Override
 	public Object clone() {
-		return new ThingRegistrationEvent(thingId, thingName, authorizer, registrationTime);
+		return new EdgeThingRegistrationEvent(thingId, thingName, authorizer, registrationTime);
 	}
 }

@@ -33,7 +33,7 @@ public class NodeConfirmedListener implements IEventListener<NodeConfirmedEvent>
 		NodeConfirmed nodeConfirmed = event.getNodeConfirmed();
 		
 		String concentratorThingName = nodeConfirmed.getNodeAdded().getConcentratorThingName();
-		String concentratorThingId = thingManager.getThingIdByThingName(concentratorThingName);
+		String concentratorThingId = thingManager.getEdgeThingManager().getThingIdByThingName(concentratorThingName);
 		String nodeThingId = nodeConfirmed.getNodeAdded().getNodeThingId();
 		
 		ConfirmedConcentration found = null;

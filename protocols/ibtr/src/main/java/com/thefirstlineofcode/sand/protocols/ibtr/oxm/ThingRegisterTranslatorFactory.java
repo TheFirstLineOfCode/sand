@@ -7,8 +7,8 @@ import com.thefirstlineofcode.basalt.oxm.translating.ITranslator;
 import com.thefirstlineofcode.basalt.oxm.translating.ITranslatorFactory;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 import com.thefirstlineofcode.sand.protocols.ibtr.ThingRegister;
-import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
-import com.thefirstlineofcode.sand.protocols.thing.UnregisteredThing;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredEdgeThing;
+import com.thefirstlineofcode.sand.protocols.thing.UnregisteredEdgeThing;
 
 public class ThingRegisterTranslatorFactory implements ITranslatorFactory<ThingRegister> {
 	private ITranslator<ThingRegister> translator = new ThingRegisterTranslator();
@@ -41,18 +41,18 @@ public class ThingRegisterTranslatorFactory implements ITranslatorFactory<ThingR
 				throw new RuntimeException("Null register object.");
 			}
 			
-			if (register instanceof UnregisteredThing) {
-				UnregisteredThing unregisteredThing = (UnregisteredThing)register;
-				writer.writeElementBegin("unregistered-thing").
-				writeTextOnly("thing-id", unregisteredThing.getThingId()).
-				writeTextOnly("registration-key", unregisteredThing.getRegistrationCode()).
+			if (register instanceof UnregisteredEdgeThing) {
+				UnregisteredEdgeThing unregisteredEdgeThing = (UnregisteredEdgeThing)register;
+				writer.writeElementBegin("unregistered-edge-thing").
+				writeTextOnly("thing-id", unregisteredEdgeThing.getThingId()).
+				writeTextOnly("registration-key", unregisteredEdgeThing.getRegistrationCode()).
 				writeElementEnd();
-			} else if (register instanceof RegisteredThing) {
-				RegisteredThing registeredThing = (RegisteredThing)register;
-				writer.writeElementBegin("registered-thing").
-					writeTextOnly("thing-name", registeredThing.getThingName()).
-					writeTextOnly("credentials", registeredThing.getCredentials()).
-					writeTextOnly("security-key", BinaryUtils.encodeToBase64(registeredThing.getSecretKey())).					
+			} else if (register instanceof RegisteredEdgeThing) {
+				RegisteredEdgeThing registeredEdgeThing = (RegisteredEdgeThing)register;
+				writer.writeElementBegin("registered-edge-thing").
+					writeTextOnly("thing-name", registeredEdgeThing.getThingName()).
+					writeTextOnly("credentials", registeredEdgeThing.getCredentials()).
+					writeTextOnly("security-key", BinaryUtils.encodeToBase64(registeredEdgeThing.getSecretKey())).					
 				writeElementEnd();
 			} else {
 				throw new RuntimeException("Unknown register object.");

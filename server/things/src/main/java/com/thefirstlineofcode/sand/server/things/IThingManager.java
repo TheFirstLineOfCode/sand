@@ -9,15 +9,10 @@ public interface IThingManager {
 	void authorize(String thingId, String authorizer, Date expiredTime);
 	ThingAuthorization getAuthorization(String thingId);
 	void cancelAuthorization(String thingId);
-	ThingRegistered register(String thingId, String registratioinCode);
 	void create(Thing thing);
 	void remove(String thingIds);
 	Thing getByThingId(String thingId);
-	Thing getByThingName(String thingName);
 	boolean thingIdExists(String thingId);
-	boolean thingNameExists(String thingName);
-	String getThingNameByThingId(String thingId);
-	String getThingIdByThingName(String thingName);
 	void registerModel(IThingModelDescriptor modelDescriptor);
 	String[] getModels();
 	IThingModelDescriptor getModelDescriptor(String model);
@@ -41,4 +36,5 @@ public interface IThingManager {
 	boolean isAuthenticationRequired();
 	boolean isConfirmationRequired();
 	String getModel(String thingId);
+	IEdgeThingManager getEdgeThingManager();
 }

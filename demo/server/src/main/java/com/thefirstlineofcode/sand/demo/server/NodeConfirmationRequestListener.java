@@ -28,7 +28,7 @@ public class NodeConfirmationRequestListener implements IEventListener<NodeConfi
 	
 	@Override
 	public void process(IEventContext context, NodeConfirmationRequestEvent event) {
-		String concentratorThingId = thingManager.getThingIdByThingName(event.getConfirmation().getConcentratorThingName());
+		String concentratorThingId = thingManager.getEdgeThingManager().getThingIdByThingName(event.getConfirmation().getConcentratorThingName());
 		String owner = aclService.getOwner(concentratorThingId);
 		
 		JabberId bareJidOwner = new JabberId(owner, domainName);

@@ -36,7 +36,7 @@ public class LanFollowsProcessor implements IXepProcessor<Iq, LanFollows>, IConf
 			throw new ProtocolException(new BadRequest("IQ type should be 'GET'."));
 		
 		JabberId jid = context.getJid();
-		String model = thingManager.getModel(thingManager.getThingIdByThingName(jid.getNode()));
+		String model = thingManager.getModel(thingManager.getEdgeThingManager().getThingIdByThingName(jid.getNode()));
 		if (!thingManager.getModelDescriptor(model).isConcentrator())
 			throw new ProtocolException(new Forbidden("Not a concentrator."));
 		

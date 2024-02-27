@@ -4,16 +4,16 @@ import com.thefirstlineofcode.basalt.oxm.coc.annotations.ProtocolObject;
 import com.thefirstlineofcode.basalt.oxm.coc.annotations.Text;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 
-@ProtocolObject(namespace = "http://thefirstlineofcode.com/sand-demo", localName = "not-authorized-thing-registration")
-public class NotAuthorizedThingRegistration {
-	public static final Protocol PROTOCOL = new Protocol("http://thefirstlineofcode.com/sand-demo", "not-authorized-thing-registration");
+@ProtocolObject(namespace = "http://thefirstlineofcode.com/sand-demo", localName = "not-authorized-edge-thing-registration")
+public class NotAuthorizedEdgeThingRegistration {
+	public static final Protocol PROTOCOL = new Protocol("http://thefirstlineofcode.com/sand-demo", "not-authorized-edge-thing-registration");
 	
 	@Text
 	private String thingId;
 	
-	public NotAuthorizedThingRegistration() {}
+	public NotAuthorizedEdgeThingRegistration() {}
 	
-	public NotAuthorizedThingRegistration(String thingId) {
+	public NotAuthorizedEdgeThingRegistration(String thingId) {
 		this.thingId = thingId;
 	}
 

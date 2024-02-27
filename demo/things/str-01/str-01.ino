@@ -20,8 +20,8 @@ void setup() {
   configureMcuBoard(MODEL_NAME);
   configureRadioModule();
 
-  // sresetThing();
-
+  // resetThing();
+  
   registerThingIdLoader(generateThingIdUsingUniqueIdLibrary);
   registerRegistrationCodeLoader(loadRegistrationCode);
 
@@ -36,7 +36,7 @@ char *loadThingId() {
 }
 
 char *loadRegistrationCode() {
-  return "abcdefghigkl";
+  return "abcdefghijkl";
 }
 
 int8_t executeResetThing(Protocol *protocol) {

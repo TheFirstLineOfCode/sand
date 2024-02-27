@@ -2,7 +2,7 @@ package com.thefirstlineofcode.sand.protocols.thing;
 
 import java.io.Serializable;
 
-public class RegisteredThing implements Serializable {
+public class RegisteredEdgeThing implements Serializable {
 	private static final long serialVersionUID = 2975514130104649088L;
 	
 	public static final String DEFAULT_RESOURCE_NAME = "0";
@@ -11,9 +11,9 @@ public class RegisteredThing implements Serializable {
 	private String credentials;
 	private byte[] secretKey;
 	
-	public RegisteredThing() {}
+	public RegisteredEdgeThing() {}
 	
-	public RegisteredThing(String thingName, String credentials, byte[] secretKey) {
+	public RegisteredEdgeThing(String thingName, String credentials, byte[] secretKey) {
 		if (thingName == null)
 			throw new IllegalArgumentException("Null thing name.");
 		

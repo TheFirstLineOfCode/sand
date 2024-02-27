@@ -19,9 +19,9 @@ import com.thefirstlineofcode.sand.server.stream.ThingClientMessageProcessor;
 
 @Component("ibtr.supported.client.message.processor")
 public class IbtrSupportedClientMessageProcessor extends ThingClientMessageProcessor {
-	private static final String APP_COMPONENT_NAME_THING_REGISTRAR = "thing.registrar";
+	private static final String APP_COMPONENT_NAME_EDGE_THING_REGISTRAR = "edge.thing.registrar";
 	
-	private IThingRegistrar registrar;
+	private IEdgeThingRegistrar registrar;
 	
 	@Override
 	protected IStreamNegotiant createNegotiant() {
@@ -121,6 +121,6 @@ public class IbtrSupportedClientMessageProcessor extends ThingClientMessageProce
 	public void setApplicationComponentService(IApplicationComponentService appComponentService) {
 		super.setApplicationComponentService(appComponentService);
 		
-		registrar = appComponentService.getAppComponent(APP_COMPONENT_NAME_THING_REGISTRAR, IThingRegistrar.class);
+		registrar = appComponentService.getAppComponent(APP_COMPONENT_NAME_EDGE_THING_REGISTRAR, IEdgeThingRegistrar.class);
 	}
 }

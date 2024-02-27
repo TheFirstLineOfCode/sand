@@ -1,12 +1,12 @@
 package com.thefirstlineofcode.sand.protocols.thing;
 
-public class UnregisteredThing {
+public class UnregisteredEdgeThing {
 	private String thingId;
 	private String registrationCode;
 	
-	public UnregisteredThing() {}
+	public UnregisteredEdgeThing() {}
 	
-	public UnregisteredThing(String thingId, String registrationCode) {
+	public UnregisteredEdgeThing(String thingId, String registrationCode) {
 		this.thingId = thingId;
 		this.registrationCode = registrationCode;
 	}

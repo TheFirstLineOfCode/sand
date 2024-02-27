@@ -17,7 +17,7 @@ import com.thefirstlineofcode.basalt.xmpp.core.JabberId;
 import com.thefirstlineofcode.sand.demo.protocols.AccessControlList;
 import com.thefirstlineofcode.sand.demo.protocols.AuthorizedThing;
 import com.thefirstlineofcode.sand.demo.protocols.LanNode;
-import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredEdgeThing;
 
 public class ThingsAdapter extends BaseExpandableListAdapter {
 	private final MainActivity mainActivity;
@@ -356,7 +356,7 @@ public class ThingsAdapter extends BaseExpandableListAdapter {
 		private JabberId getJidTargetByThingId(String thingId) {
 			for (AuthorizedThing thing : things) {
 				if (thingId.equals(thing.getThingId()))
-					return new JabberId(thing.getThingName(), host, RegisteredThing.DEFAULT_RESOURCE_NAME);
+					return new JabberId(thing.getThingName(), host, RegisteredEdgeThing.DEFAULT_RESOURCE_NAME);
 				
 				if (thing.isConcentrator() && thing.getNodes() != null && thing.getNodes().size() > 0) {
 					for (LanNode lanNode : thing.getNodes()) {

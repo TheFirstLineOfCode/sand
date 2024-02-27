@@ -42,11 +42,11 @@ import com.thefirstlineofcode.sand.client.ibtr.IbtrPlugin;
 import com.thefirstlineofcode.sand.client.ibtr.RegistrationException;
 import com.thefirstlineofcode.sand.client.thing.AbstractThing;
 import com.thefirstlineofcode.sand.protocols.actuator.ExecutionException;
-import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredEdgeThing;
 
 public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeThing, IConnectionListener {
 	private static final String ATTRIBUTE_NAME_STREAM_CONFIG = "stream_config";
-	private static final String ATTRIBUTE_NAME_REGISTERED_THING = "registered_thing";
+	private static final String ATTRIBUTE_NAME_REGISTERED_EDGE_THING = "registered_edge_thing";
 	private static final String INTERNET_CONNECTIVITY_TEST_ADDRESS = "http://www.baidu.com";
 	private static final String SAND_EDGE_CONFIG_DIR = ".com.thefirstlineofcode.sand.client.edge";
 	
@@ -55,7 +55,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 	private static Boolean isLogConfiguratorConfigured;
 	
 	protected StandardStreamConfig streamConfig;
-	protected RegisteredThing registeredThing;
+	protected RegisteredEdgeThing registeredEdgeThing;
 	
 	protected StandardChatClient chatClient;
 	protected Thread autoReconnectThread;
@@ -133,7 +133,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 		}
 		
 		StandardStreamConfig streamConfig = createStreamConfig(st);
-		streamConfig.setResource(RegisteredThing.DEFAULT_RESOURCE_NAME);
+		streamConfig.setResource(RegisteredEdgeThing.DEFAULT_RESOURCE_NAME);
 		
 		return streamConfig;
 	}
@@ -210,7 +210,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 			attributesChanged = true;
 		}
 		
-		registeredThing = getRegisteredThing(attributes);
+		registeredEdgeThing = getRegisteredEdgeThing(attributes);
 		
 		if (doProcessAttributes(attributes))
 			attributesChanged = true;
@@ -388,8 +388,8 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 			System.out.println("The thing tries to connect to server.");
 		
 		try {
-			chatClient.connect(new UsernamePasswordToken(registeredThing.getThingName(),
-					registeredThing.getCredentials()));
+			chatClient.connect(new UsernamePasswordToken(registeredEdgeThing.getThingName(),
+					registeredEdgeThing.getCredentials()));
 			
 			if (isConnected()) {
 				for (IEdgeThingListener edgeThingListener : edgeThingListeners) {
@@ -433,7 +433,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 	protected StandardStreamConfig createStreamConfigWithResource() {
 		StandardStreamConfig cloned = new StandardStreamConfig(streamConfig.getHost(), streamConfig.getPort());
 		cloned.setTlsPreferred(streamConfig.isTlsPreferred());
-		cloned.setResource(RegisteredThing.DEFAULT_RESOURCE_NAME);
+		cloned.setResource(RegisteredEdgeThing.DEFAULT_RESOURCE_NAME);
 		
 		return cloned;
 	}
@@ -449,16 +449,16 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 		autoReconnectThread.start();
 	}
 
-	protected void registered(RegisteredThing registeredThing) {
-		attributes.put(ATTRIBUTE_NAME_REGISTERED_THING, getRegisteredThingString(registeredThing));
+	protected void registered(RegisteredEdgeThing registeredEdgeThing) {
+		attributes.put(ATTRIBUTE_NAME_REGISTERED_EDGE_THING, getRegisteredEdgeThingString(registeredEdgeThing));
 		saveAttributes(attributes);
 		
-		this.registeredThing = registeredThing;
+		this.registeredEdgeThing = registeredEdgeThing;
 		
 		if (isLogConfiguratorConfigured())
-			logger.info("The thing has registered. Thing name is '{}'.", registeredThing.getThingName());
+			logger.info("The edge thing has registered. Thing name is '{}'.", registeredEdgeThing.getThingName());
 		else
-			System.out.println(String.format("The thing has registered. Thing name is '%s'.", registeredThing.getThingName()));
+			System.out.println(String.format("The edge thing has registered. Thing name is '%s'.", registeredEdgeThing.getThingName()));
 	}
 	
 	@Override
@@ -518,7 +518,7 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 	
 	@Override
 	public boolean isRegistered() {
-		return registeredThing != null;
+		return registeredEdgeThing != null;
 	}
 	
 	@Override
@@ -539,13 +539,13 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 			}
 			registration.addConnectionListener(this);
 			
-			registeredThing = registration.register(thingId, loadRegistrationCode());
-			if (registeredThing == null)
+			registeredEdgeThing = registration.register(thingId, loadRegistrationCode());
+			if (registeredEdgeThing == null)
 				return;
 			
-			registered(registeredThing);
+			registered(registeredEdgeThing);
 			for (IEdgeThingListener edgeThingListener : edgeThingListeners) {
-				edgeThingListener.registered(registeredThing);
+				edgeThingListener.registered(registeredEdgeThing);
 			}
 		} catch (RegistrationException e) {
 			for (IEdgeThingListener edgeThingListener : edgeThingListeners) {
@@ -564,9 +564,9 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 		}
 	}
 	
-	private String getRegisteredThingString(RegisteredThing registeredThing) {
-		return String.format("%s,%s,%s", registeredThing.getThingName(),
-				registeredThing.getCredentials(), BinaryUtils.encodeToBase64(registeredThing.getSecretKey()));
+	private String getRegisteredEdgeThingString(RegisteredEdgeThing registeredEdgeThing) {
+		return String.format("%s,%s,%s", registeredEdgeThing.getThingName(),
+				registeredEdgeThing.getCredentials(), BinaryUtils.encodeToBase64(registeredEdgeThing.getSecretKey()));
 	}
 
 	@Override
@@ -699,21 +699,21 @@ public abstract class AbstractEdgeThing extends AbstractThing implements IEdgeTh
 		}
 	}
 	
-	protected RegisteredThing getRegisteredThing(Map<String, String> attributes) {
-		String sRegisteredThing = attributes.get(ATTRIBUTE_NAME_REGISTERED_THING);
-		if (sRegisteredThing == null)
+	protected RegisteredEdgeThing getRegisteredEdgeThing(Map<String, String> attributes) {
+		String sRegisteredEdgeThing = attributes.get(ATTRIBUTE_NAME_REGISTERED_EDGE_THING);
+		if (sRegisteredEdgeThing == null)
 			return null;
 		
-		StringTokenizer st = new StringTokenizer(sRegisteredThing, ",");
+		StringTokenizer st = new StringTokenizer(sRegisteredEdgeThing, ",");
 		if (st.countTokens() != 3)
-			throw new RuntimeException("Invalid registered thing string!");
+			throw new RuntimeException("Invalid registered edge thing string!");
 			
-		RegisteredThing registeredThing = new RegisteredThing();
-		registeredThing.setThingName(st.nextToken().trim());
-		registeredThing.setCredentials(st.nextToken().trim());
-		registeredThing.setSecretKey(BinaryUtils.decodeFromBase64(st.nextToken().trim()));
+		RegisteredEdgeThing registeredEdgeThing = new RegisteredEdgeThing();
+		registeredEdgeThing.setThingName(st.nextToken().trim());
+		registeredEdgeThing.setCredentials(st.nextToken().trim());
+		registeredEdgeThing.setSecretKey(BinaryUtils.decodeFromBase64(st.nextToken().trim()));
 		
-		return registeredThing;
+		return registeredEdgeThing;
 	}
 	
 	@Override

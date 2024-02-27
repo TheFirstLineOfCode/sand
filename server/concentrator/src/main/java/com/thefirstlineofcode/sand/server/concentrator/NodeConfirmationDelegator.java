@@ -34,9 +34,9 @@ public class NodeConfirmationDelegator implements IConfigurationAware {
 			throw new ProtocolException(new ServiceUnavailable());
 		
 		String concentratorThingName = confirmation.getConcentratorThingName();
-		String concentratorThingId = thingManager.getThingIdByThingName(concentratorThingName);
+		String concentratorThingId = thingManager.getEdgeThingManager().getThingIdByThingName(concentratorThingName);
 		if (concentratorThingId == null)
-			throw new ProtocolException(new ItemNotFound(String.format("Thing which's thing name is '%s' not be found.",
+			throw new ProtocolException(new ItemNotFound(String.format("Edge thing which's thing name is '%s' not be found.",
 					concentratorThingName)));
 		
 		if (!thingManager.isConcentrator(thingManager.getModel(concentratorThingId)))
@@ -63,9 +63,9 @@ public class NodeConfirmationDelegator implements IConfigurationAware {
 		if (!thingManager.isConfirmationRequired())
 			throw new ProtocolException(new ServiceUnavailable());
 		
-		String thingId = thingManager.getThingIdByThingName(concentratorThingName);
+		String thingId = thingManager.getEdgeThingManager().getThingIdByThingName(concentratorThingName);
 		if (thingId == null)
-			throw new ProtocolException(new ItemNotFound(String.format("Thing which's thing name is '%s' not be found.",
+			throw new ProtocolException(new ItemNotFound(String.format("Edge thing which's thing name is '%s' not be found.",
 					concentratorThingName)));
 		
 		if (!thingManager.isConcentrator(thingManager.getModel(thingId)))

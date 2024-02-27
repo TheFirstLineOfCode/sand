@@ -27,13 +27,13 @@ public class EdgeThingAvailableEventListener implements IEventListener<ResourceA
 	
 	@Override
 	public void process(IEventContext context, ResourceAvailableEvent event) {
-		if (!thingManager.thingNameExists(event.getJid().getNode())) {
+		if (!thingManager.getEdgeThingManager().thingNameExists(event.getJid().getNode())) {
 			if (logger.isDebugEnabled())
 				logger.debug("Not a thing. Node name: {}.", event.getJid().getNode());
 			return;
 		}
 		
-		String thingId = thingManager.getThingIdByThingName(event.getJid().getNode());
+		String thingId = thingManager.getEdgeThingManager().getThingIdByThingName(event.getJid().getNode());
 		String owner = aclService.getOwner(thingId);
 		
 		if (owner == null) {

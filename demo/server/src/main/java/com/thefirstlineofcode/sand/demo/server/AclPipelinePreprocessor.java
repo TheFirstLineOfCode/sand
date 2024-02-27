@@ -18,7 +18,7 @@ import com.thefirstlineofcode.sand.demo.protocols.AccessControlList.Role;
 import com.thefirstlineofcode.sand.protocols.actuator.Execution;
 import com.thefirstlineofcode.sand.protocols.location.LocateThings;
 import com.thefirstlineofcode.sand.protocols.operator.ApproveFollow;
-import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredEdgeThing;
 import com.thefirstlineofcode.sand.protocols.webrtc.signaling.Signal;
 import com.thefirstlineofcode.sand.server.concentrator.IConcentrator;
 import com.thefirstlineofcode.sand.server.concentrator.IConcentratorFactory;
@@ -128,7 +128,7 @@ public class AclPipelinePreprocessor implements IPipelinePreprocessor {
 	}
 
 	private boolean isThing(JabberId from) {
-		return thingManager.thingNameExists(from.getNode());
+		return thingManager.getEdgeThingManager().thingNameExists(from.getNode());
 	}
 
 	private Object afterParsingExecution(JabberId from, Iq iq) {
@@ -205,12 +205,12 @@ public class AclPipelinePreprocessor implements IPipelinePreprocessor {
 			throw new ProtocolException(new BadRequest("Null target."));
 		
 		String thingId = null;
-		if (to.getResource() != null && !RegisteredThing.DEFAULT_RESOURCE_NAME.equals(to.getResource())) {
+		if (to.getResource() != null && !RegisteredEdgeThing.DEFAULT_RESOURCE_NAME.equals(to.getResource())) {
 			// The thing is a LAN node.
 			String concentratorThingName = to.getNode();
 			String sLanId = to.getResource();
 			
-			Thing concentratorThing = thingManager.getByThingName(concentratorThingName);
+			Thing concentratorThing = thingManager.getEdgeThingManager().getByThingName(concentratorThingName);
 			if (concentratorThing == null) {
 				throw new ProtocolException(new BadRequest(String.format("Concentrator which's thing name is '%s' not exists.", concentratorThingName)));
 			}
@@ -239,9 +239,9 @@ public class AclPipelinePreprocessor implements IPipelinePreprocessor {
 			thingId = nodeThing.getThingId();
 		} else {
 			// The thing is an edge thing.
-			Thing thing = thingManager.getByThingName(to.getNode());
+			Thing thing = thingManager.getEdgeThingManager().getByThingName(to.getNode());
 			if (thing == null)
-				throw new ProtocolException(new BadRequest(String.format("Thing which's thing name is '%s' not exists.", to.getNode())));
+				throw new ProtocolException(new BadRequest(String.format("Edge thing which's thing name is '%s' not exists.", to.getNode())));
 				
 			thingId = thing.getThingId();
 		}

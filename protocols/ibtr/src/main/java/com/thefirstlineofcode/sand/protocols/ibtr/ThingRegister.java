@@ -2,8 +2,8 @@ package com.thefirstlineofcode.sand.protocols.ibtr;
 
 import com.thefirstlineofcode.basalt.oxm.coc.annotations.ProtocolObject;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
-import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
-import com.thefirstlineofcode.sand.protocols.thing.UnregisteredThing;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredEdgeThing;
+import com.thefirstlineofcode.sand.protocols.thing.UnregisteredEdgeThing;
 
 @ProtocolObject(namespace="urn:leps:tuxp:ibtr", localName="thing-register")
 public class ThingRegister {
@@ -14,8 +14,8 @@ public class ThingRegister {
 	public ThingRegister() {}
 	
 	public ThingRegister(Object register) {
-		if (!(register instanceof UnregisteredThing) && !(register instanceof RegisteredThing))
-			throw new IllegalArgumentException("Register object must be a unregistered thing or a registered thing.");
+		if (!(register instanceof UnregisteredEdgeThing) && !(register instanceof RegisteredEdgeThing))
+			throw new IllegalArgumentException("Register object must be a unregistered edge thing or a registered edge thing.");
 		
 		this.register = register;
 	}

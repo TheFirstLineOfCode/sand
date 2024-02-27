@@ -39,9 +39,9 @@ public class AddNodeProcessor implements IXepProcessor<Iq, AddNode>, IEventFirer
 		if (iq.getType() != Iq.Type.SET)
 			throw new ProtocolException(new BadRequest("IQ type should be 'SET'."));
 		
-		String thingId = thingManager.getThingIdByThingName(context.getJid().getNode());
+		String thingId = thingManager.getEdgeThingManager().getThingIdByThingName(context.getJid().getNode());
 		if (thingId == null)
-			throw new ProtocolException(new ItemNotFound(String.format("Thing which's thing name is '%s' not be found.",
+			throw new ProtocolException(new ItemNotFound(String.format("Edge thing which's thing name is '%s' not be found.",
 					context.getJid().getNode())));
 		
 		if (!thingManager.isConcentrator(thingManager.getModel(thingId)))
@@ -76,7 +76,7 @@ public class AddNodeProcessor implements IXepProcessor<Iq, AddNode>, IEventFirer
 		node.setModel(thingManager.getModel(xep.getThingId()));
 		
 		if (thingManager.isConfirmationRequired()) {
-			requestToConfirm(context, iq, thingManager.getThingNameByThingId(thingId), node);
+			requestToConfirm(context, iq, thingManager.getEdgeThingManager().getThingNameByThingId(thingId), node);
 		} else {
 			addNode(context, iq, thingId, node);
 		}

@@ -24,8 +24,8 @@ import com.thefirstlineofcode.chalk.network.ConnectionException;
 import com.thefirstlineofcode.chalk.network.ConnectionListenerAdapter;
 import com.thefirstlineofcode.chalk.network.IConnectionListener;
 import com.thefirstlineofcode.sand.protocols.ibtr.ThingRegister;
-import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
-import com.thefirstlineofcode.sand.protocols.thing.UnregisteredThing;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredEdgeThing;
+import com.thefirstlineofcode.sand.protocols.thing.UnregisteredEdgeThing;
 
 public class Registration extends ConnectionListenerAdapter implements IRegistration, INegotiationListener {
 	private StandardStreamConfig streamConfig;
@@ -35,7 +35,7 @@ public class Registration extends ConnectionListenerAdapter implements IRegistra
 	private boolean dontThrowConnectionException = false;
 	
 	@Override
-	public RegisteredThing register(String thingId, String registrationCode) throws RegistrationException {
+	public RegisteredEdgeThing register(String thingId, String registrationCode) throws RegistrationException {
 		IChatClient chatClient = new IbtrChatClient(streamConfig);
 		chatClient.register(InternalIbtrPlugin.class);
 		
@@ -77,12 +77,12 @@ public class Registration extends ConnectionListenerAdapter implements IRegistra
 		}
 	}
 	
-	private class RegisterTask implements ISyncTask<Iq, RegisteredThing> {
+	private class RegisterTask implements ISyncTask<Iq, RegisteredEdgeThing> {
 		private ThingRegister thingRegister;
 		
 		public RegisterTask(String thingId, String registrationCode) {
 			thingRegister = new ThingRegister();
-			thingRegister.setRegister(new UnregisteredThing(thingId, registrationCode));
+			thingRegister.setRegister(new UnregisteredEdgeThing(thingId, registrationCode));
 		}
 
 		@Override
@@ -94,9 +94,9 @@ public class Registration extends ConnectionListenerAdapter implements IRegistra
 		}
 
 		@Override
-		public RegisteredThing processResult(Iq iq) {
+		public RegisteredEdgeThing processResult(Iq iq) {
 			ThingRegister register = iq.getObject();
-			return (RegisteredThing)register.getRegister();
+			return (RegisteredEdgeThing)register.getRegister();
 		}
 	}
 

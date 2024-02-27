@@ -16,7 +16,7 @@ import com.thefirstlineofcode.granite.framework.core.pipeline.stages.processing.
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.processing.IXepProcessor;
 import com.thefirstlineofcode.granite.framework.core.utils.CommonUtils;
 import com.thefirstlineofcode.granite.framework.im.IResourcesService;
-import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredEdgeThing;
 import com.thefirstlineofcode.sand.protocols.webrtc.signaling.Signal;
 import com.thefirstlineofcode.sand.server.things.IThingManager;
 
@@ -39,7 +39,7 @@ public class SignalProcessor implements IXepProcessor<Iq, Signal> {
 		boolean isThingSession = false;
 		if (accountManager.exists(sessionJid.getNode())) {
 			isUserSession = true;
-		} else if (thingManager.thingNameExists(sessionJid.getNode())) {
+		} else if (thingManager.getEdgeThingManager().thingNameExists(sessionJid.getNode())) {
 			isThingSession = true;
 		} else {			
 			CommonUtils.logAndThrow(logger, new ProtocolException(new NotAllowed(String.format("Neither user nor thing. What thing are you?"))));
@@ -49,12 +49,12 @@ public class SignalProcessor implements IXepProcessor<Iq, Signal> {
 			CommonUtils.logAndThrow(logger, new ProtocolException(new BadRequest("Null peer JID.")));
 		
 		if (isUserSession) {
-			if (!thingManager.thingNameExists(iq.getTo().getNode())) {
-				CommonUtils.logAndThrow(logger, new ProtocolException(new ItemNotFound(String.format("Thing named '%s' doesn't exist.", iq.getTo().getNode()))));
+			if (!thingManager.getEdgeThingManager().thingNameExists(iq.getTo().getNode())) {
+				CommonUtils.logAndThrow(logger, new ProtocolException(new ItemNotFound(String.format("Edge thing named '%s' doesn't exist.", iq.getTo().getNode()))));
 			}			
 			
 			if (iq.getTo().getResource() == null)
-				iq.getTo().setResource(RegisteredThing.DEFAULT_RESOURCE_NAME);
+				iq.getTo().setResource(RegisteredEdgeThing.DEFAULT_RESOURCE_NAME);
 		}
 		
 		if (isThingSession) {

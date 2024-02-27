@@ -39,7 +39,7 @@ public class CelsiusDegreeListener implements IDataListener<CelsiusDegree>, ISer
 		if (!deliverTemperatureToOwner)
 			return;
 		
-		String thingId = thingManager.getThingIdByThingName(context.getJid().getNode());
+		String thingId = thingManager.getEdgeThingManager().getThingIdByThingName(context.getJid().getNode());
 		if (thingId == null)
 			throw new ProtocolException(new NotAllowed("Reporter isn't a thing."));
 		

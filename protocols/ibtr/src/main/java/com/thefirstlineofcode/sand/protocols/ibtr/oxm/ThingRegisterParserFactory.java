@@ -16,8 +16,8 @@ import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 import com.thefirstlineofcode.basalt.xmpp.core.ProtocolException;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.BadRequest;
 import com.thefirstlineofcode.sand.protocols.ibtr.ThingRegister;
-import com.thefirstlineofcode.sand.protocols.thing.RegisteredThing;
-import com.thefirstlineofcode.sand.protocols.thing.UnregisteredThing;
+import com.thefirstlineofcode.sand.protocols.thing.RegisteredEdgeThing;
+import com.thefirstlineofcode.sand.protocols.thing.UnregisteredEdgeThing;
 
 public class ThingRegisterParserFactory implements IParserFactory<ThingRegister> {
 	@Override
@@ -39,7 +39,7 @@ public class ThingRegisterParserFactory implements IParserFactory<ThingRegister>
 		public IElementParser<ThingRegister> getElementParser(IParsingPath parsingPath) {
 			if (parsingPath.match("/")) {
 				return new ElementParserAdaptor<>();
-			} else if (parsingPath.match("unregistered-thing")) {
+			} else if (parsingPath.match("unregistered-edge-thing")) {
 				return new ElementParserAdaptor<ThingRegister>() {
 					@Override
 					public void processAttributes(IParsingContext<ThingRegister> context, List<Attribute> attributes) {
@@ -48,26 +48,26 @@ public class ThingRegisterParserFactory implements IParserFactory<ThingRegister>
 						if (context.getObject().getRegister() != null)
 							throw new ProtocolException(new BadRequest("Thing registration document allows only one subelement."));
 						
-						context.getObject().setRegister(new UnregisteredThing());
+						context.getObject().setRegister(new UnregisteredEdgeThing());
 					}
 				};
-			} else if (parsingPath.match("/unregistered-thing/thing-id")) {
+			} else if (parsingPath.match("/unregistered-edge-thing/thing-id")) {
 				return new ElementParserAdaptor<ThingRegister>() {
 					@Override
 					public void processText(IParsingContext<ThingRegister> context, Value<?> text) {
-						UnregisteredThing unregisteredThing = (UnregisteredThing)context.getObject().getRegister();
-						unregisteredThing.setThingId(text.getString());
+						UnregisteredEdgeThing unregisteredEdgeThing = (UnregisteredEdgeThing)context.getObject().getRegister();
+						unregisteredEdgeThing.setThingId(text.getString());
 					}
 				};
-			} else if (parsingPath.match("/unregistered-thing/registration-key")) {
+			} else if (parsingPath.match("/unregistered-edge-thing/registration-key")) {
 				return new ElementParserAdaptor<ThingRegister>() {
 					@Override
 					public void processText(IParsingContext<ThingRegister> context, Value<?> text) {
-						UnregisteredThing unregisteredThing = (UnregisteredThing)context.getObject().getRegister();
-						unregisteredThing.setRegistrationCode(text.getString());
+						UnregisteredEdgeThing unregisteredEdgeThing = (UnregisteredEdgeThing)context.getObject().getRegister();
+						unregisteredEdgeThing.setRegistrationCode(text.getString());
 					}
 				};
-			} else if (parsingPath.match("/registered-thing")) {
+			} else if (parsingPath.match("/registered-edge-thing")) {
 				return new ElementParserAdaptor<ThingRegister>() {
 					@Override
 					public void processAttributes(IParsingContext<ThingRegister> context, List<Attribute> attributes) {
@@ -76,31 +76,31 @@ public class ThingRegisterParserFactory implements IParserFactory<ThingRegister>
 						if (context.getObject().getRegister() != null)
 							throw new ProtocolException(new BadRequest("Thing registration document allows only one subelement."));
 						
-						context.getObject().setRegister(new RegisteredThing());
+						context.getObject().setRegister(new RegisteredEdgeThing());
 					}
 				};
-			} else if (parsingPath.match("/registered-thing/thing-name")) {
+			} else if (parsingPath.match("//registered-edge-thing/thing-name")) {
 				return new ElementParserAdaptor<ThingRegister>() {
 					@Override
 					public void processText(IParsingContext<ThingRegister> context, Value<?> text) {
-						RegisteredThing registeredThing = (RegisteredThing)context.getObject().getRegister();
-						registeredThing.setThingName(text.getString());
+						RegisteredEdgeThing registeredEdgeThing = (RegisteredEdgeThing)context.getObject().getRegister();
+						registeredEdgeThing.setThingName(text.getString());
 					}
 				};
-			} else if (parsingPath.match("/registered-thing/credentials")) {
+			} else if (parsingPath.match("//registered-edge-thing/credentials")) {
 				return new ElementParserAdaptor<ThingRegister>() {
 					@Override
 					public void processText(IParsingContext<ThingRegister> context, Value<?> text) {
-						RegisteredThing registeredThing = (RegisteredThing)context.getObject().getRegister();
-						registeredThing.setCredentials(text.getString());
+						RegisteredEdgeThing registeredEdgeThing = (RegisteredEdgeThing)context.getObject().getRegister();
+						registeredEdgeThing.setCredentials(text.getString());
 					}
 				};
-			} else if (parsingPath.match("/registered-thing/security-key")) {
+			} else if (parsingPath.match("//registered-edge-thing/security-key")) {
 				return new ElementParserAdaptor<ThingRegister>() {
 					@Override
 					public void processText(IParsingContext<ThingRegister> context, Value<?> text) {
-						RegisteredThing registeredThing = (RegisteredThing)context.getObject().getRegister();
-						registeredThing.setSecretKey(BinaryUtils.decodeFromBase64(text.getString()));
+						RegisteredEdgeThing registeredEdgeThing = (RegisteredEdgeThing)context.getObject().getRegister();
+						registeredEdgeThing.setSecretKey(BinaryUtils.decodeFromBase64(text.getString()));
 					}
 				};
 			} else {

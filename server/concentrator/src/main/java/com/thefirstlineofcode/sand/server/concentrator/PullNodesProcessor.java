@@ -26,7 +26,7 @@ public class PullNodesProcessor implements IXepProcessor<Iq, PullNodes> {
 			throw new ProtocolException(new BadRequest("IQ type should be 'GET'."));
 		
 		String thingName = context.getJid().getNode();
-		String thingId = thingManager.getThingIdByThingName(thingName);
+		String thingId = thingManager.getEdgeThingManager().getThingIdByThingName(thingName);
 		String model = thingManager.getModel(thingId);
 		
 		if (!thingManager.isConcentrator(model))
