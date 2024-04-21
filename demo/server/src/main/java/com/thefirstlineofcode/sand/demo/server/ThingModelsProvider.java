@@ -2,6 +2,7 @@ package com.thefirstlineofcode.sand.demo.server;
 
 import org.pf4j.Extension;
 
+import com.thefirstlineofcode.sand.demo.protocols.AmberWatchModelDescriptor;
 import com.thefirstlineofcode.sand.demo.protocols.Lg01ModelDescriptor;
 import com.thefirstlineofcode.sand.demo.protocols.Lgsc01ModelDescriptor;
 import com.thefirstlineofcode.sand.demo.protocols.Sl01ModelDescriptor;
@@ -26,7 +27,8 @@ public class ThingModelsProvider implements IThingModelsProvider {
 			new Sl01ModelDescriptor(),
 			new Sl02ModelDescriptor(),
 			new Lg01ModelDescriptor(),
-			new Str01ModelDescriptor()
+			new Str01ModelDescriptor(),
+			new AmberWatchModelDescriptor()
 		};		
 	}
 }

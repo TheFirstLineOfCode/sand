@@ -196,7 +196,6 @@ public class LoraGatewayAndCamera extends AbstractEdgeThing implements ISimpleCa
 	}
 
 	private void configureFollowService() {
-		// TODO Auto-generated method stub
 		if (loraGateway == null)
 			return;
 		
