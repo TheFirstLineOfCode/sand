@@ -11,8 +11,8 @@ import com.thefirstlineofcode.granite.framework.core.pipeline.stages.processing.
 import com.thefirstlineofcode.sand.demo.protocols.AccessControlEntry;
 import com.thefirstlineofcode.sand.demo.protocols.AccessControlList;
 import com.thefirstlineofcode.sand.demo.protocols.AccessControlList.Role;
-import com.thefirstlineofcode.sand.demo.protocols.AuthorizedThing;
-import com.thefirstlineofcode.sand.demo.protocols.AuthorizedThings;
+import com.thefirstlineofcode.sand.demo.protocols.AuthorizedEdgeThing;
+import com.thefirstlineofcode.sand.demo.protocols.AuthorizedEdgeThings;
 import com.thefirstlineofcode.sand.demo.protocols.LanNode;
 import com.thefirstlineofcode.sand.protocols.location.ThingLocation;
 import com.thefirstlineofcode.sand.server.concentrator.IConcentrator;
@@ -20,7 +20,7 @@ import com.thefirstlineofcode.sand.server.concentrator.IConcentratorFactory;
 import com.thefirstlineofcode.sand.server.location.ILocationService;
 import com.thefirstlineofcode.sand.server.things.IThingManager;
 
-public class AuthorizedThingsProcessor implements IXepProcessor<Iq, AuthorizedThings> {
+public class AuthorizedEdgeThingsProcessor implements IXepProcessor<Iq, AuthorizedEdgeThings> {
 	@BeanDependency
 	private IAclService aclService;
 	
@@ -34,17 +34,17 @@ public class AuthorizedThingsProcessor implements IXepProcessor<Iq, AuthorizedTh
 	private IConcentratorFactory concentratorFactory;
 
 	@Override
-	public void process(IProcessingContext context, Iq iq, AuthorizedThings xep) {
+	public void process(IProcessingContext context, Iq iq, AuthorizedEdgeThings xep) {
 		AccessControlList acl = aclService.getUserAcl(context.getJid().getNode());
 		if (acl.getEntries() == null || acl.getEntries().size() == 0) {
-			context.write(Iq.createResult(iq, new AuthorizedThings()));
+			context.write(Iq.createResult(iq, new AuthorizedEdgeThings()));
 		} else {
 			List<String> thingIds = getAclThingIds(acl);
 			List<ThingLocation> thingLocations = locationService.locateThings(thingIds);
 			
-			List<AuthorizedThing> things = getThings(acl, thingLocations);
+			List<AuthorizedEdgeThing> things = getAuthorizedEdgeThings(acl, thingLocations);
 			
-			context.write(Iq.createResult(iq, new AuthorizedThings(things)));
+			context.write(Iq.createResult(iq, new AuthorizedEdgeThings(things)));
 		}
 	}
 	
@@ -58,10 +58,10 @@ public class AuthorizedThingsProcessor implements IXepProcessor<Iq, AuthorizedTh
 		return thingIds;
 	}
 
-	private List<AuthorizedThing> getThings(AccessControlList acl, List<ThingLocation> thingLocations) {
-		List<AuthorizedThing> things = new ArrayList<>();
+	private List<AuthorizedEdgeThing> getAuthorizedEdgeThings(AccessControlList acl, List<ThingLocation> thingLocations) {
+		List<AuthorizedEdgeThing> things = new ArrayList<>();
 		for (int i = 0; i < thingLocations.size(); i++) {
-			AuthorizedThing thing = new AuthorizedThing();
+			AuthorizedEdgeThing thing = new AuthorizedEdgeThing();
 			thing.setThingId(thingLocations.get(i).getThingId());
 			thing.setThingName(thingLocations.get(i).getLocation());
 			thing.setModel(thingManager.getModel(thing.getThingId()));

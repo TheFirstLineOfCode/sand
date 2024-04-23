@@ -8,7 +8,7 @@ import com.thefirstlineofcode.basalt.oxm.coc.conversion.annotations.String2Enum;
 import com.thefirstlineofcode.basalt.xmpp.HandyUtils;
 import com.thefirstlineofcode.sand.demo.protocols.AccessControlList.Role;
 
-public class AuthorizedThing {
+public class AuthorizedEdgeThing {
 	private String thingId;
 	private String thingName;
 	private String model;
@@ -21,7 +21,7 @@ public class AuthorizedThing {
 	@Array(value = LanNode.class, elementName = "node")
 	private List<LanNode> nodes;
 	
-	public AuthorizedThing() {
+	public AuthorizedEdgeThing() {
 		concentrator = false;
 		nodes = new ArrayList<>();
 	}
@@ -89,10 +89,10 @@ public class AuthorizedThing {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof AuthorizedThing))
+		if (!(obj instanceof AuthorizedEdgeThing))
 			return false;
 		
-		AuthorizedThing other = (AuthorizedThing)obj;
+		AuthorizedEdgeThing other = (AuthorizedEdgeThing)obj;
 		
 		return HandyUtils.equalsEvenNull(this.thingId, other.thingId) &&
 				HandyUtils.equalsEvenNull(this.thingName, this.thingName);

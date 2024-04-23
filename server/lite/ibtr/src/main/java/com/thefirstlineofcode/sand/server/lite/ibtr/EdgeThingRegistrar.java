@@ -10,7 +10,7 @@ import com.thefirstlineofcode.granite.framework.core.annotations.BeanDependency;
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.event.IEventFirer;
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.event.IEventFirerAware;
 import com.thefirstlineofcode.sand.server.ibtr.IEdgeThingRegistrar;
-import com.thefirstlineofcode.sand.server.ibtr.NotAuthorizedThingRegistrationEvent;
+import com.thefirstlineofcode.sand.server.ibtr.NotAuthorizedEdgeThingRegistrationEvent;
 import com.thefirstlineofcode.sand.server.ibtr.EdgeThingRegistrationEvent;
 import com.thefirstlineofcode.sand.server.things.EdgeThingRegistered;
 import com.thefirstlineofcode.sand.server.things.IThingManager;
@@ -41,7 +41,7 @@ public class EdgeThingRegistrar implements IEdgeThingRegistrar, IEventFirerAware
 				if (logger.isWarnEnabled())
 					logger.warn("Edge thing which's thing ID is '{}' tried to register without authorization.", thingId);
 				
-				eventFirer.fire(new NotAuthorizedThingRegistrationEvent(thingId));
+				eventFirer.fire(new NotAuthorizedEdgeThingRegistrationEvent(thingId));
 			}
 			
 			throw e;

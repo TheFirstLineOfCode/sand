@@ -101,7 +101,7 @@ public class ThingsAdapter extends BaseExpandableListAdapter {
 		viewHolder.tvUserRole.setText(thing.getRole().toString());
 		
 		ControlSpinner spnControlActions = convertView.findViewById(R.id.spn_control_actions);
-		String[] sActions = getAuthorizedThingActions(thing.getModel());
+		String[] sActions = getAuthorizedEdgeThingActions(thing.getModel());
 		ArrayAdapter<String> actionsAdapter = new ArrayAdapter<>(mainActivity,
 				android.R.layout.simple_spinner_dropdown_item, sActions);
 		spnControlActions.setAdapter(actionsAdapter);
@@ -129,7 +129,7 @@ public class ThingsAdapter extends BaseExpandableListAdapter {
 	}
 	
 	@NonNull
-	private String[] getAuthorizedThingActions(String model) {
+	private String[] getAuthorizedEdgeThingActions(String model) {
 		if (model.startsWith("LGE-") || model.equals("HLG")) {
 			return new String[] {"Change Working Mode"};
 		} else if ("LGSC-01".equals(model)) {
@@ -161,6 +161,11 @@ public class ThingsAdapter extends BaseExpandableListAdapter {
 		} else if ("HWT".equals(model)) {
 			return new String[] {
 					"Open Live Streaming"
+			};
+		} else if ("AMBER-WATCH".equals(model)) {
+			return new String[] {
+					"",
+					"Send Message"
 			};
 		} else {
 			throw new RuntimeException(String.format("Unknown thing model: %s.", model));

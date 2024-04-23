@@ -7,7 +7,7 @@ import com.thefirstlineofcode.granite.framework.core.pipeline.stages.IPipelineEx
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.PipelineExtendersConfigurator;
 import com.thefirstlineofcode.granite.framework.im.ResourceAvailableEvent;
 import com.thefirstlineofcode.sand.demo.protocols.AccessControlList;
-import com.thefirstlineofcode.sand.demo.protocols.AuthorizedThings;
+import com.thefirstlineofcode.sand.demo.protocols.AuthorizedEdgeThings;
 import com.thefirstlineofcode.sand.demo.protocols.DeliverTemperatureToOwner;
 import com.thefirstlineofcode.sand.demo.protocols.NodeAddition;
 import com.thefirstlineofcode.sand.demo.protocols.NodeConfirmationRequest;
@@ -17,7 +17,7 @@ import com.thefirstlineofcode.sand.demo.protocols.EdgeThingRegistration;
 import com.thefirstlineofcode.sand.protocols.things.simple.temperature.reporter.CelsiusDegree;
 import com.thefirstlineofcode.sand.server.concentrator.NodeAddedEvent;
 import com.thefirstlineofcode.sand.server.concentrator.NodeConfirmationRequestEvent;
-import com.thefirstlineofcode.sand.server.ibtr.NotAuthorizedThingRegistrationEvent;
+import com.thefirstlineofcode.sand.server.ibtr.NotAuthorizedEdgeThingRegistrationEvent;
 import com.thefirstlineofcode.sand.server.ibtr.EdgeThingRegistrationEvent;
 
 @Extension
@@ -36,13 +36,13 @@ public class PipelineExtendersContributor extends PipelineExtendersConfigurator 
 		configurator.registerSingletonXepProcessor(new IqProtocolChain(AccessControlList.PROTOCOL),
 				new AclProcessor());
 		
-		configurator.registerCocParser(new IqProtocolChain(AuthorizedThings.PROTOCOL),
-				AuthorizedThings.class);
-		configurator.registerCocTranslator(AuthorizedThings.class);
-		configurator.registerSingletonXepProcessor(new IqProtocolChain(AuthorizedThings.PROTOCOL),
-				new AuthorizedThingsProcessor());
+		configurator.registerCocParser(new IqProtocolChain(AuthorizedEdgeThings.PROTOCOL),
+				AuthorizedEdgeThings.class);
+		configurator.registerCocTranslator(AuthorizedEdgeThings.class);
+		configurator.registerSingletonXepProcessor(new IqProtocolChain(AuthorizedEdgeThings.PROTOCOL),
+				new AuthorizedEdgeThingsProcessor());
 		
-		configurator.registerEventListener(NotAuthorizedThingRegistrationEvent.class, new NotAuthorizedThingRegistrationListener());
+		configurator.registerEventListener(NotAuthorizedEdgeThingRegistrationEvent.class, new NotAuthorizedThingRegistrationListener());
 		configurator.registerEventListener(EdgeThingRegistrationEvent.class, new EdgeThingRegistrationListener());
 		configurator.registerEventListener(NodeConfirmationRequestEvent.class, new NodeConfirmationRequestListener());
 		configurator.registerEventListener(NodeAddedEvent.class, new NodeAdditionListener());

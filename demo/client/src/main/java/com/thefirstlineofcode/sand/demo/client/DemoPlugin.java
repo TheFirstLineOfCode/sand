@@ -9,7 +9,7 @@ import com.thefirstlineofcode.basalt.xmpp.core.IqProtocolChain;
 import com.thefirstlineofcode.chalk.core.IChatSystem;
 import com.thefirstlineofcode.chalk.core.IPlugin;
 import com.thefirstlineofcode.sand.demo.protocols.AccessControlList;
-import com.thefirstlineofcode.sand.demo.protocols.AuthorizedThings;
+import com.thefirstlineofcode.sand.demo.protocols.AuthorizedEdgeThings;
 import com.thefirstlineofcode.sand.demo.protocols.DeliverTemperatureToOwner;
 import com.thefirstlineofcode.sand.demo.protocols.NodeAddition;
 import com.thefirstlineofcode.sand.demo.protocols.NodeConfirmationRequest;
@@ -37,11 +37,11 @@ public class DemoPlugin implements IPlugin {
 				new CocTranslatorFactory<>(AccessControlList.class));
 		chatSystem.registerApi(IAclService.class, AclService.class);
 		
-		chatSystem.registerParser(new IqProtocolChain(AuthorizedThings.PROTOCOL),
-				new CocParserFactory<>(AuthorizedThings.class));
-		chatSystem.registerTranslator(AuthorizedThings.class,
-				new CocTranslatorFactory<>(AuthorizedThings.class));
-		chatSystem.registerApi(IAuthorizedThingsService.class, AuthorizedThingsService.class);
+		chatSystem.registerParser(new IqProtocolChain(AuthorizedEdgeThings.PROTOCOL),
+				new CocParserFactory<>(AuthorizedEdgeThings.class));
+		chatSystem.registerTranslator(AuthorizedEdgeThings.class,
+				new CocTranslatorFactory<>(AuthorizedEdgeThings.class));
+		chatSystem.registerApi(IAuthorizedEdgeThingsService.class, AuthorizedEdgeThingsService.class);
 		
 		chatSystem.registerTranslator(RemoveNode.class,
 				new CocTranslatorFactory<>(RemoveNode.class));
@@ -65,9 +65,9 @@ public class DemoPlugin implements IPlugin {
 		
 		chatSystem.unregisterTranslator(RemoveNode.class);
 		
-		chatSystem.unregisterApi(IAuthorizedThingsService.class);
-		chatSystem.unregisterTranslator(AuthorizedThings.class);
-		chatSystem.unregisterParser(new IqProtocolChain(AuthorizedThings.PROTOCOL));
+		chatSystem.unregisterApi(IAuthorizedEdgeThingsService.class);
+		chatSystem.unregisterTranslator(AuthorizedEdgeThings.class);
+		chatSystem.unregisterParser(new IqProtocolChain(AuthorizedEdgeThings.PROTOCOL));
 		
 		chatSystem.unregisterApi(IAclService.class);
 		chatSystem.unregisterTranslator(AccessControlList.class);

@@ -9,14 +9,14 @@ import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.StanzaError;
 import com.thefirstlineofcode.chalk.core.IChatServices;
 import com.thefirstlineofcode.chalk.core.ITask;
 import com.thefirstlineofcode.chalk.core.IUnidirectionalStream;
-import com.thefirstlineofcode.sand.demo.protocols.AuthorizedThings;
+import com.thefirstlineofcode.sand.demo.protocols.AuthorizedEdgeThings;
 
-public class AuthorizedThingsService implements IAuthorizedThingsService {
+public class AuthorizedEdgeThingsService implements IAuthorizedEdgeThingsService {
 	private IChatServices chatServices;
 	
 	private List<Listener> listeners;
 	
-	public AuthorizedThingsService() {
+	public AuthorizedEdgeThingsService() {
 		listeners = new ArrayList<Listener>();
 	}
 
@@ -26,13 +26,13 @@ public class AuthorizedThingsService implements IAuthorizedThingsService {
 
 			@Override
 			public void trigger(IUnidirectionalStream<Iq> stream) {
-				stream.send(new Iq(Iq.Type.GET, new AuthorizedThings(), Stanza.generateId("ads")));
+				stream.send(new Iq(Iq.Type.GET, new AuthorizedEdgeThings(), Stanza.generateId("ads")));
 			}
 			
 			@Override
 			public void processResponse(IUnidirectionalStream<Iq> stream, Iq iq) {
 				for (Listener listener : listeners) {
-					listener.retrieved((AuthorizedThings)iq.getObject());
+					listener.retrieved((AuthorizedEdgeThings)iq.getObject());
 				}
 			}
 

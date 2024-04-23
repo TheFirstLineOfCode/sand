@@ -10,9 +10,9 @@ import com.thefirstlineofcode.granite.framework.core.pipeline.stages.event.IEven
 import com.thefirstlineofcode.granite.framework.im.IResource;
 import com.thefirstlineofcode.granite.framework.im.IResourcesService;
 import com.thefirstlineofcode.sand.demo.protocols.NotAuthorizedEdgeThingRegistration;
-import com.thefirstlineofcode.sand.server.ibtr.NotAuthorizedThingRegistrationEvent;
+import com.thefirstlineofcode.sand.server.ibtr.NotAuthorizedEdgeThingRegistrationEvent;
 
-public class NotAuthorizedThingRegistrationListener implements IEventListener<NotAuthorizedThingRegistrationEvent>,
+public class NotAuthorizedThingRegistrationListener implements IEventListener<NotAuthorizedEdgeThingRegistrationEvent>,
 			IServerConfigurationAware {
 	@BeanDependency
 	private IResourcesService resourcesService;
@@ -20,7 +20,7 @@ public class NotAuthorizedThingRegistrationListener implements IEventListener<No
 	private String domainName;
 	
 	@Override
-	public void process(IEventContext context, NotAuthorizedThingRegistrationEvent event) {
+	public void process(IEventContext context, NotAuthorizedEdgeThingRegistrationEvent event) {
 		for (String user : SandDemoCommandsProcessor.TEST_USERS) {
 			JabberId bareJid = new JabberId(user, domainName);
 			IResource[] resources = resourcesService.getResources(bareJid);
