@@ -100,8 +100,11 @@ public class ThingsAdapter extends BaseExpandableListAdapter {
 		viewHolder.tvThingId.setText(thing.getThingId());
 		viewHolder.tvUserRole.setText(thing.getRole().toString());
 		
-		ControlSpinner spnControlActions = convertView.findViewById(R.id.spn_control_actions);
 		String[] sActions = getAuthorizedEdgeThingActions(thing.getModel());
+		if (sActions == null || sActions.length == 0)
+			return convertView;
+		
+		ControlSpinner spnControlActions = convertView.findViewById(R.id.spn_control_actions);
 		ArrayAdapter<String> actionsAdapter = new ArrayAdapter<>(mainActivity,
 				android.R.layout.simple_spinner_dropdown_item, sActions);
 		spnControlActions.setAdapter(actionsAdapter);
@@ -162,11 +165,8 @@ public class ThingsAdapter extends BaseExpandableListAdapter {
 			return new String[] {
 					"Open Live Streaming"
 			};
-		} else if ("AMBER-WATCH".equals(model)) {
-			return new String[] {
-					"",
-					"Send Message"
-			};
+		} else if ("Amber-Bridge".equals(model)) {
+			return new String[0];
 		} else {
 			throw new RuntimeException(String.format("Unknown thing model: %s.", model));
 		}
@@ -180,6 +180,11 @@ public class ThingsAdapter extends BaseExpandableListAdapter {
 			return new String[] {"Watch Temperature", "Reset Thing", "Remove Node"};
 		} else if (model.equals("HLT")) {
 			return new String[] {"Flash", "Turn On", "Turn Off"};
+		} else if ("Amber-Watch".equals(model)) {
+			return new String[] {
+					"Device Status",
+					"Send Message"
+			};
 		} else {
 			throw new RuntimeException(String.format("Unknown thing model: %s.", model));
 		}
