@@ -15,25 +15,25 @@ import androidx.annotation.NonNull;
 
 import com.thefirstlineofcode.basalt.xmpp.core.JabberId;
 import com.thefirstlineofcode.sand.demo.protocols.AccessControlList;
-import com.thefirstlineofcode.sand.demo.protocols.AuthorizedThing;
+import com.thefirstlineofcode.sand.demo.protocols.AuthorizedEdgeThing;
 import com.thefirstlineofcode.sand.demo.protocols.LanNode;
 import com.thefirstlineofcode.sand.protocols.thing.RegisteredEdgeThing;
 
 public class ThingsAdapter extends BaseExpandableListAdapter {
 	private final MainActivity mainActivity;
 	private String host;
-	private AuthorizedThing[] things;
+	private AuthorizedEdgeThing[] things;
 	
-	public ThingsAdapter(MainActivity mainActivity, String host, AuthorizedThing[] things) {
+	public ThingsAdapter(MainActivity mainActivity, String host, AuthorizedEdgeThing[] things) {
 		this.mainActivity = mainActivity;
 		this.host = host;
 		this.things = things;
 	}
 	
-	public void setThings(AuthorizedThing[] things) {
+	public void setThings(AuthorizedEdgeThing[] things) {
 		this.things = things;
 	}
-	public AuthorizedThing[] getThings() {
+	public AuthorizedEdgeThing[] getThings() {
 		return things;
 	}
 	
@@ -47,7 +47,7 @@ public class ThingsAdapter extends BaseExpandableListAdapter {
 	
 	@Override
 	public int getChildrenCount(int groupPosition) {
-		AuthorizedThing thing = things[groupPosition];
+		AuthorizedEdgeThing thing = things[groupPosition];
 		if (!thing.isConcentrator())
 			return 0;
 		
@@ -61,7 +61,7 @@ public class ThingsAdapter extends BaseExpandableListAdapter {
 	
 	@Override
 	public Object getChild(int groupPosition, int childPosition) {
-		AuthorizedThing thing = things[groupPosition];
+		AuthorizedEdgeThing thing = things[groupPosition];
 		return thing.getNodes().get(childPosition);
 	}
 	
@@ -82,7 +82,7 @@ public class ThingsAdapter extends BaseExpandableListAdapter {
 	
 	@Override
 	public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-		AuthorizedThing thing = things[groupPosition];
+		AuthorizedEdgeThing thing = things[groupPosition];
 		
 		AuthorizedThingViewHolder viewHolder;
 		if (convertView == null) {
@@ -192,7 +192,7 @@ public class ThingsAdapter extends BaseExpandableListAdapter {
 	
 	@Override
 	public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-		AuthorizedThing thing = things[groupPosition];
+		AuthorizedEdgeThing thing = things[groupPosition];
 		LanNode lanNode = thing.getNodes().get(childPosition);
 		
 		LanNodeViewHolder viewHolder;
@@ -364,7 +364,7 @@ public class ThingsAdapter extends BaseExpandableListAdapter {
 		public void onNothingSelected(AdapterView<?> parent) {}
 		
 		private JabberId getJidTargetByThingId(String thingId) {
-			for (AuthorizedThing thing : things) {
+			for (AuthorizedEdgeThing thing : things) {
 				if (thingId.equals(thing.getThingId()))
 					return new JabberId(thing.getThingName(), host, RegisteredEdgeThing.DEFAULT_RESOURCE_NAME);
 				

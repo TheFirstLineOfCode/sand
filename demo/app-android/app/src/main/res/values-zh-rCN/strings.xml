@@ -38,6 +38,7 @@
     <string name="stream_error_occurred">Stream错误：%s。请联系开发者</string>
     <string name="stanza_error_occurred">Stanza错误：%s。请联系开发者</string>
     <string name="retrieve_authorized_things_timeout">获取智能物件超时. 你可以选择 \'刷新智能物件列表\' 菜单来刷新你的智能物件列表.</string>
+    <string name="no_authorized_things_received">没有收到任何智能物件.</string>
     <string name="refresh_things">刷新智能物件列表</string>
     <string name="things_has_updated">智能物件列表被更新</string>
     <string name="control_the_thing">控制这个智能物件</string>

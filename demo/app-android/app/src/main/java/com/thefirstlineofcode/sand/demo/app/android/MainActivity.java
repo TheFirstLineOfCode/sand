@@ -58,11 +58,11 @@ import com.thefirstlineofcode.sand.client.sensor.IDataProcessor;
 import com.thefirstlineofcode.sand.client.sensor.IReportService;
 import com.thefirstlineofcode.sand.client.thing.IEventProcessor;
 import com.thefirstlineofcode.sand.client.thing.INotificationService;
-import com.thefirstlineofcode.sand.demo.client.IAuthorizedThingsService;
+import com.thefirstlineofcode.sand.demo.client.IAuthorizedEdgeThingsService;
 import com.thefirstlineofcode.sand.demo.client.INetConfigService;
 import com.thefirstlineofcode.sand.demo.client.IRecordedVideosService;
-import com.thefirstlineofcode.sand.demo.protocols.AuthorizedThing;
-import com.thefirstlineofcode.sand.demo.protocols.AuthorizedThings;
+import com.thefirstlineofcode.sand.demo.protocols.AuthorizedEdgeThing;
+import com.thefirstlineofcode.sand.demo.protocols.AuthorizedEdgeThings;
 import com.thefirstlineofcode.sand.demo.protocols.DeliverTemperatureToOwner;
 import com.thefirstlineofcode.sand.demo.protocols.RecordedVideo;
 import com.thefirstlineofcode.sand.demo.protocols.VideoRecorded;
@@ -99,7 +99,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity implements IOperator.Listener,
-		IAuthorizedThingsService.Listener, IErrorListener,
+		IAuthorizedEdgeThingsService.Listener, IErrorListener,
 			INetConfigService.NetConfigEventsListener {
 	private static final Logger logger = LoggerFactory.getLogger(MainActivity.class);
 	
@@ -217,11 +217,11 @@ public class MainActivity extends AppCompatActivity implements IOperator.Listene
 		
 		IChatClient chatClient = ChatClientSingleton.get(this);
 		host = chatClient.getStreamConfig().getHost();
-		IAuthorizedThingsService authorizedThingsService =
-				chatClient.createApi(IAuthorizedThingsService.class);
-		authorizedThingsService.addListener(this);
+		IAuthorizedEdgeThingsService authorizedEdgeThingsService =
+				chatClient.createApi(IAuthorizedEdgeThingsService.class);
+		authorizedEdgeThingsService.addListener(this);
 		
-		authorizedThingsService.retrieve();
+		authorizedEdgeThingsService.retrieve();
 	}
 	
 	@Override
@@ -377,16 +377,16 @@ public class MainActivity extends AppCompatActivity implements IOperator.Listene
 	}
 	
 	@Override
-	public void retrieved(AuthorizedThings authorizedThings) {
+	public void retrieved(AuthorizedEdgeThings authorizedEdgeThings) {
 		runOnUiThread(() -> {
 			ProgressBar pbRetrievingThings = findViewById(R.id.pb_retrieving_things);
 			pbRetrievingThings.setVisibility(View.INVISIBLE);
 			
-			List<AuthorizedThing> lThings = authorizedThings.getThings();
+			List<AuthorizedEdgeThing> lThings = authorizedEdgeThings.getThings();
 			
-			AuthorizedThing[] things = new AuthorizedThing[0];
+			AuthorizedEdgeThing[] things = new AuthorizedEdgeThing[0];
 			if (lThings != null && lThings.size() != 0)
-				things = lThings.toArray(new AuthorizedThing[0]);
+				things = lThings.toArray(new AuthorizedEdgeThing[0]);
 			
 			ExpandableListView elvThings = findViewById(R.id.elv_things);
 			if (thingsAdapter == null) {
@@ -394,6 +394,12 @@ public class MainActivity extends AppCompatActivity implements IOperator.Listene
 				elvThings.setAdapter(thingsAdapter);
 				
 				if (things == null || things.length == 0) {
+					runOnUiThread(() ->
+							Toast.makeText(MainActivity.this,
+									getString(R.string.no_authorized_things_received),
+									Toast.LENGTH_LONG).show()
+					);
+					
 					return;
 				}
 				
@@ -410,7 +416,7 @@ public class MainActivity extends AppCompatActivity implements IOperator.Listene
 				
 				@Override
 				public void received(Presence presence) {
-					AuthorizedThing[] things = thingsAdapter.getThings();
+					AuthorizedEdgeThing[] things = thingsAdapter.getThings();
 					if (things == null || things.length == 0) {
 						return;
 					}
@@ -428,9 +434,9 @@ public class MainActivity extends AppCompatActivity implements IOperator.Listene
 		});
 	}
 	
-	private void expandNodes(ExpandableListView elvThings, AuthorizedThing[] things) {
+	private void expandNodes(ExpandableListView elvThings, AuthorizedEdgeThing[] things) {
 		for (int i = 0; i < things.length; i++) {
-			AuthorizedThing thing = things[i];
+			AuthorizedEdgeThing thing = things[i];
 			if (thing.isConcentrator() && thing.getNodes() != null &&
 					thing.getNodes().size() > 0)
 				elvThings.expandGroup(i);

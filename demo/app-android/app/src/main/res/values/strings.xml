@@ -14,7 +14,7 @@
     <string name="port">Port</string>
     <string name="enable_tls">Enable TLS</string>
     <string name="ok">OK</string>
-    <string name="stream_config_default_host" translatable="false">47.115.36.99</string>
+    <string name="stream_config_default_host" translatable="false">120.78.128.21</string>
     <string name="stream_config_default_port" translatable="false">5222</string>
     <string name="stream_config_default_enable_tls" translatable="false">false</string>
     <string name="host_cant_be_null">Host can\'t be null.</string>
@@ -46,6 +46,7 @@
     <string name="stream_error_occurred">Stream error %s occurred. Please contact the developer.</string>
     <string name="stanza_error_occurred">Stanza error %s occurred. Please contact the developer.</string>
     <string name="retrieve_authorized_things_timeout">Retrieve authorized things timeout. You can refresh your Things by selecting \'Refresh Things\' menu.</string>
+    <string name="no_authorized_things_received">没有收到任何智能物件.</string>
     <string name="refresh_things">Refresh Things</string>
     <string name="things_has_updated">Things has updated.</string>
     <string name="control_the_thing">Control the thing</string>
