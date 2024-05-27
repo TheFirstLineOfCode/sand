@@ -35,7 +35,7 @@ public class RecordedVideoManager implements IRecordedVideoManager, IDataObjectF
 				videoRecorded.getVideoUrl() == null ||
 				videoRecorded.getRecordingTime() == null ||
 				videoRecorded.getRecordingReason() == null)
-			throw new ProtocolException(new BadRequest("Required attribute of recorded video is lacked."));
+			throw new ProtocolException(new BadRequest("Some required attributes of recorded video are null."));
 		
 		RecordedVideo recordedVideo = dataObjectFactory.create(RecordedVideo.class);
 		
