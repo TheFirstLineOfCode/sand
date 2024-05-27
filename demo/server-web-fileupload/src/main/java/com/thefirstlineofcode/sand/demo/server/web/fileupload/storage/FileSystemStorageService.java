@@ -27,7 +27,7 @@ public class FileSystemStorageService implements StorageService {
 	}
 
 	@Override
-	public void store(MultipartFile file) {
+	public void store(MultipartFile file) throws StorageException {
 		try {
 			if (file.isEmpty()) {
 				throw new StorageException("Failed to store empty file.");
@@ -51,7 +51,7 @@ public class FileSystemStorageService implements StorageService {
 	}
 
 	@Override
-	public Stream<Path> loadAll() {
+	public Stream<Path> loadAll() throws StorageException {
 		try {
 			return Files.walk(this.rootLocation, 1)
 				.filter(path -> !path.equals(this.rootLocation))
@@ -63,26 +63,21 @@ public class FileSystemStorageService implements StorageService {
 
 	}
 
-	@Override
-	public Path load(String filename) {
+	private Path load(String filename) {
 		return rootLocation.resolve(filename);
 	}
 
 	@Override
-	public Resource loadAsResource(String filename) {
+	public Resource loadAsResource(String filename) throws StorageException {
 		try {
 			Path file = load(filename);
 			Resource resource = new UrlResource(file.toUri());
 			if (resource.exists() || resource.isReadable()) {
 				return resource;
 			}
-			else {
-				throw new StorageFileNotFoundException(
-						"Could not read file: " + filename);
-
-			}
-		}
-		catch (MalformedURLException e) {
+			
+			return null;
+		} catch (MalformedURLException e) {
 			throw new StorageFileNotFoundException("Could not read file: " + filename, e);
 		}
 	}
@@ -93,11 +88,24 @@ public class FileSystemStorageService implements StorageService {
 	}
 
 	@Override
-	public void init() {
+	public void init() throws StorageException {
 		try {
 			Files.createDirectories(rootLocation);
 		} catch (IOException e) {
 			throw new StorageException("Could not initialize storage", e);
+		}
+	}
+
+	@Override
+	public void delete(String filename) throws StorageException {
+		Path file = load(filename);
+		if (!Files.exists(file))
+			throw new StorageFileNotFoundException("Could not read file: " + filename);
+		
+		try {			
+			Files.delete(file);
+		} catch (IOException e) {
+			throw new StorageException("IO exception.", e);
 		}
 	}
 }

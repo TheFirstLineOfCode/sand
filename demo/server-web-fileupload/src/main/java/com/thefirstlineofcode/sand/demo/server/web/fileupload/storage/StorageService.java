@@ -7,11 +7,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface StorageService {
-	void init();
-	void store(MultipartFile file);
-	Stream<Path> loadAll();
-	Path load(String filename);
-	Resource loadAsResource(String filename);
-	void deleteAll();
+	void init() throws StorageException;
+	void store(MultipartFile file) throws StorageException;
+	Stream<Path> loadAll() throws StorageException;
+	Resource loadAsResource(String filename) throws StorageException ;
+	void deleteAll() throws StorageException;
+	void delete(String filename) throws StorageException;
 
 }

@@ -8,5 +8,8 @@ import com.thefirstlineofcode.sand.demo.protocols.VideoRecorded;
 
 public interface IRecordedVideoManager {
 	void add(JabberId recorder, VideoRecorded videoRecorded);
+	void remove(String videoName);
+	boolean exists(String videoName);
 	List<RecordedVideo> findByRecorderThingId(String recorderThingId);
+	
 }

@@ -43,7 +43,7 @@ public class FileUploadTests {
 	private StorageService storageService;
 	
 	@Test
-	public void testFileUpload() throws IOException {
+	public void testFileUpload() throws StorageException, IOException {
 		OkHttpClient client = new OkHttpClient.Builder().readTimeout(5, TimeUnit.MINUTES).build();
 		Response response = client.newCall(getFileUploadRequest()).execute();
 		
@@ -59,6 +59,7 @@ public class FileUploadTests {
 		processResponse(call.execute());
 		
 		storageService.deleteAll();
+			
 		FileSystemUtils.deleteRecursively(DOWNLOAD_DIR.toFile());
 	}
 

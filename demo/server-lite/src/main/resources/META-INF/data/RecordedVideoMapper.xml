@@ -6,6 +6,14 @@
 		INSERT INTO RECORDED_VIDEOS(id, recorder_thing_id, video_name, video_url, recording_time, recording_reason, stored_time) VALUES(#{id}, #{recorderThingId}, #{videoName}, #{videoUrl}, #{recordingTime}, #{recordingReason}, CURRENT_TIMESTAMP)
 	</insert>
 	
+	<delete id="delete">
+        DELETE FROM RECORDED_VIDEOS WHERE video_name=#{0}
+    </delete>
+    
+    <select id="selectCountByVideoName" resultType="int">
+		SELECT count(*) FROM RECORDED_VIDEOS WHERE video_name=#{0}
+    </select>
+	
 	<select id="selectByRecorder" resultMap="recordedVideoResultMap">
 		SELECT * FROM RECORDED_VIDEOS WHERE recorder_thing_id = #{arg0} ORDER BY recording_time DESC
 	</select>

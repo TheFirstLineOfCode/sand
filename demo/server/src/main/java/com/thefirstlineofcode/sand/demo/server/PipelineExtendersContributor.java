@@ -9,16 +9,17 @@ import com.thefirstlineofcode.granite.framework.im.ResourceAvailableEvent;
 import com.thefirstlineofcode.sand.demo.protocols.AccessControlList;
 import com.thefirstlineofcode.sand.demo.protocols.AuthorizedEdgeThings;
 import com.thefirstlineofcode.sand.demo.protocols.DeliverTemperatureToOwner;
+import com.thefirstlineofcode.sand.demo.protocols.EdgeThingRegistration;
 import com.thefirstlineofcode.sand.demo.protocols.NodeAddition;
 import com.thefirstlineofcode.sand.demo.protocols.NodeConfirmationRequest;
 import com.thefirstlineofcode.sand.demo.protocols.NotAuthorizedEdgeThingRegistration;
 import com.thefirstlineofcode.sand.demo.protocols.RecordedVideos;
-import com.thefirstlineofcode.sand.demo.protocols.EdgeThingRegistration;
+import com.thefirstlineofcode.sand.demo.protocols.RemoveVideo;
 import com.thefirstlineofcode.sand.protocols.things.simple.temperature.reporter.CelsiusDegree;
 import com.thefirstlineofcode.sand.server.concentrator.NodeAddedEvent;
 import com.thefirstlineofcode.sand.server.concentrator.NodeConfirmationRequestEvent;
-import com.thefirstlineofcode.sand.server.ibtr.NotAuthorizedEdgeThingRegistrationEvent;
 import com.thefirstlineofcode.sand.server.ibtr.EdgeThingRegistrationEvent;
+import com.thefirstlineofcode.sand.server.ibtr.NotAuthorizedEdgeThingRegistrationEvent;
 
 @Extension
 public class PipelineExtendersContributor extends PipelineExtendersConfigurator {
@@ -59,6 +60,9 @@ public class PipelineExtendersContributor extends PipelineExtendersConfigurator 
 		configurator.registerCocParser(new IqProtocolChain(DeliverTemperatureToOwner.PROTOCOL), DeliverTemperatureToOwner.class);
 		configurator.registerCocTranslator(CelsiusDegree.class);
 		configurator.registerSingletonXepProcessor(new IqProtocolChain(DeliverTemperatureToOwner.PROTOCOL), new DeliverTemperatureToOwnerProcessor());
+		
+		configurator.registerCocParser(new IqProtocolChain(RemoveVideo.PROTOCOL), RemoveVideo.class);
+		configurator.registerSingletonXepProcessor(new IqProtocolChain(RemoveVideo.PROTOCOL), new RemoveVideoProcessor());
 	}
 	
 }

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.thefirstlineofcode.sand.demo.server.web.fileupload.storage.StorageException;
 import com.thefirstlineofcode.sand.demo.server.web.fileupload.storage.StorageFileNotFoundException;
 import com.thefirstlineofcode.sand.demo.server.web.fileupload.storage.StorageService;
 
@@ -32,7 +33,16 @@ public class FileUploadController {
 	@GetMapping("/files/{filename:.+}")
 	@ResponseBody
 	public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
-		Resource file = storageService.loadAsResource(filename);
+		Resource file = null;
+		try {
+			file = storageService.loadAsResource(filename);
+		} catch (StorageException e) {
+			return ResponseEntity.internalServerError().body(null);
+		}
+		
+		if (file == null)
+			return ResponseEntity.notFound().build();
+		
 		if (filename.endsWith(".jpg")) {			
 			return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
 					"attachment; filename=\"" + file.getFilename() + "\"").body(file);
@@ -46,7 +56,11 @@ public class FileUploadController {
 	@PostMapping("/file-upload")
 	public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file,
 			RedirectAttributes redirectAttributes) {
-		storageService.store(file);
+		try {
+			storageService.store(file);
+		} catch (StorageException e) {
+			return ResponseEntity.internalServerError().body(null);
+		}
 		
 		return ResponseEntity.ok().body(null);
 	}

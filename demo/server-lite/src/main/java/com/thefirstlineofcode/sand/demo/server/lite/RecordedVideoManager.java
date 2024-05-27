@@ -35,7 +35,7 @@ public class RecordedVideoManager implements IRecordedVideoManager, IDataObjectF
 				videoRecorded.getVideoUrl() == null ||
 				videoRecorded.getRecordingTime() == null ||
 				videoRecorded.getRecordingReason() == null)
-			throw new ProtocolException(new BadRequest());
+			throw new ProtocolException(new BadRequest("Required attribute of recorded video is lacked."));
 		
 		RecordedVideo recordedVideo = dataObjectFactory.create(RecordedVideo.class);
 		
@@ -48,7 +48,6 @@ public class RecordedVideoManager implements IRecordedVideoManager, IDataObjectF
 		recordedVideo.setVideoUrl(videoRecorded.getVideoUrl());
 		recordedVideo.setRecordingTime(videoRecorded.getRecordingTime());
 		recordedVideo.setRecordingReason(videoRecorded.getRecordingReason());
-		recordedVideo.setVideoUrl(videoRecorded.getVideoUrl());
 		
 		getRecordedVideoMapper().insert(recordedVideo);
 	}
@@ -65,6 +64,16 @@ public class RecordedVideoManager implements IRecordedVideoManager, IDataObjectF
 	@Override
 	public void setDataObjectFactory(IDataObjectFactory dataObjectFactory) {
 		this.dataObjectFactory = dataObjectFactory;
+	}
+
+	@Override
+	public void remove(String videoName) {
+		getRecordedVideoMapper().delete(videoName);
+	}
+
+	@Override
+	public boolean exists(String videoName) {
+		return getRecordedVideoMapper().selectCountByVideoName(videoName) != 0;
 	}
 
 }
