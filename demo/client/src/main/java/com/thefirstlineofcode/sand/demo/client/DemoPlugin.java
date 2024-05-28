@@ -15,6 +15,7 @@ import com.thefirstlineofcode.sand.demo.protocols.NodeAddition;
 import com.thefirstlineofcode.sand.demo.protocols.NodeConfirmationRequest;
 import com.thefirstlineofcode.sand.demo.protocols.NotAuthorizedEdgeThingRegistration;
 import com.thefirstlineofcode.sand.demo.protocols.RecordedVideos;
+import com.thefirstlineofcode.sand.demo.protocols.RemoveVideo;
 import com.thefirstlineofcode.sand.demo.protocols.EdgeThingRegistration;
 
 public class DemoPlugin implements IPlugin {
@@ -53,6 +54,8 @@ public class DemoPlugin implements IPlugin {
 		chatSystem.registerApi(IRecordedVideosService.class, RecordedVideosService.class);
 		
 		chatSystem.registerTranslator(DeliverTemperatureToOwner.class, new CocTranslatorFactory<>(DeliverTemperatureToOwner.class));
+		
+		chatSystem.registerTranslator(RemoveVideo.class, new CocTranslatorFactory<>(RemoveVideo.class));
 	}
 	
 	@Override
