@@ -187,6 +187,13 @@ public class As32Ttl100LoraCommunicator extends AbstractCommunicator<LoraAddress
 			
 			Thread.sleep(1000);
 			
+			while (serial.available() > 0) {
+				// Clear all received data in serial.
+				byte[] buffer = new byte[256];
+				serial.read(buffer);
+				Thread.sleep(500);
+			}
+			
 			serial.write(configurationCommand);
 			
 			Thread.sleep(1000);
