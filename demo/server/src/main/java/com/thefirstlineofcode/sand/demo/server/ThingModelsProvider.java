@@ -2,8 +2,8 @@ package com.thefirstlineofcode.sand.demo.server;
 
 import org.pf4j.Extension;
 
-import com.thefirstlineofcode.sand.demo.protocols.AmberBridgeModelDescriptor;
-import com.thefirstlineofcode.sand.demo.protocols.AmberWatchModelDescriptor;
+import com.thefirstlineofcode.amber.protocol.AmberBridgeModelDescriptor;
+import com.thefirstlineofcode.amber.protocol.AmberWatchModelDescriptor;
 import com.thefirstlineofcode.sand.demo.protocols.Lg01ModelDescriptor;
 import com.thefirstlineofcode.sand.demo.protocols.Lgsc01ModelDescriptor;
 import com.thefirstlineofcode.sand.demo.protocols.Sl01ModelDescriptor;

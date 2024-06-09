@@ -69,5 +69,10 @@
 			<groupId>com.thefirstlineofcode.sand.protocols.things</groupId>
 			<artifactId>sand-protocols-things-simple-temperature-reporter</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.thefirstlineofcode.amber</groupId>
+			<artifactId>amber-protocol</artifactId>
+			<version>1.0.0-RELEASE</version>
+		</dependency>
 	</dependencies>
 </project>

@@ -2,6 +2,7 @@ package com.thefirstlineofcode.sand.demo.server;
 
 import com.thefirstlinelinecode.sand.protocols.concentrator.AddNode;
 import com.thefirstlinelinecode.sand.protocols.concentrator.Node;
+import com.thefirstlineofcode.amber.protocol.WatchState;
 import com.thefirstlineofcode.basalt.oxm.coc.annotations.ProtocolObject;
 import com.thefirstlineofcode.basalt.xeps.ping.Ping;
 import com.thefirstlineofcode.basalt.xmpp.core.JabberId;
@@ -61,11 +62,25 @@ public class AclPipelinePreprocessor implements IPipelinePreprocessor {
 			return afterParsingConcentratorGroupObject(from, iq);			
 		} else if (iq.getObject() instanceof ApproveFollow) {
 			return afterParsingApproveFollow(from, iq);
+		} else if (iq.getObject() instanceof WatchState) {
+			return afterParsingWatchState(from, iq);
 		} else {
 			return object;
 		}
 	}
 	
+	private Object afterParsingWatchState(JabberId from, Iq iq) {
+		if (iq.getType() != Iq.Type.RESULT)
+			throw new ProtocolException(new BadRequest("Must be a IQ result."));
+		
+		String thingId = getThingId(from);
+		JabberId user = iq.getTo();
+		if (!isUser(user) || !isOwnerOrController(user.getNode(), thingId))
+			throw new ProtocolException(new NotAuthorized("Neither owner nor controller of thing."));
+		
+		return iq;
+	}
+
 	private Object afterParsingApproveFollow(JabberId from, Iq iq) {
 		String approver = from.getNode();
 		
@@ -123,30 +138,30 @@ public class AclPipelinePreprocessor implements IPipelinePreprocessor {
 		return iq;
 	}
 	
-	private boolean isUser(JabberId to) {
-		return accountManager.exists(to.getNode());
+	private boolean isUser(JabberId user) {
+		return accountManager.exists(user.getNode());
 	}
 
-	private boolean isThing(JabberId from) {
-		return thingManager.getEdgeThingManager().thingNameExists(from.getNode());
+	private boolean isThing(JabberId thing) {
+		return thingManager.getEdgeThingManager().thingNameExists(thing.getNode());
 	}
 
 	private Object afterParsingExecution(JabberId from, Iq iq) {
 		if (iq.getType() == Iq.Type.RESULT)
 			return iq;
 		
-		String sender = from.getNode();
+		String user = from.getNode();
 		String thingId = getThingId(iq.getTo());
 		
 		Execution execution = iq.getObject();
 		if (isTuxpAction(execution.getAction())) {
-			if (!isOwner(sender, thingId))
+			if (!isOwner(user, thingId))
 				throw new ProtocolException(new NotAuthorized("TUXP actions can be sent by owner only."));
 			
 			return iq;
 		}
 		
-		if (!isOwnerOrController(sender, thingId))
+		if (!isOwnerOrController(user, thingId))
 			throw new ProtocolException(new NotAuthorized("Neither owner nor controller of thing."));
 		
 		return iq;
@@ -190,25 +205,25 @@ public class AclPipelinePreprocessor implements IPipelinePreprocessor {
 		return Role.OWNER == aclService.getRole(sender, thingId);
 	}
 	
-	private boolean isOwnerOrController(String sender, String thingId) {
-		if (!accountManager.exists(sender)) {
+	private boolean isOwnerOrController(String user, String thingId) {
+		if (!accountManager.exists(user)) {
 			// Did a thing send the message?
 			throw new ProtocolException(new NotAllowed());
 		}
 		
-		Role role = aclService.getRole(sender, thingId);
+		Role role = aclService.getRole(user, thingId);
 		return Role.OWNER == role || Role.CONTROLLER == role;
 	}
 
-	private String getThingId(JabberId to) {
-		if (to == null)
-			throw new ProtocolException(new BadRequest("Null target."));
+	private String getThingId(JabberId thing) {
+		if (thing == null)
+			throw new ProtocolException(new BadRequest("Null thing."));
 		
 		String thingId = null;
-		if (to.getResource() != null && !RegisteredEdgeThing.DEFAULT_RESOURCE_NAME.equals(to.getResource())) {
+		if (thing.getResource() != null && !RegisteredEdgeThing.DEFAULT_RESOURCE_NAME.equals(thing.getResource())) {
 			// The thing is a LAN node.
-			String concentratorThingName = to.getNode();
-			String sLanId = to.getResource();
+			String concentratorThingName = thing.getNode();
+			String sLanId = thing.getResource();
 			
 			Thing concentratorThing = thingManager.getEdgeThingManager().getByThingName(concentratorThingName);
 			if (concentratorThing == null) {
@@ -239,11 +254,11 @@ public class AclPipelinePreprocessor implements IPipelinePreprocessor {
 			thingId = nodeThing.getThingId();
 		} else {
 			// The thing is an edge thing.
-			Thing thing = thingManager.getEdgeThingManager().getByThingName(to.getNode());
-			if (thing == null)
-				throw new ProtocolException(new BadRequest(String.format("Edge thing which's thing name is '%s' not exists.", to.getNode())));
+			Thing edgeThing = thingManager.getEdgeThingManager().getByThingName(thing.getNode());
+			if (edgeThing == null)
+				throw new ProtocolException(new BadRequest(String.format("Edge thing which's thing name is '%s' not exists.", thing.getNode())));
 				
-			thingId = thing.getThingId();
+			thingId = edgeThing.getThingId();
 		}
 		
 		return thingId;

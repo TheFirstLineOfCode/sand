@@ -100,18 +100,23 @@ public class ThingsAdapter extends BaseExpandableListAdapter {
 		viewHolder.tvThingId.setText(thing.getThingId());
 		viewHolder.tvUserRole.setText(thing.getRole().toString());
 		
-		String[] sActions = getAuthorizedEdgeThingActions(thing.getModel());
-		if (sActions == null || sActions.length == 0)
-			return convertView;
-		
+		TextView tvControl = convertView.findViewById(R.id.tv_control);
 		ControlSpinner spnControlActions = convertView.findViewById(R.id.spn_control_actions);
+		
+		String[] sActions = getAuthorizedEdgeThingActions(thing.getModel());
+		if (sActions == null || sActions.length == 0) {
+			tvControl.setVisibility(View.INVISIBLE);
+			spnControlActions.setVisibility(View.INVISIBLE);
+			
+			return convertView;
+		}
+		
 		ArrayAdapter<String> actionsAdapter = new ArrayAdapter<>(mainActivity,
 				android.R.layout.simple_spinner_dropdown_item, sActions);
 		spnControlActions.setAdapter(actionsAdapter);
 		
 		if (thing.getRole() != AccessControlList.Role.OWNER &&
 				thing.getRole() != AccessControlList.Role.CONTROLLER) {
-			TextView tvControl = convertView.findViewById(R.id.tv_control);
 			tvControl.setVisibility(View.INVISIBLE);
 			spnControlActions.setVisibility(View.INVISIBLE);
 		} else {
@@ -182,7 +187,8 @@ public class ThingsAdapter extends BaseExpandableListAdapter {
 			return new String[] {"Flash", "Turn On", "Turn Off"};
 		} else if ("Amber-Watch".equals(model)) {
 			return new String[] {
-					"Device Status",
+					"Query Watch State",
+					"Monitor Heart Rate",
 					"Send Message"
 			};
 		} else {
@@ -354,6 +360,15 @@ public class ThingsAdapter extends BaseExpandableListAdapter {
 					break;
 				case "Remove Node":
 					mainActivity.removeNode(getJidTargetByThingId(thingId));
+					break;
+				case "Query Watch State":
+					mainActivity.queryWatchState(getJidTargetByThingId(thingId));
+					break;
+				case "Monitor Heart Rate":
+					mainActivity.monitorHeartRate(getJidTargetByThingId(thingId));
+					break;
+				case "Send Message":
+					mainActivity.sendMessage(getJidTargetByThingId(thingId));
 					break;
 				default:
 					throw new RuntimeException("Unknown command: " + selectedItem);

@@ -17,7 +17,6 @@ public class AclProcessor implements IXepProcessor<Iq, AccessControlList> {
 
 	@Override
 	public void process(IProcessingContext context, Iq iq, AccessControlList xep) {
-		// TODO Auto-generated method stub
 		if (iq.getType() == Iq.Type.GET) {
 			if (xep.getEntries() != null && xep.getEntries().size() != 0)
 				throw new ProtocolException(new BadRequest("Access control list entries must be null when IQ type is set to 'get'."));

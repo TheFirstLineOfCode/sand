@@ -1283,6 +1283,18 @@ public class MainActivity extends AppCompatActivity implements IOperator.Listene
 		controlThing(target, new ResetLoraDacService(), "Reset DAC service");
 	}
 	
+	public void queryWatchState(JabberId target) {
+		logger.info("Query state of watch which's JID is {}.", target);
+	}
+	
+	public void monitorHeartRate(JabberId target) {
+		logger.info("Monitor heart rate of watch which's JID is {}.", target);
+	}
+	
+	public void sendMessage(JabberId target) {
+		logger.info("Send message to {}.", target);
+	}
+	
 	@Override
 	public void occurred(IError error) {
 		runOnUiThread(() -> {
