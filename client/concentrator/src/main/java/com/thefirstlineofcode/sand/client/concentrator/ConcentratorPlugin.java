@@ -13,17 +13,10 @@ import com.thefirstlineofcode.basalt.oxm.coc.CocTranslatorFactory;
 import com.thefirstlineofcode.basalt.xmpp.core.IqProtocolChain;
 import com.thefirstlineofcode.chalk.core.IChatSystem;
 import com.thefirstlineofcode.chalk.core.IPlugin;
-import com.thefirstlineofcode.sand.client.actuator.ActuatorPlugin;
-import com.thefirstlineofcode.sand.client.friends.FriendsPlugin;
-import com.thefirstlineofcode.sand.client.sensor.SensorPlugin;
 
 public class ConcentratorPlugin implements IPlugin {
 	@Override
 	public void init(IChatSystem chatSystem, Properties properties) {
-		chatSystem.register(ActuatorPlugin.class);
-		chatSystem.register(FriendsPlugin.class);
-		chatSystem.register(SensorPlugin.class);
-		
 		chatSystem.registerTranslator(
 				AddNode.class,
 				new CocTranslatorFactory<>(AddNode.class)
@@ -80,10 +73,6 @@ public class ConcentratorPlugin implements IPlugin {
 		
 		chatSystem.unregisterParser(new IqProtocolChain(NodeAdded.PROTOCOL));
 		chatSystem.unregisterTranslator(AddNode.class);
-		
-		chatSystem.unregister(SensorPlugin.class);
-		chatSystem.unregister(FriendsPlugin.class);
-		chatSystem.unregister(ActuatorPlugin.class);
 	}
 
 }

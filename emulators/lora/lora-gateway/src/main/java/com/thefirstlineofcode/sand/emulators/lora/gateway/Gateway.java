@@ -73,7 +73,6 @@ import com.thefirstlineofcode.sand.client.actuator.IExecutorFactory;
 import com.thefirstlineofcode.sand.client.concentrator.IConcentrator;
 import com.thefirstlineofcode.sand.client.concentrator.IConcentrator.AddNodeError;
 import com.thefirstlineofcode.sand.client.concentrator.LanNode;
-import com.thefirstlineofcode.sand.client.concentrator.SyncNodesExecutor;
 import com.thefirstlineofcode.sand.client.friends.FriendsPlugin;
 import com.thefirstlineofcode.sand.client.friends.IFollowProcessor;
 import com.thefirstlineofcode.sand.client.friends.IFollowService;
@@ -84,6 +83,8 @@ import com.thefirstlineofcode.sand.client.lora.dac.ILoraDacClient;
 import com.thefirstlineofcode.sand.client.lora.dac.ILoraDacService;
 import com.thefirstlineofcode.sand.client.lora.gateway.ILoraGateway;
 import com.thefirstlineofcode.sand.client.lora.gateway.LoraGatewayPlugin;
+import com.thefirstlineofcode.sand.client.lpwanconcentrator.ILpwanConcentrator;
+import com.thefirstlineofcode.sand.client.lpwanconcentrator.SyncNodesExecutor;
 import com.thefirstlineofcode.sand.client.thing.AbstractThing;
 import com.thefirstlineofcode.sand.client.thing.IBatteryPowerListener;
 import com.thefirstlineofcode.sand.client.thing.ThingsUtils;
@@ -349,7 +350,7 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 		if (!isConnected() || loraGateway == null)
 			return "";
 		
-		if (loraGateway.getConcentrator().isStarted()) {
+		if (loraGateway.getLpwanConcentrator().isStarted()) {
 			return "Mode: W. ";
 		} else if (loraGateway.getDacService().isStarted()) {
 			return "Mode: A. ";
@@ -501,7 +502,7 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 			if (loraGateway == null) {
 				loraGateway = chatClient.createApi(ILoraGateway.class);
 				configureLoraGateway(loraGateway);
-				configureFollowService(loraGateway.getConcentrator());
+				configureFollowService(loraGateway.getLpwanConcentrator());
 			}
 			
 			if (!loraGateway.isStarted())
@@ -528,9 +529,9 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 		loraGateway.setUplinkCommunicators(Collections.singletonList(
 				(ICommunicator<LoraAddress, LoraAddress, byte[]>)gatewayCommunicator));
 		
-		registerExecutors(loraGateway.getConcentrator());
+		registerExecutors(loraGateway.getLpwanConcentrator());
 		
-		IConcentrator concentrator = loraGateway.getConcentrator();
+		ILpwanConcentrator concentrator = loraGateway.getLpwanConcentrator();
 		concentrator.registerLanThingModel(new Sle01ModelDescriptor());
 		concentrator.addListener(this);
 		
@@ -622,7 +623,7 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 		actuator.registerExecutorFactory(new IExecutorFactory<SyncNodes>() {
 			@Override
 			public IExecutor<SyncNodes> create() {
-				return new SyncNodesExecutor(chatClient.getChatServices(), loraGateway.getConcentrator());
+				return new SyncNodesExecutor(chatClient.getChatServices(), loraGateway.getLpwanConcentrator());
 			}
 
 			@Override
@@ -824,7 +825,7 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 			if (loraGateway == null) {
 				output.writeInt(0);
 			} else {				
-				IConcentrator concentrator = loraGateway.getConcentrator();
+				IConcentrator concentrator = loraGateway.getLpwanConcentrator();
 				Collection<LanNode> nodes = concentrator.getNodes();
 				output.writeInt(nodes.size());
 				
@@ -1030,7 +1031,7 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 		
 		loraGateway = chatClient.createApi(ILoraGateway.class);
 		loraGateway.setDownlinkCommunicator(gatewayCommunicator);
-		IConcentrator concentrator = loraGateway.getConcentrator();
+		IConcentrator concentrator = loraGateway.getLpwanConcentrator();
 		concentrator.setNodes(gatewayInfo.nodes);
 		
 		List<LanNode> nodes = new ArrayList<>();

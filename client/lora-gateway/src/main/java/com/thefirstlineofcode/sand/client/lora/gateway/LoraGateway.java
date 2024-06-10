@@ -11,6 +11,7 @@ import com.thefirstlineofcode.sand.client.concentrator.IConcentrator;
 import com.thefirstlineofcode.sand.client.concentrator.IConcentrator.SyncNodesListener;
 import com.thefirstlineofcode.sand.client.lora.dac.ILoraDacService;
 import com.thefirstlineofcode.sand.client.lora.dac.LoraDacService;
+import com.thefirstlineofcode.sand.client.lpwanconcentrator.ILpwanConcentrator;
 import com.thefirstlineofcode.sand.client.thing.INotificationService;
 import com.thefirstlineofcode.sand.client.thing.INotifier;
 import com.thefirstlineofcode.sand.client.thing.commuication.CommunicationException;
@@ -29,7 +30,7 @@ public class LoraGateway implements ILoraGateway, ILoraDacService.Listener {
 	private int channels;
 	private ICommunicator<LoraAddress, LoraAddress, byte[]> downlinkCommunicator;
 	private List<ICommunicator<LoraAddress, LoraAddress, byte[]>> uplinkCommunicators;
-	private IConcentrator concentrator;
+	private ILpwanConcentrator concentrator;
 	private ILoraDacService dacService;
 	
 	private byte thingCommunicationChannel;
@@ -72,8 +73,8 @@ public class LoraGateway implements ILoraGateway, ILoraDacService.Listener {
 		if (logger.isInfoEnabled())
 			logger.info("Stopping Lora gateway....");
 		
-		if (getConcentrator().isStarted())
-			getConcentrator().stop();
+		if (getLpwanConcentrator().isStarted())
+			getLpwanConcentrator().stop();
 		
 		if (getDacService().isStarted())
 			getDacService().stop();
@@ -90,9 +91,9 @@ public class LoraGateway implements ILoraGateway, ILoraDacService.Listener {
 	}
 	
 	@Override
-	public IConcentrator getConcentrator() {
+	public ILpwanConcentrator getLpwanConcentrator() {
 		if (concentrator == null) {
-			concentrator = chatServices.createApi(IConcentrator.class);
+			concentrator = chatServices.createApi(ILpwanConcentrator.class);
 			if (uplinkCommunicators.size() == 1 && downlinkCommunicator.equals(uplinkCommunicators.get(0)))
 				concentrator.addCommunicator(CommunicationNet.LORA, downlinkCommunicator);
 			else
@@ -111,10 +112,10 @@ public class LoraGateway implements ILoraGateway, ILoraDacService.Listener {
 			
 			if (uplinkCommunicators.size() == 1 && downlinkCommunicator == uplinkCommunicators.get(0)) {
 				dacService = new LoraDacService(downlinkCommunicator, thingCommunicationChannel, thingCommunicationChannel,
-						DEFAULT_UPLINK_ADDRESS, getConcentrator(), notifier);
+						DEFAULT_UPLINK_ADDRESS, getLpwanConcentrator(), notifier);
 			} else {
 				dacService = new LoraDacService(downlinkCommunicator, 0, uplinkCommunicators.size() - 1,
-						DEFAULT_UPLINK_ADDRESS, getConcentrator(), notifier);
+						DEFAULT_UPLINK_ADDRESS, getLpwanConcentrator(), notifier);
 				dacService.setThingCommunicationChannel(thingCommunicationChannel);
 			}
 		}
@@ -161,7 +162,7 @@ public class LoraGateway implements ILoraGateway, ILoraDacService.Listener {
 			throw new RuntimeException("Failed to configure lora communicators.", e);
 		}
 		
-		IConcentrator concentrator = getConcentrator();
+		ILpwanConcentrator concentrator = getLpwanConcentrator();
 		concentrator.syncNodesWithServer(new SyncNodesListener() {
 			
 			@Override
@@ -186,7 +187,7 @@ public class LoraGateway implements ILoraGateway, ILoraDacService.Listener {
 			logger.info("Change Lora gateway working mode to {}.", workingMode);
 		
 		if (workingMode == WorkingMode.DAC) {
-			getConcentrator();
+			getLpwanConcentrator();
 			if (concentrator.isStarted()) {
 				concentrator.disableLanRouting();
 			}
@@ -200,10 +201,10 @@ public class LoraGateway implements ILoraGateway, ILoraDacService.Listener {
 				dacService.stop();
 			}
 			
-			if (getConcentrator().isStarted()) {
-				getConcentrator().enableLanRouting();
+			if (getLpwanConcentrator().isStarted()) {
+				getLpwanConcentrator().enableLanRouting();
 			} else {				
-				getConcentrator().start();
+				getLpwanConcentrator().start();
 			}
 		}
 	}
@@ -220,7 +221,7 @@ public class LoraGateway implements ILoraGateway, ILoraDacService.Listener {
 
 	@Override
 	public void addressConfigured(String thingId, String registrationCode, LoraAddress address) {
-		IConcentrator concentrator = getConcentrator();
+		IConcentrator concentrator = getLpwanConcentrator();
 		concentrator.requestServerToAddNode(thingId, registrationCode, concentrator.getBestSuitedNewLanId(), address);
 	}
 

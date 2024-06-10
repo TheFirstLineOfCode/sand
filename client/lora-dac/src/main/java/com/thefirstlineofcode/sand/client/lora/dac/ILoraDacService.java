@@ -1,6 +1,6 @@
 package com.thefirstlineofcode.sand.client.lora.dac;
 
-import com.thefirstlineofcode.sand.client.concentrator.IConcentrator;
+import com.thefirstlineofcode.sand.client.lpwanconcentrator.ILpwanConcentrator;
 import com.thefirstlineofcode.sand.client.thing.commuication.IAddressConfigurator;
 import com.thefirstlineofcode.sand.client.thing.commuication.ICommunicator;
 import com.thefirstlineofcode.sand.protocols.lora.dac.Allocation;
@@ -22,8 +22,8 @@ public interface ILoraDacService extends IAddressConfigurator<ICommunicator<Lora
 	int getUplinkChannelEnd();
 	void setUplinkAddress(byte[] uplinkAddress);
 	byte[] getUplinkAddress();
-	void setConcentrator(IConcentrator concentrator);
-	IConcentrator getConcentrator();
+	void setLpwanConcentrator(ILpwanConcentrator concentrator);
+	ILpwanConcentrator getLpwanConcentrator();
 	void start();
 	boolean isStarted();
 	void stop();

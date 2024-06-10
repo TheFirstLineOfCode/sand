@@ -1,4 +1,4 @@
-package com.thefirstlineofcode.sand.client.concentrator;
+package com.thefirstlineofcode.sand.client.lpwanconcentrator;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;

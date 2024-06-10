@@ -13,7 +13,7 @@ import com.thefirstlineofcode.basalt.oxm.binary.BxmppConversionException;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 import com.thefirstlineofcode.basalt.xmpp.core.ProtocolException;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.Conflict;
-import com.thefirstlineofcode.sand.client.concentrator.IConcentrator;
+import com.thefirstlineofcode.sand.client.lpwanconcentrator.ILpwanConcentrator;
 import com.thefirstlineofcode.sand.client.thing.INotifier;
 import com.thefirstlineofcode.sand.client.thing.commuication.CommunicationException;
 import com.thefirstlineofcode.sand.client.thing.commuication.ICommunicationListener;
@@ -50,7 +50,7 @@ public class LoraDacService implements ILoraDacService, ICommunicationListener<L
 	
 	private ICommunicator<LoraAddress, LoraAddress, byte[]> communicator;
 	private LoraAddress oldCommunicatorAddress;
-	private IConcentrator concentrator;
+	private ILpwanConcentrator concentrator;
 	private INotifier notifier;
 	
 	private boolean started;
@@ -76,7 +76,7 @@ public class LoraDacService implements ILoraDacService, ICommunicationListener<L
 	
 	public LoraDacService(ICommunicator<LoraAddress, LoraAddress, byte[]> communicator,
 			int uplinkChannelBegin, int uplinkChannelEnd, byte[] uplinkAddress,
-			IConcentrator concentrator, INotifier notifier) {
+			ILpwanConcentrator concentrator, INotifier notifier) {
 		this.concentrator = concentrator;
 		
 		dacServiceAddress = DEFAULT_DAC_SERVICE_ADDRESS;
@@ -512,7 +512,7 @@ public class LoraDacService implements ILoraDacService, ICommunicationListener<L
 	}
 	
 	@Override
-	public void setConcentrator(IConcentrator concentrator) {
+	public void setLpwanConcentrator(ILpwanConcentrator concentrator) {
 		this.concentrator = concentrator;
 	}
 	
@@ -553,7 +553,7 @@ public class LoraDacService implements ILoraDacService, ICommunicationListener<L
 	}
 
 	@Override
-	public IConcentrator getConcentrator() {
+	public ILpwanConcentrator getLpwanConcentrator() {
 		return concentrator;
 	}
 }

@@ -1,4 +1,4 @@
-package com.thefirstlineofcode.sand.client.concentrator;
+package com.thefirstlineofcode.sand.client.lpwanconcentrator;
 
 import com.thefirstlinelinecode.sand.protocols.concentrator.ResetNode;
 import com.thefirstlineofcode.basalt.xmpp.core.JabberId;
@@ -6,6 +6,7 @@ import com.thefirstlineofcode.basalt.xmpp.core.ProtocolException;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.Iq;
 import com.thefirstlineofcode.chalk.core.stanza.IIqListener;
 import com.thefirstlineofcode.sand.client.actuator.IExecutor;
+import com.thefirstlineofcode.sand.client.concentrator.IConcentrator;
 import com.thefirstlineofcode.sand.protocols.actuator.Execution;
 import com.thefirstlineofcode.sand.protocols.thing.tacp.ResetThing;
 

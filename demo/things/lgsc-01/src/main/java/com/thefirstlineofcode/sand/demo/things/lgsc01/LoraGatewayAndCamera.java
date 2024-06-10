@@ -29,9 +29,6 @@ import com.thefirstlineofcode.sand.client.actuator.IActuator;
 import com.thefirstlineofcode.sand.client.actuator.IExecutor;
 import com.thefirstlineofcode.sand.client.actuator.IExecutorFactory;
 import com.thefirstlineofcode.sand.client.concentrator.IConcentrator;
-import com.thefirstlineofcode.sand.client.concentrator.PullLanFollowsExecutor;
-import com.thefirstlineofcode.sand.client.concentrator.ResetNodeExecutor;
-import com.thefirstlineofcode.sand.client.concentrator.SyncNodesExecutor;
 import com.thefirstlineofcode.sand.client.edge.AbstractEdgeThing;
 import com.thefirstlineofcode.sand.client.edge.ResponseInAdvanceExecutor;
 import com.thefirstlineofcode.sand.client.edge.ShutdownSystemExecutor;
@@ -43,6 +40,10 @@ import com.thefirstlineofcode.sand.client.lora.dac.ResetLoraDacServiceExecutor;
 import com.thefirstlineofcode.sand.client.lora.gateway.ChangeWorkingModeExecutor;
 import com.thefirstlineofcode.sand.client.lora.gateway.ILoraGateway;
 import com.thefirstlineofcode.sand.client.lora.gateway.LoraGatewayPlugin;
+import com.thefirstlineofcode.sand.client.lpwanconcentrator.ILpwanConcentrator;
+import com.thefirstlineofcode.sand.client.lpwanconcentrator.PullLanFollowsExecutor;
+import com.thefirstlineofcode.sand.client.lpwanconcentrator.ResetNodeExecutor;
+import com.thefirstlineofcode.sand.client.lpwanconcentrator.SyncNodesExecutor;
 import com.thefirstlineofcode.sand.client.thing.INotificationService;
 import com.thefirstlineofcode.sand.client.thing.INotifier;
 import com.thefirstlineofcode.sand.client.thing.ThingsUtils;
@@ -199,7 +200,7 @@ public class LoraGatewayAndCamera extends AbstractEdgeThing implements ISimpleCa
 		if (loraGateway == null)
 			return;
 		
-		IFollowService followService= loraGateway.getConcentrator();
+		IFollowService followService= loraGateway.getLpwanConcentrator();
 		followService.registerFollowedEvent(SwitchStateChanged.PROTOCOL, SwitchStateChanged.class);
 		followService.setFollowProcessor(this);
 	}
@@ -209,7 +210,7 @@ public class LoraGatewayAndCamera extends AbstractEdgeThing implements ISimpleCa
 			if (disableLoraGateway || loraGateway == null)
 				actuator = chatClient.createApi(IActuator.class);
 			else
-				actuator = loraGateway.getConcentrator();
+				actuator = loraGateway.getLpwanConcentrator();
 			
 			registerExecutors(actuator);
 		}
@@ -238,8 +239,8 @@ public class LoraGatewayAndCamera extends AbstractEdgeThing implements ISimpleCa
 			loraGateway.setDownlinkCommunicator(communicator);
 			loraGateway.setUplinkCommunicators(Collections.singletonList(communicator));
 			
-			loraGateway.getConcentrator().registerLanThingModel(new Sl02ModelDescriptor());
-			loraGateway.getConcentrator().registerLanThingModel(new Str01ModelDescriptor());
+			loraGateway.getLpwanConcentrator().registerLanThingModel(new Sl02ModelDescriptor());
+			loraGateway.getLpwanConcentrator().registerLanThingModel(new Str01ModelDescriptor());
 		}
 		
 		loraGateway.start();
@@ -307,9 +308,9 @@ public class LoraGatewayAndCamera extends AbstractEdgeThing implements ISimpleCa
 	private void registerExecutorsForLoraGateway(IActuator actuator) {
 		actuator.registerExecutorFactory(createChangeWorkingModeExecutatorFactory(loraGateway));
 		actuator.registerExecutorFactory(createResetDacServiceExecutatorFactory(loraGateway.getDacService()));
-		actuator.registerExecutorFactory(createResetNodeServiceExecutatorFactory(loraGateway.getConcentrator()));
-		actuator.registerExecutorFactory(createSyncNodesExecutatorFactory(loraGateway.getConcentrator()));
-		actuator.registerExecutorFactory(createPullLanFollowsExecutatorFactory(loraGateway.getConcentrator()));
+		actuator.registerExecutorFactory(createResetNodeServiceExecutatorFactory(loraGateway.getLpwanConcentrator()));
+		actuator.registerExecutorFactory(createSyncNodesExecutatorFactory(loraGateway.getLpwanConcentrator()));
+		actuator.registerExecutorFactory(createPullLanFollowsExecutatorFactory(loraGateway.getLpwanConcentrator()));
 	}
 	
 	private IExecutorFactory<?> createSyncNodesExecutatorFactory(IConcentrator concentrator) {
@@ -334,7 +335,7 @@ public class LoraGatewayAndCamera extends AbstractEdgeThing implements ISimpleCa
 		};
 	}
 	
-	private IExecutorFactory<?> createPullLanFollowsExecutatorFactory(IConcentrator concentrator) {
+	private IExecutorFactory<?> createPullLanFollowsExecutatorFactory(ILpwanConcentrator concentrator) {
 		return new IExecutorFactory<PullLanFollows>() {
 			private IExecutor<PullLanFollows> executor = new PullLanFollowsExecutor(
 					chatClient.getChatServices(), concentrator);
