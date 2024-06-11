@@ -276,7 +276,9 @@ public class Concentrator implements IConcentrator {
 			if (nodes == null) {
 				this.nodes = new LinkedHashMap<>();
 			} else {
-				this.nodes = nodes;
+				for (Map.Entry<Integer, LanNode> entry : nodes.entrySet()) {					
+					this.nodes.put(entry.getKey(), entry.getValue());
+				}
 			}
 		}
 	}
