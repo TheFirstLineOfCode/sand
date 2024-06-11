@@ -278,6 +278,60 @@
 
 			<dependency>
 				<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+				<artifactId>sand-protocols-lpwan-concentrator</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+				<artifactId>sand-protocols-location</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+				<artifactId>sand-protocols-actuator</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+				<artifactId>sand-protocols-operator</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+				<artifactId>sand-protocols-webrtc-signaling</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+				<artifactId>sand-protocols-edge</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+				<artifactId>sand-protocols-lora-gateway</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+				<artifactId>sand-protocols-sensor</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+				<artifactId>sand-protocols-bxmpp-extensions</artifactId>
+				<version>${sand.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thefirstlineofcode.sand.protocols</groupId>
 				<artifactId>sand-protocols-location</artifactId>
 				<version>${sand.version}</version>
 			</dependency>

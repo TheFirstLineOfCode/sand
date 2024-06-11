@@ -3,11 +3,10 @@ package com.thefirstlineofcode.sand.client.lpwanconcentrator;
 import java.util.Properties;
 
 import com.thefirstlinelinecode.sand.protocols.concentrator.AddNode;
-import com.thefirstlinelinecode.sand.protocols.concentrator.LanDeliveryIsDisabled;
 import com.thefirstlinelinecode.sand.protocols.concentrator.NodeAdded;
 import com.thefirstlinelinecode.sand.protocols.concentrator.PullNodes;
 import com.thefirstlinelinecode.sand.protocols.concentrator.RemoveNode;
-import com.thefirstlinelinecode.sand.protocols.concentrator.friends.LanFollows;
+import com.thefirstlinelinecode.sand.protocols.lpwanconcentrator.friends.LanFollows;
 import com.thefirstlineofcode.basalt.oxm.coc.CocParserFactory;
 import com.thefirstlineofcode.basalt.oxm.coc.CocTranslatorFactory;
 import com.thefirstlineofcode.basalt.xmpp.core.IqProtocolChain;
@@ -26,24 +25,10 @@ public class LpwanConcentratorPlugin implements IPlugin {
 		chatSystem.register(FriendsPlugin.class);
 		chatSystem.register(SensorPlugin.class);
 		
-		chatSystem.registerTranslator(
-				AddNode.class,
-				new CocTranslatorFactory<>(AddNode.class)
-		);
-		chatSystem.registerParser(
-				new IqProtocolChain(NodeAdded.PROTOCOL),
-				new CocParserFactory<>(NodeAdded.class)
-		);
-		
 		chatSystem.registerParser(
 				new IqProtocolChain(RemoveNode.PROTOCOL),
 				new CocParserFactory<>(RemoveNode.class)
 				);
-		
-		chatSystem.registerTranslator(
-				LanDeliveryIsDisabled.class,
-				new CocTranslatorFactory<>(LanDeliveryIsDisabled.class)
-		);
 		
 		chatSystem.registerTranslator(
 				PullNodes.class,
@@ -75,8 +60,6 @@ public class LpwanConcentratorPlugin implements IPlugin {
 		
 		chatSystem.unregisterParser(new IqProtocolChain(PullNodes.PROTOCOL));
 		chatSystem.unregisterTranslator(PullNodes.class);
-		
-		chatSystem.unregisterTranslator(LanDeliveryIsDisabled.class);
 		
 		chatSystem.unregisterParser(new IqProtocolChain(RemoveNode.PROTOCOL));
 		

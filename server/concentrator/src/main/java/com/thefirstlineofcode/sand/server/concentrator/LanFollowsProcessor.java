@@ -2,8 +2,8 @@ package com.thefirstlineofcode.sand.server.concentrator;
 
 import java.util.List;
 
-import com.thefirstlinelinecode.sand.protocols.concentrator.friends.LanFollow;
-import com.thefirstlinelinecode.sand.protocols.concentrator.friends.LanFollows;
+import com.thefirstlinelinecode.sand.protocols.lpwanconcentrator.friends.LanFollow;
+import com.thefirstlinelinecode.sand.protocols.lpwanconcentrator.friends.LanFollows;
 import com.thefirstlineofcode.basalt.xmpp.core.JabberId;
 import com.thefirstlineofcode.basalt.xmpp.core.ProtocolException;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.Iq;

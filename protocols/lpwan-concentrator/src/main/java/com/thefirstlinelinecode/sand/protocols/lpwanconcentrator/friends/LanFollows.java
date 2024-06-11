@@ -1,4 +1,4 @@
-package com.thefirstlinelinecode.sand.protocols.concentrator.friends;
+package com.thefirstlinelinecode.sand.protocols.lpwanconcentrator.friends;
 
 import java.util.ArrayList;
 import java.util.List;

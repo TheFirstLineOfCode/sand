@@ -3,11 +3,9 @@ package com.thefirstlineofcode.sand.client.concentrator;
 import java.util.Properties;
 
 import com.thefirstlinelinecode.sand.protocols.concentrator.AddNode;
-import com.thefirstlinelinecode.sand.protocols.concentrator.LanDeliveryIsDisabled;
 import com.thefirstlinelinecode.sand.protocols.concentrator.NodeAdded;
 import com.thefirstlinelinecode.sand.protocols.concentrator.PullNodes;
 import com.thefirstlinelinecode.sand.protocols.concentrator.RemoveNode;
-import com.thefirstlinelinecode.sand.protocols.concentrator.friends.LanFollows;
 import com.thefirstlineofcode.basalt.oxm.coc.CocParserFactory;
 import com.thefirstlineofcode.basalt.oxm.coc.CocTranslatorFactory;
 import com.thefirstlineofcode.basalt.xmpp.core.IqProtocolChain;
@@ -32,11 +30,6 @@ public class ConcentratorPlugin implements IPlugin {
 				);
 		
 		chatSystem.registerTranslator(
-				LanDeliveryIsDisabled.class,
-				new CocTranslatorFactory<>(LanDeliveryIsDisabled.class)
-		);
-		
-		chatSystem.registerTranslator(
 				PullNodes.class,
 				new CocTranslatorFactory<>(PullNodes.class)
 		);
@@ -45,15 +38,6 @@ public class ConcentratorPlugin implements IPlugin {
 				new CocParserFactory<>(PullNodes.class)
 		);
 		
-		chatSystem.registerTranslator(
-				LanFollows.class,
-				new CocTranslatorFactory<>(LanFollows.class)
-				);
-		chatSystem.registerParser(
-				new IqProtocolChain(LanFollows.PROTOCOL),
-				new CocParserFactory<>(LanFollows.class)
-				);
-		
 		chatSystem.registerApi(IConcentrator.class, Concentrator.class);
 	}
 
@@ -61,13 +45,8 @@ public class ConcentratorPlugin implements IPlugin {
 	public void destroy(IChatSystem chatSystem) {
 		chatSystem.unregisterApi(IConcentrator.class);
 		
-		chatSystem.unregisterParser(new IqProtocolChain(LanFollows.PROTOCOL));
-		chatSystem.unregisterTranslator(LanFollows.class);
-		
 		chatSystem.unregisterParser(new IqProtocolChain(PullNodes.PROTOCOL));
 		chatSystem.unregisterTranslator(PullNodes.class);
-		
-		chatSystem.unregisterTranslator(LanDeliveryIsDisabled.class);
 		
 		chatSystem.unregisterParser(new IqProtocolChain(RemoveNode.PROTOCOL));
 		

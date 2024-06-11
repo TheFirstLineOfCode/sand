@@ -13,8 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.thefirstlinelinecode.sand.protocols.concentrator.RemoveNode;
-import com.thefirstlinelinecode.sand.protocols.concentrator.friends.LanFollow;
-import com.thefirstlinelinecode.sand.protocols.concentrator.friends.LanFollows;
+import com.thefirstlinelinecode.sand.protocols.lpwanconcentrator.friends.LanFollow;
+import com.thefirstlinelinecode.sand.protocols.lpwanconcentrator.friends.LanFollows;
 import com.thefirstlineofcode.basalt.oxm.binary.BinaryUtils;
 import com.thefirstlineofcode.basalt.oxm.binary.BxmppConversionException;
 import com.thefirstlineofcode.basalt.oxm.coc.CocParserFactory;
@@ -39,8 +39,10 @@ import com.thefirstlineofcode.chalk.core.IChatServices;
 import com.thefirstlineofcode.chalk.core.ITask;
 import com.thefirstlineofcode.chalk.core.IUnidirectionalStream;
 import com.thefirstlineofcode.sand.client.actuator.Actuator;
+import com.thefirstlineofcode.sand.client.concentrator.Concentrator;
 import com.thefirstlineofcode.sand.client.concentrator.IConcentrator;
 import com.thefirstlineofcode.sand.client.concentrator.LanNode;
+import com.thefirstlineofcode.sand.client.concentrator.NodeNotFoundException;
 import com.thefirstlineofcode.sand.client.friends.IFollowProcessor;
 import com.thefirstlineofcode.sand.client.sensor.IReportService;
 import com.thefirstlineofcode.sand.client.sensor.IReporter;
@@ -66,8 +68,8 @@ import com.thefirstlineofcode.sand.protocols.thing.tacp.LanNotification;
 import com.thefirstlineofcode.sand.protocols.thing.tacp.Notification;
 import com.thefirstlineofcode.sand.protocols.thing.tacp.ThingsTinyId;
 
-public class Concentrator extends Actuator implements ILpwanConcentrator {
-	private static final Logger logger = LoggerFactory.getLogger(Concentrator.class);
+public class LpwanConcentrator extends Actuator implements ILpwanConcentrator {
+	private static final Logger logger = LoggerFactory.getLogger(LpwanConcentrator.class);
 	
 	private static final long DEFAULT_VALUE_OF_DEFAULT_LAN_EXECUTION_TIMEOUT = 1000 * 10;
 	private static final int DEFAULT_LAN_EXECUTION_TIMEOUT_CHECK_INTERVAL = 500;
@@ -118,7 +120,7 @@ public class Concentrator extends Actuator implements ILpwanConcentrator {
 	
 	private StandardErrorCodeMapping standardErrorCodeMapping;
 	
-	public Concentrator(IChatServices chatServices)  {
+	public LpwanConcentrator(IChatServices chatServices)  {
 		super(chatServices);
 		
 		concentrator = new Concentrator(chatServices);
@@ -697,7 +699,7 @@ public class Concentrator extends Actuator implements ILpwanConcentrator {
 	}
 	
 	@Override
-	public void removeNode(int lanId) {
+	public void removeNode(int lanId) throws NodeNotFoundException {
 		concentrator.removeNode(lanId);
 	}
 	
@@ -898,7 +900,7 @@ public class Concentrator extends Actuator implements ILpwanConcentrator {
 
 		@Override
 		public void received(PA from, byte[] data) {
-			Concentrator.this.received(communicationNet, from, data);
+			LpwanConcentrator.this.received(communicationNet, from, data);
 		}
 		
 		@Override
@@ -934,7 +936,7 @@ public class Concentrator extends Actuator implements ILpwanConcentrator {
 		
 		private void checkExpiredLanExecutions() {
 			long currentTime = Calendar.getInstance().getTime().getTime();
-			synchronized (Concentrator.this) {
+			synchronized (LpwanConcentrator.this) {
 				for (List<LanExecutionTraceInfo> traceInfos : lanNodeToLanExecutionTraceInfos.values()) {
 					List<LanExecutionTraceInfo> expiredLanExecutions = new ArrayList<>();
 					for (LanExecutionTraceInfo traceInfo : traceInfos) {
@@ -1026,7 +1028,12 @@ public class Concentrator extends Actuator implements ILpwanConcentrator {
 	public void received(Iq iq) {
 		if (iq.getObject() instanceof RemoveNode) {
 			RemoveNode removeNode = iq.getObject();
-			removeNode(removeNode.getLanId());
+			try {
+				removeNode(removeNode.getLanId());
+			} catch (NodeNotFoundException e) {
+				throw new ProtocolException(new ItemNotFound(String.format("LAN node which's LAN ID is '%s' not be found.",
+						removeNode.getLanId())));
+			}
 			
 			if (logger.isInfoEnabled()) {
 				logger.info("LAN node which's LAN ID is '{}' has been removed.", removeNode.getLanId());

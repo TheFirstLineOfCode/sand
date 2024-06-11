@@ -12,7 +12,6 @@ import javax.naming.OperationNotSupportedException;
 
 import org.pf4j.Extension;
 
-import com.thefirstlinelinecode.sand.protocols.concentrator.LanDeliveryIsDisabled;
 import com.thefirstlinelinecode.sand.protocols.concentrator.Node;
 import com.thefirstlinelinecode.sand.protocols.concentrator.SyncNodes;
 import com.thefirstlineofcode.basalt.oxm.coc.PropertyDescriptor;
@@ -611,23 +610,7 @@ public class SandCommandsProcessor extends AbstractCommandsProcessor implements 
 
 	@Override
 	public void setConsoleSystem(IConsoleSystem consoleSystem) {
-		notificationDispatcher.addEventListener(LanDeliveryIsDisabled.class, new LanDeliveryIsDisabledListener(consoleSystem));
 		notificationDispatcher.addEventListener(Reconfigure.class, new ReconfigureListener(consoleSystem));
-	}
-	
-	private class LanDeliveryIsDisabledListener implements com.thefirstlineofcode.sand.server.notification.IEventListener<LanDeliveryIsDisabled> {		
-		private IConsoleSystem consoleSystem;
-		
-		public LanDeliveryIsDisabledListener(IConsoleSystem consoleSystem) {
-			this.consoleSystem = consoleSystem;
-		}
-		
-		@Override
-		public void eventReceived(IProcessingContext context, JabberId notifier, LanDeliveryIsDisabled event) {
-			consoleSystem.printContentLine(String.format("Concentrator %s can't deliver the action bacause LAN delivery is disabled.",
-					notifier.getNode()));
-		}
-		
 	}
 	
 	private class ReconfigureListener implements com.thefirstlineofcode.sand.server.notification.IEventListener<Reconfigure> {		

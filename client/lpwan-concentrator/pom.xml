@@ -31,6 +31,10 @@
 			<artifactId>sand-client-sensor</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.thefirstlineofcode.sand.protocols</groupId>
+			<artifactId>sand-protocols-lpwan-concentrator</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.thefirstlineofcode.sand.client</groupId>
 			<artifactId>sand-client-concentrator</artifactId>
 		</dependency>

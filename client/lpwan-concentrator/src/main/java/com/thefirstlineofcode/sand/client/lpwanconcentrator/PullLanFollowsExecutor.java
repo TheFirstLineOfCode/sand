@@ -3,7 +3,7 @@ package com.thefirstlineofcode.sand.client.lpwanconcentrator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.thefirstlinelinecode.sand.protocols.concentrator.friends.PullLanFollows;
+import com.thefirstlinelinecode.sand.protocols.lpwanconcentrator.friends.PullLanFollows;
 import com.thefirstlineofcode.basalt.xmpp.core.ProtocolException;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.Iq;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.StanzaError;
