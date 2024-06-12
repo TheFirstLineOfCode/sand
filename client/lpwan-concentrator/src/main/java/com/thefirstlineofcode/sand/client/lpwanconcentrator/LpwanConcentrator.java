@@ -13,8 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.thefirstlinelinecode.sand.protocols.concentrator.RemoveNode;
-import com.thefirstlinelinecode.sand.protocols.lpwanconcentrator.friends.LanFollow;
-import com.thefirstlinelinecode.sand.protocols.lpwanconcentrator.friends.LanFollows;
+import com.thefirstlinelinecode.sand.protocols.lpwan.concentrator.friends.LanFollow;
+import com.thefirstlinelinecode.sand.protocols.lpwan.concentrator.friends.LanFollows;
 import com.thefirstlineofcode.basalt.oxm.binary.BinaryUtils;
 import com.thefirstlineofcode.basalt.oxm.binary.BxmppConversionException;
 import com.thefirstlineofcode.basalt.oxm.coc.CocParserFactory;
@@ -60,7 +60,7 @@ import com.thefirstlineofcode.sand.protocols.sensor.LanReport;
 import com.thefirstlineofcode.sand.protocols.sensor.Report.QoS;
 import com.thefirstlineofcode.sand.protocols.thing.BadAddressException;
 import com.thefirstlineofcode.sand.protocols.thing.CommunicationNet;
-import com.thefirstlineofcode.sand.protocols.thing.IAddress;
+import com.thefirstlineofcode.sand.protocols.thing.ILanAddress;
 import com.thefirstlineofcode.sand.protocols.thing.IThingModelDescriptor;
 import com.thefirstlineofcode.sand.protocols.thing.tacp.ITraceId;
 import com.thefirstlineofcode.sand.protocols.thing.tacp.LanAnswer;
@@ -81,7 +81,7 @@ public class LpwanConcentrator extends Actuator implements ILpwanConcentrator {
 	private static final int DEFAULT_NOTIFICATION_INIT_REX_INTERVAL = 200;
 	private static final int DEFAULT_NOTIFICATION_REX_TIMEOUT = 2000;
 	
-	protected Map<CommunicationNet, ICommunicator<?, ? extends IAddress, byte[]>> communicators;
+	protected Map<CommunicationNet, ICommunicator<?, ? extends ILanAddress, byte[]>> communicators;
 	protected Map<CommunicationNet, LanCommunicationListener<?, ?>> netToLanCommunicationListeners;
 	protected Map<Integer, List<LanExecutionTraceInfo>> lanNodeToLanExecutionTraceInfos;
 	protected long defaultLanExecutionTimeout;
@@ -204,7 +204,7 @@ public class LpwanConcentrator extends Actuator implements ILpwanConcentrator {
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected <OA extends IAddress, PA extends IAddress> void removeLanExecutionAnswerListener(CommunicationNet net,
+	protected <OA extends ILanAddress, PA extends ILanAddress> void removeLanExecutionAnswerListener(CommunicationNet net,
 			ICommunicator<OA, PA, byte[]> communicator) {
 		LanCommunicationListener<OA, PA> lanExecutionAnswerListener = (LanCommunicationListener<OA, PA>)netToLanCommunicationListeners.get(net);
 		if (lanExecutionAnswerListener != null)
@@ -262,7 +262,7 @@ public class LpwanConcentrator extends Actuator implements ILpwanConcentrator {
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected <PA extends IAddress> void executeOnLanNode(Iq iq, Object action, boolean lanTraceable, Integer lanTimeout) {
+	protected <PA extends ILanAddress> void executeOnLanNode(Iq iq, Object action, boolean lanTraceable, Integer lanTimeout) {
 		int lanId = Integer.parseInt(iq.getTo().getResource());
 		LanNode node = getNode(lanId);
 		if (node == null)
@@ -316,7 +316,7 @@ public class LpwanConcentrator extends Actuator implements ILpwanConcentrator {
 		lanExecutionTraceInfos.add(new LanExecutionTraceInfo(from, to, stanzaId, node, lanExecution, expiredTime));
 	}
 	
-	protected synchronized <PA extends IAddress> void received(CommunicationNet net, PA from, byte[] data) {
+	protected synchronized <PA extends ILanAddress> void received(CommunicationNet net, PA from, byte[] data) {
 		if (!BinaryUtils.isLegalBxmppMessage(data)) {
 			if (logger.isWarnEnabled())
 				logger.warn("Illegal BXMPP message. Message: {}.", BinaryUtils.getHexStringFromBytes(data));
@@ -342,7 +342,7 @@ public class LpwanConcentrator extends Actuator implements ILpwanConcentrator {
 		}
 	}
 
-	protected <PA extends IAddress> void lanNotificationReceived(CommunicationNet net, PA from, byte[] data) throws BxmppConversionException {
+	protected <PA extends ILanAddress> void lanNotificationReceived(CommunicationNet net, PA from, byte[] data) throws BxmppConversionException {
 		LanNotification lanNotification = ObxFactory.getInstance().toObject(LanNotification.class, data);
 		
 		if (lanNotification.getEvent() == null)
@@ -360,7 +360,7 @@ public class LpwanConcentrator extends Actuator implements ILpwanConcentrator {
 		}
 	}
 	
-	protected <PA extends IAddress> void lanReportReceived(CommunicationNet net, PA from, byte[] data) throws BxmppConversionException {
+	protected <PA extends ILanAddress> void lanReportReceived(CommunicationNet net, PA from, byte[] data) throws BxmppConversionException {
 		processLanReport(ObxFactory.getInstance().toObject(LanReport.class, data));
 	}
 
@@ -492,7 +492,7 @@ public class LpwanConcentrator extends Actuator implements ILpwanConcentrator {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <T extends IAddress> void sendAnswerToLanNode(ThingsTinyId traceId) {
+	protected <T extends ILanAddress> void sendAnswerToLanNode(ThingsTinyId traceId) {
 		LanNode lanNode = getNode(traceId.getLanId());
 		if (lanNode == null)
 			throw new RuntimeException(String.format("LAN node not found. LAN ID: '%s'.", traceId.getLanId()));
@@ -520,7 +520,7 @@ public class LpwanConcentrator extends Actuator implements ILpwanConcentrator {
 		return LanReport.PROTOCOL.equals(ObxFactory.getInstance().readProtocol(data));
 	}
 
-	protected <PA extends IAddress> void lanAnswerReceived(CommunicationNet net, PA from, byte[] data) throws BxmppConversionException {
+	protected <PA extends ILanAddress> void lanAnswerReceived(CommunicationNet net, PA from, byte[] data) throws BxmppConversionException {
 		LanAnswer answer = ObxFactory.getInstance().toObject(LanAnswer.class, data);
 		for (LanNode node : concentrator.getNodes()) {
 			if (!isFromNode(net, from, node))
@@ -567,7 +567,7 @@ public class LpwanConcentrator extends Actuator implements ILpwanConcentrator {
 		}
 	}
 
-	protected <PA extends IAddress> boolean isFromNode(CommunicationNet net, PA from, LanNode node) {
+	protected <PA extends ILanAddress> boolean isFromNode(CommunicationNet net, PA from, LanNode node) {
 		if (from == null)
 			return true;
 		
@@ -694,7 +694,7 @@ public class LpwanConcentrator extends Actuator implements ILpwanConcentrator {
 	}
 
 	@Override
-	public void requestServerToAddNode(String thingId, String registrationCode, int lanId, IAddress address) {
+	public void requestServerToAddNode(String thingId, String registrationCode, int lanId, ILanAddress address) {
 		concentrator.requestServerToAddNode(thingId, registrationCode, lanId, address);
 	}
 	
@@ -863,12 +863,12 @@ public class LpwanConcentrator extends Actuator implements ILpwanConcentrator {
 	}
 	
 	@Override
-	public ICommunicator<?, ? extends IAddress, byte[]> getCommunicator(CommunicationNet communicationNet) {
+	public ICommunicator<?, ? extends ILanAddress, byte[]> getCommunicator(CommunicationNet communicationNet) {
 		return getCommunicatorByNet(communicationNet);
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected <OA extends IAddress, PA extends IAddress> ICommunicator<OA, PA, byte[]> getCommunicatorByNet(CommunicationNet communicationNet) {
+	protected <OA extends ILanAddress, PA extends ILanAddress> ICommunicator<OA, PA, byte[]> getCommunicatorByNet(CommunicationNet communicationNet) {
 		ICommunicator<OA, PA, byte[]> communicator = null;
 		synchronized(this) {
 			communicator = (ICommunicator<OA, PA, byte[]>)communicators.get(communicationNet);
@@ -888,7 +888,7 @@ public class LpwanConcentrator extends Actuator implements ILpwanConcentrator {
 		return communicator;
 	}
 	
-	private class LanCommunicationListener<OA, PA extends IAddress> implements ICommunicationListener<OA, PA, byte[]> {
+	private class LanCommunicationListener<OA, PA extends ILanAddress> implements ICommunicationListener<OA, PA, byte[]> {
 		private CommunicationNet communicationNet;
 		
 		public LanCommunicationListener(CommunicationNet communicationNet) {

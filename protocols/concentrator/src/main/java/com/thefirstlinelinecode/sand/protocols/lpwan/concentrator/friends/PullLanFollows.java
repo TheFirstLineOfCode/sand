@@ -1,4 +1,4 @@
-package com.thefirstlinelinecode.sand.protocols.lpwanconcentrator.friends;
+package com.thefirstlinelinecode.sand.protocols.lpwan.concentrator.friends;
 
 import com.thefirstlineofcode.basalt.oxm.coc.annotations.ProtocolObject;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;

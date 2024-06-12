@@ -1,8 +1,8 @@
 package com.thefirstlineofcode.sand.client.thing.commuication;
 
-import com.thefirstlineofcode.sand.protocols.thing.IAddress;
+import com.thefirstlineofcode.sand.protocols.thing.ILanAddress;
 
-public interface ICommunicator<OA extends IAddress, PA extends IAddress, D> {
+public interface ICommunicator<OA extends ILanAddress, PA extends ILanAddress, D> {
 	void initialize();
 	boolean isInitialized();
 	void configure();

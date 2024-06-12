@@ -29,7 +29,7 @@ import com.thefirstlineofcode.chalk.core.ITask;
 import com.thefirstlineofcode.chalk.core.IUnidirectionalStream;
 import com.thefirstlineofcode.sand.protocols.thing.BadAddressException;
 import com.thefirstlineofcode.sand.protocols.thing.CommunicationNet;
-import com.thefirstlineofcode.sand.protocols.thing.IAddress;
+import com.thefirstlineofcode.sand.protocols.thing.ILanAddress;
 
 public class Concentrator implements IConcentrator {
 	protected static final Logger logger = LoggerFactory.getLogger(Concentrator.class);
@@ -69,7 +69,7 @@ public class Concentrator implements IConcentrator {
 	}
 
 	@Override
-	public void requestServerToAddNode(String thingId, String registrationCode, int lanId, IAddress address) {
+	public void requestServerToAddNode(String thingId, String registrationCode, int lanId, ILanAddress address) {
 		synchronized (nodesLock) {
 			LanNode node = new LanNode();
 			node.setThingId(thingId);

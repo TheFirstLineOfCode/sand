@@ -11,12 +11,12 @@ import com.thefirstlineofcode.sand.client.thing.commuication.ICommunicator;
 import com.thefirstlineofcode.sand.client.thing.obx.ObxFactory;
 import com.thefirstlineofcode.sand.protocols.actuator.ExecutionException;
 import com.thefirstlineofcode.sand.protocols.actuator.LanExecution;
-import com.thefirstlineofcode.sand.protocols.thing.IAddress;
+import com.thefirstlineofcode.sand.protocols.thing.ILanAddress;
 import com.thefirstlineofcode.sand.protocols.thing.tacp.LanAnswer;
 import com.thefirstlineofcode.sand.protocols.thing.tacp.ResetThing;
 import com.thefirstlineofcode.sand.protocols.thing.tacp.ThingsTinyId;
 
-public abstract class AbstractCommunicationNetworkThingEmulator<OA extends IAddress, PA extends IAddress> extends
+public abstract class AbstractCommunicationNetworkThingEmulator<OA extends ILanAddress, PA extends ILanAddress> extends
 		AbstractThingEmulator implements ICommunicationNetworkThingEmulator<OA, PA, byte[]>,
 		ICommunicationListener<OA, PA, byte[]> {
 	protected ICommunicator<OA, PA, byte[]> communicator;

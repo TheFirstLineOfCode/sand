@@ -5,9 +5,9 @@ import java.util.StringTokenizer;
 
 import com.thefirstlineofcode.sand.protocols.thing.BadAddressException;
 import com.thefirstlineofcode.sand.protocols.thing.CommunicationNet;
-import com.thefirstlineofcode.sand.protocols.thing.IAddress;
+import com.thefirstlineofcode.sand.protocols.thing.ILanAddress;
 
-public class LoraAddress implements IAddress, Serializable {
+public class LoraAddress implements ILanAddress, Serializable {
 	private static final long serialVersionUID = -2095123770025458417L;
 	
 	private byte addressHighByte;
@@ -128,7 +128,6 @@ public class LoraAddress implements IAddress, Serializable {
 		return CommunicationNet.LORA;
 	}
 
-	@Override
 	public byte[] getBytes() {
 		return new byte[] {addressHighByte, addressLowByte, channel};
 	}

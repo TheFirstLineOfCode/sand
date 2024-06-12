@@ -6,7 +6,7 @@ import com.thefirstlinelinecode.sand.protocols.concentrator.AddNode;
 import com.thefirstlinelinecode.sand.protocols.concentrator.NodeAdded;
 import com.thefirstlinelinecode.sand.protocols.concentrator.PullNodes;
 import com.thefirstlinelinecode.sand.protocols.concentrator.RemoveNode;
-import com.thefirstlinelinecode.sand.protocols.lpwanconcentrator.friends.LanFollows;
+import com.thefirstlinelinecode.sand.protocols.lpwan.concentrator.friends.LanFollows;
 import com.thefirstlineofcode.basalt.xmpp.core.IqProtocolChain;
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.IPipelineExtendersConfigurator;
 import com.thefirstlineofcode.granite.framework.core.pipeline.stages.PipelineExtendersConfigurator;

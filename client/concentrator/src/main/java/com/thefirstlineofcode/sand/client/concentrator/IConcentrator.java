@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.StanzaError;
-import com.thefirstlineofcode.sand.protocols.thing.IAddress;
+import com.thefirstlineofcode.sand.protocols.thing.ILanAddress;
 
 public interface IConcentrator {
 	public static final int LAN_ID_CONCENTRATOR = 0;
@@ -29,7 +29,7 @@ public interface IConcentrator {
 	int getBestSuitedNewLanId();
 	void setAddNodeTimeout(long addNodeTimeout);
 	long getAddNodeTimeout();
-	void requestServerToAddNode(String thingId, String registrationCode, int lanId, IAddress address);
+	void requestServerToAddNode(String thingId, String registrationCode, int lanId, ILanAddress address);
 	void removeNode(int lanId) throws NodeNotFoundException;
 	void cleanNodes();
 	void setNodes(Map<Integer, LanNode> nodes);

@@ -1,4 +1,4 @@
-package com.thefirstlinelinecode.sand.protocols.lpwanconcentrator.friends;
+package com.thefirstlinelinecode.sand.protocols.lpwan.concentrator.friends;
 
 import com.thefirstlineofcode.basalt.oxm.coc.conversion.annotations.String2Protocol;
 import com.thefirstlineofcode.basalt.oxm.coc.validation.annotations.NotNull;

@@ -9,9 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.thefirstlineofcode.chalk.core.IOrder;
-import com.thefirstlineofcode.sand.protocols.thing.IAddress;
+import com.thefirstlineofcode.sand.protocols.thing.ILanAddress;
 
-public abstract class AbstractCommunicator<OA extends IAddress, PA extends IAddress, D> implements ICommunicator<OA, PA, D> {
+public abstract class AbstractCommunicator<OA extends ILanAddress, PA extends ILanAddress, D> implements ICommunicator<OA, PA, D> {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractCommunicator.class);
 	
 	protected List<ICommunicationListener<OA, PA, D>> listeners;

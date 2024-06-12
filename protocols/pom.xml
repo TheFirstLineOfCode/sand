@@ -22,7 +22,6 @@
 		<module>ibtr</module>
 		<module>lora-dac</module>
 		<module>concentrator</module>
-		<module>lpwan-concentrator</module>
 		<module>location</module>
 		<module>actuator</module>
 		<module>operator</module>

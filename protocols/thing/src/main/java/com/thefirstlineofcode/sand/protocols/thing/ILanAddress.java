@@ -1,7 +1,6 @@
 package com.thefirstlineofcode.sand.protocols.thing;
 
-public interface IAddress {
-	byte[] getBytes();
+public interface ILanAddress {
 	String toAddressString();
 	CommunicationNet getCommunicationNet();
 }

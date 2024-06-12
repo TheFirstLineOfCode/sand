@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import com.thefirstlinelinecode.sand.protocols.concentrator.ResetNode;
 import com.thefirstlinelinecode.sand.protocols.concentrator.SyncNodes;
-import com.thefirstlinelinecode.sand.protocols.lpwanconcentrator.friends.PullLanFollows;
+import com.thefirstlinelinecode.sand.protocols.lpwan.concentrator.friends.PullLanFollows;
 import com.thefirstlineofcode.basalt.xmpp.core.JabberId;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
 import com.thefirstlineofcode.basalt.xmpp.core.ProtocolException;

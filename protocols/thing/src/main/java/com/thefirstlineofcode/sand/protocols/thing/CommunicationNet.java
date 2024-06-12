@@ -4,21 +4,24 @@ import java.lang.reflect.Method;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import com.thefirstlineofcode.sand.protocols.thing.lora.BleAddress;
 import com.thefirstlineofcode.sand.protocols.thing.lora.LoraAddress;
 
 public enum CommunicationNet {
-	LORA;
+	LORA,
+	BLE;
 	
-	private static ConcurrentMap<String, Class<? extends IAddress>> types = new ConcurrentHashMap<>();
+	private static ConcurrentMap<String, Class<? extends ILanAddress>> types = new ConcurrentHashMap<>();
 	
 	static {
 		types.put(LORA.name(), LoraAddress.class);
+		types.put(BLE.name(), BleAddress.class);
 	}
 	
-	public IAddress parse(String addressString) throws BadAddressException {
+	public ILanAddress parse(String addressString) throws BadAddressException {
 		try {
 			Method parseMethod = getAddressType().getMethod("parse", new Class<?>[] {String.class});
-			return (IAddress)parseMethod.invoke(null, addressString);
+			return (ILanAddress)parseMethod.invoke(null, addressString);
 		} catch (Exception e) {
 			throw new RuntimeException("Can't call static parse method of address.", e);
 		}
@@ -26,8 +29,8 @@ public enum CommunicationNet {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private Class<? extends IAddress> getAddressType() {
-		Class<? extends IAddress> type = types.get(name());
+	private Class<? extends ILanAddress> getAddressType() {
+		Class<? extends ILanAddress> type = types.get(name());
 		if (type != null)
 			return type;
 		
@@ -41,13 +44,13 @@ public enum CommunicationNet {
 		);
 		
 		try {
-			type = (Class<? extends IAddress>)Class.forName(className);
+			type = (Class<? extends ILanAddress>)Class.forName(className);
 		} catch (Exception e) {
 			throw new RuntimeException(String.format("Can't get address type. Address name is %s and Address class name is %s.",
 					name(), className), e);
 		}
 		
-		Class<? extends IAddress> existed = types.putIfAbsent(name, type);
+		Class<? extends ILanAddress> existed = types.putIfAbsent(name, type);
 		if (existed != null)
 			type = existed;
 		
