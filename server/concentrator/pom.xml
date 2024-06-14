@@ -23,7 +23,7 @@
 		</dependency>	
 		<dependency>
 			<groupId>com.thefirstlineofcode.sand.protocols</groupId>
-			<artifactId>sand-protocols-lpwan-concentrator</artifactId>
+			<artifactId>sand-protocols-concentrator</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.thefirstlineofcode.sand.server</groupId>
