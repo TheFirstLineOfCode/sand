@@ -36,7 +36,7 @@ import com.google.zxing.integration.android.IntentResult;
 import com.thefirstlinelinecode.sand.protocols.concentrator.RemoveNode;
 import com.thefirstlinelinecode.sand.protocols.concentrator.ResetNode;
 import com.thefirstlinelinecode.sand.protocols.concentrator.SyncNodes;
-import com.thefirstlinelinecode.sand.protocols.lpwanconcentrator.friends.PullLanFollows;
+import com.thefirstlinelinecode.sand.protocols.lpwan.concentrator.friends.PullLanFollows;
 import com.thefirstlineofcode.basalt.xmpp.core.IError;
 import com.thefirstlineofcode.basalt.xmpp.core.JabberId;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;

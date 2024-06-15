@@ -53,7 +53,6 @@ dependencies {
 
     implementation 'com.thefirstlineofcode.sand.demo:sand-demo-client:1.2.0-BETA1'
     implementation 'com.thefirstlineofcode.sand.protocols:sand-protocols-lora-dac:1.2.0-BETA1'
-    implementation 'com.thefirstlineofcode.sand.protocols:sand-protocols-lpwan-concentrator:1.2.0-BETA1'
     implementation 'com.thefirstlineofcode.sand.protocols.things:sand-protocols-things-simple-camera:1.2.0-BETA1'
     implementation 'com.thefirstlineofcode.sand.emulators:sand-emulators-models:1.2.0-BETA1'
     implementation 'com.thefirstlineofcode.amber:amber-protocol:1.0.0-RELEASE'
