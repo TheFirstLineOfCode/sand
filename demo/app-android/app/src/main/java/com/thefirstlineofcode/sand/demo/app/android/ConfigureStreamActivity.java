@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.thefirstlineofcode.chalk.core.IChatClient;
 import com.thefirstlineofcode.chalk.core.stream.StandardStreamConfig;
 
 import java.net.Inet4Address;
@@ -92,7 +93,9 @@ public class ConfigureStreamActivity extends AppCompatActivity {
 		streamConfig.setTlsPreferred(cbEnableTls.isChecked());
 		Toolkits.setStreamConfig(this, streamConfig);
 
-		ChatClientSingleton.destroy();
+		IChatClient chatClient = ChatClientSingleton.get(this);
+		if (chatClient.isConnected())
+			chatClient.close();
 
 		finish();
 	}

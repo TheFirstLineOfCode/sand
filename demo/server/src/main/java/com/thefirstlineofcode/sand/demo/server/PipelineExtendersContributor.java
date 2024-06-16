@@ -48,6 +48,7 @@ public class PipelineExtendersContributor extends PipelineExtendersConfigurator 
 		configurator.registerEventListener(NodeConfirmationRequestEvent.class, new NodeConfirmationRequestListener());
 		configurator.registerEventListener(NodeAddedEvent.class, new NodeAdditionListener());
 		configurator.registerEventListener(ResourceAvailableEvent.class, new EdgeThingAvailableEventListener());
+		configurator.registerEventListener(ResourceAvailableEvent.class, new UserAvailableListener());
 		
 		configurator.registerPipelinePreprocessor(new AclPipelinePreprocessor());
 		

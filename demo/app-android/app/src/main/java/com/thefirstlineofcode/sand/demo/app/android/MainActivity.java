@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements IOperator.Listene
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.activity_main);
 		
 		Toolbar tbToolbar = findViewById(R.id.tb_tool_bar);
@@ -136,6 +137,20 @@ public class MainActivity extends AppCompatActivity implements IOperator.Listene
 		listenNetConfigEvents();
 		listenVideoRecordedEvent();
 		retrieveAuthorizedThings();
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		if (!ChatClientSingleton.get(this).isConnected()) {
+			runOnUiThread(() ->
+					Toast.makeText(this,
+							"Not connect to host.",
+							Toast.LENGTH_SHORT).show());
+			
+			logout();
+		}
 	}
 	
 	private void listenVideoRecordedEvent() {
@@ -223,14 +238,6 @@ public class MainActivity extends AppCompatActivity implements IOperator.Listene
 		
 		authorizedEdgeThingsService.retrieve();
 	}
-	
-	@Override
-	protected void onStart() {
-		super.onStart();
-
-		Intent intent = new Intent(this, AppExitMonitor.class);
-		startService(intent);
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -302,12 +309,6 @@ public class MainActivity extends AppCompatActivity implements IOperator.Listene
 		Intent intent = new Intent(this, LoginActivity.class);
 		intent.putExtra(getString(R.string.auto_login), false);
 		startActivity(intent);
-	}
-
-	@Override
-	protected void onDestroy() {
-		ChatClientSingleton.destroy();
-		super.onDestroy();
 	}
 
 	@Override
