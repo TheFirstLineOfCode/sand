@@ -10,7 +10,8 @@ public class AppComponentContributor implements IAppComponentsContributor {
 	@Override
 	public Class<?>[] getAppComponentClasses() {
 		return new Class<?>[] {
-			NotAuthorizedEdgeThingRegistrations.class
+			NotAuthorizedEdgeThingRegistrations.class,
+			NodeConfirmationRequests.class
 		};
 	}
 
