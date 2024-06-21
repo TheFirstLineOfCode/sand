@@ -25,6 +25,7 @@ import com.thefirstlineofcode.basalt.xmpp.core.stanza.Iq;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.StanzaError;
 import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.UndefinedCondition;
 import com.thefirstlineofcode.chalk.core.stream.StandardStreamConfig;
+import com.thefirstlineofcode.sand.client.actuator.ExecutorFactoryAdapter;
 import com.thefirstlineofcode.sand.client.actuator.IActuator;
 import com.thefirstlineofcode.sand.client.actuator.IExecutor;
 import com.thefirstlineofcode.sand.client.actuator.IExecutorFactory;
@@ -262,7 +263,7 @@ public class LoraGatewayAndCamera extends AbstractEdgeThing implements ISimpleCa
 	}
 
 	private IExecutorFactory<?> createShutdownSystemExecutatorFactory() {
-		return new IExecutorFactory<ShutdownSystem>() {
+		return new ExecutorFactoryAdapter<ShutdownSystem>() {
 			private IExecutor<ShutdownSystem> executor = new ResponseInAdvanceExecutor<ShutdownSystem>(
 					new ShutdownSystemExecutor(LoraGatewayAndCamera.this), LoraGatewayAndCamera.this);
 			
@@ -284,7 +285,7 @@ public class LoraGatewayAndCamera extends AbstractEdgeThing implements ISimpleCa
 	}
 
 	private IExecutorFactory<?> createStopExecutatorFactory() {
-		return new IExecutorFactory<Stop>() {
+		return new ExecutorFactoryAdapter<Stop>() {
 			private IExecutor<Stop> executor = new ResponseInAdvanceExecutor<Stop>(
 					new StopExecutor(LoraGatewayAndCamera.this), LoraGatewayAndCamera.this);
 			
@@ -314,7 +315,7 @@ public class LoraGatewayAndCamera extends AbstractEdgeThing implements ISimpleCa
 	}
 	
 	private IExecutorFactory<?> createSyncNodesExecutatorFactory(IConcentrator concentrator) {
-		return new IExecutorFactory<SyncNodes>() {
+		return new ExecutorFactoryAdapter<SyncNodes>() {
 			private IExecutor<SyncNodes> executor = new SyncNodesExecutor(
 					chatClient.getChatServices(), concentrator);
 			
@@ -336,7 +337,7 @@ public class LoraGatewayAndCamera extends AbstractEdgeThing implements ISimpleCa
 	}
 	
 	private IExecutorFactory<?> createPullLanFollowsExecutatorFactory(ILpwanConcentrator concentrator) {
-		return new IExecutorFactory<PullLanFollows>() {
+		return new ExecutorFactoryAdapter<PullLanFollows>() {
 			private IExecutor<PullLanFollows> executor = new PullLanFollowsExecutor(
 					chatClient.getChatServices(), concentrator);
 			
@@ -358,7 +359,7 @@ public class LoraGatewayAndCamera extends AbstractEdgeThing implements ISimpleCa
 	}
 	
 	private IExecutorFactory<?> createResetNodeServiceExecutatorFactory(IConcentrator concentrator) {
-		return new IExecutorFactory<ResetNode>() {
+		return new ExecutorFactoryAdapter<ResetNode>() {
 			private IExecutor<ResetNode> executor = new ResetNodeExecutor(concentrator);
 			
 			@Override
@@ -379,7 +380,7 @@ public class LoraGatewayAndCamera extends AbstractEdgeThing implements ISimpleCa
 	}
 
 	private IExecutorFactory<?> createChangeWorkingModeExecutatorFactory(ILoraGateway loraGateway) {
-		return new IExecutorFactory<ChangeWorkingMode>() {
+		return new ExecutorFactoryAdapter<ChangeWorkingMode>() {
 			private IExecutor<ChangeWorkingMode> executor = new ChangeWorkingModeExecutor(loraGateway);
 
 			@Override
@@ -400,7 +401,7 @@ public class LoraGatewayAndCamera extends AbstractEdgeThing implements ISimpleCa
 	}
 	
 	private IExecutorFactory<?> createResetDacServiceExecutatorFactory(ILoraDacService loraDacService) {
-		return new IExecutorFactory<ResetLoraDacService>() {
+		return new ExecutorFactoryAdapter<ResetLoraDacService>() {
 			private IExecutor<ResetLoraDacService> executor = new ResetLoraDacServiceExecutor(loraDacService);
 
 			@Override
@@ -426,7 +427,7 @@ public class LoraGatewayAndCamera extends AbstractEdgeThing implements ISimpleCa
 	}
 	
 	private IExecutorFactory<?> createTakeVideoExecutatorFactory() {
-		return new IExecutorFactory<TakeVideo>() {
+		return new ExecutorFactoryAdapter<TakeVideo>() {
 			private IExecutor<TakeVideo> executor = new TakeVideoExecutor();
 			
 			@Override
@@ -504,7 +505,7 @@ public class LoraGatewayAndCamera extends AbstractEdgeThing implements ISimpleCa
 	}
 	
 	private IExecutorFactory<?> createTakePhotoExecutatorFactory() {
-		return new IExecutorFactory<TakePhoto>() {
+		return new ExecutorFactoryAdapter<TakePhoto>() {
 			private IExecutor<TakePhoto> executor = new TakePhotoExecutor();
 			
 			@Override

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.thefirstlineofcode.basalt.oxm.IOxmFactory;
 import com.thefirstlineofcode.basalt.oxm.coc.CocParserFactory;
+import com.thefirstlineofcode.basalt.oxm.coc.CocTranslatorFactory;
 import com.thefirstlineofcode.basalt.oxm.coc.annotations.ProtocolObject;
 import com.thefirstlineofcode.basalt.xmpp.core.IqProtocolChain;
 import com.thefirstlineofcode.basalt.xmpp.core.JabberId;
@@ -210,28 +211,49 @@ public class Actuator implements IActuator, IIqListener {
 	}
 	
 	@Override
+	public <T> void registerExecutor(Class<T> actionType, Class<?> actionResultType, Class<? extends IExecutor<T>> executorType) {
+		registerExecutorFactory(new CreateByTypeExecutorFactory<T>(actionType, actionResultType, executorType, null));
+	}
+	
+	@Override
 	public <T> void registerExecutor(Class<T> actionType, Class<? extends IExecutor<T>> executorType, Object thingController) {
 		registerExecutorFactory(new CreateByTypeExecutorFactory<T>(actionType, executorType, thingController));
+	}
+	
+	@Override
+	public <T> void registerExecutor(Class<T> actionType, Class<?> actionResultType, Class<? extends IExecutor<T>> executorType, Object thingController) {
+		registerExecutorFactory(new CreateByTypeExecutorFactory<T>(actionType, actionResultType, executorType, thingController));
 	}
 	
 	private class CreateByTypeExecutorFactory<T> implements IExecutorFactory<T> {
 		private Protocol protocol;
 		private Class<T> actionType;
+		private Class<?> actionResultType;
 		private Class<? extends IExecutor<T>> executorType;
 		private Object thingController;
 		
 		public CreateByTypeExecutorFactory(Class<T> actionType,
 				Class<? extends IExecutor<T>> executorType, Object thingController) {
+			this(actionType, null, executorType, thingController);
+		}
+		
+		public CreateByTypeExecutorFactory(Class<T> actionType, Class<?> actionResultType,
+				Class<? extends IExecutor<T>> executorType, Object thingController) {
 			this.actionType = actionType;
+			this.actionResultType = actionResultType;
 			this.executorType = executorType;
 			this.thingController = thingController;
 			
-			ProtocolObject protocolObject = actionType.getAnnotation(ProtocolObject.class);
+			protocol = getProtocolForProjectObjectClass(actionType);
+		}
+
+		private Protocol getProtocolForProjectObjectClass(Class<?> protocolObjectClass) {
+			ProtocolObject protocolObject = protocolObjectClass.getAnnotation(ProtocolObject.class);
 			if (protocolObject == null)
 				throw new IllegalArgumentException(String.format("Not a protocol object. Object type: %s.",
-						actionType.getName()));
+						protocolObjectClass.getName()));
 			
-			protocol = new Protocol(protocolObject.namespace(), protocolObject.localName());
+			return new Protocol(protocolObject.namespace(), protocolObject.localName());
 		}
 
 		@SuppressWarnings("unchecked")
@@ -254,7 +276,19 @@ public class Actuator implements IActuator, IIqListener {
 		public Class<T> getActionType() {
 			return actionType;
 		}
-		
+
+		@Override
+		public Class<?> getActionResultType() {
+			return actionResultType;
+		}
+
+		@Override
+		public Protocol getActionResultProtocol() {
+			if (actionResultType != null)
+				getProtocolForProjectObjectClass(actionResultType);
+			
+			return null;
+		}
 	}
 	
 	@Override
@@ -266,6 +300,11 @@ public class Actuator implements IActuator, IIqListener {
 		
 		oxmFactory.register(new IqProtocolChain(Execution.PROTOCOL).next(executorFactory.getProtocol()),
 				new CocParserFactory<>(executorFactory.getActionType()));
+		
+		if (executorFactory.getActionResultType() != null) {
+			oxmFactory.register(executorFactory.getActionResultType(),
+					new CocTranslatorFactory<>(executorFactory.getActionResultType()));
+		}
 		
 		executorFactories.put(executorFactory.getActionType(), executorFactory);
 	}

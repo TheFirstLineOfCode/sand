@@ -7,8 +7,8 @@ import com.thefirstlineofcode.basalt.xmpp.core.stanza.error.StanzaError;
 import com.thefirstlineofcode.sand.protocols.actuator.Execution;
 
 public interface IRemoting {
-	void registerActions(Class<?>... actionTypes);
 	void registerActions(List<Class<?>> actionTypes);
+	void registerActions(List<Class<?>> actionTypes, List<Class<?>> actionResultTypes);
 	void execute(JabberId target, Object action);
 	void execute(JabberId target, Object action, int timeout);
 	void execute(JabberId target, Object action, Callback callback);

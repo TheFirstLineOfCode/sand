@@ -96,4 +96,15 @@ public class MultiTypeThingTypeDescriptor implements IThingTypeDescriptor {
 		
 		return allSupportedActions;
 	}
+
+	@Override
+	public Map<Protocol, Class<?>> getSupportedActionResults() {
+		Map<Protocol, Class<?>> allSupportedActionResults = new LinkedHashMap<>();
+		for (IThingTypeDescriptor typeDescriptor : typeDescriptors) {
+			if (typeDescriptor.getSupportedActions() != null)
+				allSupportedActionResults.putAll(typeDescriptor.getSupportedActionResults());
+		}
+		
+		return allSupportedActionResults;
+	}
 }

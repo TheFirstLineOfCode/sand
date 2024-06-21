@@ -13,4 +13,5 @@ public interface IThingDescriptor {
 	public Map<Protocol, Class<?>> getFollowedEvents();
 	public Map<Protocol, Class<?>> getSupportedData();
 	public Map<Protocol, Class<?>> getSupportedActions();
+	public Map<Protocol, Class<?>> getSupportedActionResults();
 }

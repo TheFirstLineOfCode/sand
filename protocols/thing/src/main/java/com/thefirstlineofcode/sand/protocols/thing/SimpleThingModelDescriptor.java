@@ -28,6 +28,14 @@ public class SimpleThingModelDescriptor extends AbstractThingDescriptor implemen
 		this.description = description;
 	}
 	
+	public SimpleThingModelDescriptor(String modelName, String description, boolean concentrator, Map<Protocol, Class<?>> supportedEvents,
+			Map<Protocol, Class<?>> supportedData, Map<Protocol, Class<?>> suppportedActions,
+				Map<Protocol, Class<?>> suppportedActionResults) {
+		super(concentrator, supportedEvents, supportedData, suppportedActions, suppportedActionResults);
+		this.modelName = modelName;
+		this.description = description;
+	}
+	
 	@Override
 	public String getModelName() {
 		return modelName;

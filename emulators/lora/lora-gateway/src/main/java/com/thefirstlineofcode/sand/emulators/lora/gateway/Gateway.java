@@ -67,9 +67,9 @@ import com.thefirstlineofcode.chalk.core.stream.StandardStreamConfig;
 import com.thefirstlineofcode.chalk.core.stream.UsernamePasswordToken;
 import com.thefirstlineofcode.chalk.network.ConnectionException;
 import com.thefirstlineofcode.chalk.network.IConnectionListener;
+import com.thefirstlineofcode.sand.client.actuator.ExecutorFactoryAdapter;
 import com.thefirstlineofcode.sand.client.actuator.IActuator;
 import com.thefirstlineofcode.sand.client.actuator.IExecutor;
-import com.thefirstlineofcode.sand.client.actuator.IExecutorFactory;
 import com.thefirstlineofcode.sand.client.concentrator.IConcentrator;
 import com.thefirstlineofcode.sand.client.concentrator.IConcentrator.AddNodeError;
 import com.thefirstlineofcode.sand.client.concentrator.LanNode;
@@ -603,7 +603,7 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 	}
 
 	private void registerExecutors(IActuator actuator) {
-		actuator.registerExecutorFactory(new IExecutorFactory<ChangeWorkingMode>() {
+		actuator.registerExecutorFactory(new ExecutorFactoryAdapter<ChangeWorkingMode>() {
 			@Override
 			public IExecutor<ChangeWorkingMode> create() {
 				return new ChangeWorkingModeExecutor();
@@ -620,7 +620,7 @@ public class Gateway extends JFrame implements ActionListener, InternalFrameList
 			}
 		});
 		
-		actuator.registerExecutorFactory(new IExecutorFactory<SyncNodes>() {
+		actuator.registerExecutorFactory(new ExecutorFactoryAdapter<SyncNodes>() {
 			@Override
 			public IExecutor<SyncNodes> create() {
 				return new SyncNodesExecutor(chatClient.getChatServices(), loraGateway.getLpwanConcentrator());

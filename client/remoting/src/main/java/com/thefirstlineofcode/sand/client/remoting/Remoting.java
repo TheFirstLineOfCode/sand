@@ -125,8 +125,7 @@ public class Remoting implements IRemoting {
 		
 	}
 	
-	@Override
-	public void registerActions(Class<?>... actionTypes) {
+	private void registerActions(Class<?>... actionTypes) {
 		for (Class<?> actionType : actionTypes) {			
 			ProtocolObject protocolObject = actionType.getAnnotation(ProtocolObject.class);
 			if (protocolObject == null)
@@ -135,19 +134,37 @@ public class Remoting implements IRemoting {
 								actionType.getName()));
 			
 			chatServices.getOxmFactory().register(actionType, new CocTranslatorFactory<>(actionType));
-			chatServices.getOxmFactory().register(
-					new IqProtocolChain(Execution.PROTOCOL).
-					next(new Protocol(protocolObject.namespace(), protocolObject.localName())),
-					new CocParserFactory<>(actionType));
 			chatServices.getOxmFactory().register(new IqProtocolChain(
 					new Protocol(protocolObject.namespace(), protocolObject.localName())),
 					new CocParserFactory<>(actionType));
 		}
 	}
+	
+	private void registerActionReults(Class<?>[] actionResultTypes) {
+		for (Class<?> actionResultType : actionResultTypes) {			
+			ProtocolObject protocolObject = actionResultType.getAnnotation(ProtocolObject.class);
+			if (protocolObject == null)
+				throw new RuntimeException(
+						String.format("Illegal action type. An action type must be a protocol object. Action type name: %s.",
+								actionResultType.getName()));
+			
+			chatServices.getOxmFactory().register(new IqProtocolChain(
+					new Protocol(protocolObject.namespace(), protocolObject.localName())),
+					new CocParserFactory<>(actionResultType));
+		}
+	}
 
 	@Override
 	public void registerActions(List<Class<?>> actionTypes) {
+		registerActions(actionTypes, null);
+	}
+	
+	@Override
+	public void registerActions(List<Class<?>> actionTypes, List<Class<?>> actionResultTypes) {
 		registerActions(actionTypes.toArray(new Class<?>[0]));
+		
+		if (actionResultTypes != null && actionResultTypes.size() != 0)
+			registerActionReults(actionResultTypes.toArray(new Class<?>[0]));
 	}
 	
 }

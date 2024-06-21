@@ -2,6 +2,7 @@ package com.thefirstlineofcode.sand.demo.app.android;
 
 import android.content.Context;
 
+import com.thefirstlineofcode.amber.protocol.AmberWatchModelDescriptor;
 import com.thefirstlineofcode.chalk.android.StandardChatClient;
 import com.thefirstlineofcode.sand.client.operator.OperatorPlugin;
 import com.thefirstlineofcode.sand.client.remoting.IRemoting;
@@ -15,6 +16,7 @@ import com.thefirstlineofcode.sand.emulators.models.Lge01ModelDescriptor;
 import com.thefirstlineofcode.sand.emulators.models.Sle01ModelDescriptor;
 
 import java.util.Collection;
+import java.util.Collections;
 
 class ChatClientSingleton {
 	private static StandardChatClient chatClient;
@@ -31,13 +33,18 @@ class ChatClientSingleton {
 			
 			IRemoting remoting = chatClient.createApi(IRemoting.class);
 			Collection<Class<?>> actionTypes = new Lge01ModelDescriptor().getSupportedActions().values();
-			remoting.registerActions(actionTypes.toArray(new Class<?>[actionTypes.size()]));
+			remoting.registerActions(Collections.list(Collections.enumeration(actionTypes)));
 			
 			actionTypes = new Sle01ModelDescriptor().getSupportedActions().values();
-			remoting.registerActions(actionTypes.toArray(new Class<?>[actionTypes.size()]));
+			remoting.registerActions(Collections.list(Collections.enumeration(actionTypes)));
 			
 			actionTypes = new Lgsc01ModelDescriptor().getSupportedActions().values();
-			remoting.registerActions(actionTypes.toArray(new Class<?>[actionTypes.size()]));
+			remoting.registerActions(Collections.list(Collections.enumeration(actionTypes)));
+			
+			actionTypes = new AmberWatchModelDescriptor().getSupportedActions().values();
+			Collection<Class<?>> actionResultTypes = new AmberWatchModelDescriptor().getSupportedActionResults().values();
+			remoting.registerActions(Collections.list(Collections.enumeration(actionTypes)),
+					Collections.list(Collections.enumeration(actionResultTypes)));
 		}
 
 		return chatClient;

@@ -63,4 +63,9 @@ public class SingleTypeThingModelDescriptor implements IThingModelDescriptor {
 	public Map<Protocol, Class<?>> getFollowedEvents() {
 		return typeDescriptor.getFollowedEvents();
 	}
+
+	@Override
+	public Map<Protocol, Class<?>> getSupportedActionResults() {
+		return typeDescriptor.getSupportedActionResults();
+	}
 }

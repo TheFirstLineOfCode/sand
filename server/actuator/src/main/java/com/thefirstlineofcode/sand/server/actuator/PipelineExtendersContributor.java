@@ -47,6 +47,11 @@ public class PipelineExtendersContributor extends PipelineExtendersConfigurator 
 					configurator.registerCocParser(new IqProtocolChain(entry.getKey()), entry.getValue());
 					configurator.registerCocTranslator(entry.getValue());
 				}
+				
+				for (Entry<Protocol, Class<?>> entry : modelDescriptor.getSupportedActionResults().entrySet()) {
+					configurator.registerCocParser(new IqProtocolChain(entry.getKey()), entry.getValue());
+					configurator.registerCocTranslator(entry.getValue());
+				}
 			}
 		}
 	}

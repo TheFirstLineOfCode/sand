@@ -37,6 +37,8 @@ import com.thefirstlinelinecode.sand.protocols.concentrator.RemoveNode;
 import com.thefirstlinelinecode.sand.protocols.concentrator.ResetNode;
 import com.thefirstlinelinecode.sand.protocols.concentrator.SyncNodes;
 import com.thefirstlinelinecode.sand.protocols.lpwan.concentrator.friends.PullLanFollows;
+import com.thefirstlineofcode.amber.protocol.QueryWatchState;
+import com.thefirstlineofcode.amber.protocol.WatchState;
 import com.thefirstlineofcode.basalt.xmpp.core.IError;
 import com.thefirstlineofcode.basalt.xmpp.core.JabberId;
 import com.thefirstlineofcode.basalt.xmpp.core.Protocol;
@@ -1286,6 +1288,36 @@ public class MainActivity extends AppCompatActivity implements IOperator.Listene
 	
 	public void queryWatchState(JabberId target) {
 		logger.info("Query state of watch which's JID is {}.", target);
+		
+		IChatClient chatClient = ChatClientSingleton.get(this);
+		IRemoting remoting = chatClient.createApi(IRemoting.class);
+		remoting.execute(target, new QueryWatchState(),
+				new IRemoting.Callback() {
+					@Override
+					public void executed(Object xep) {
+						WatchState watchState = (WatchState)xep;
+						MainActivity.this.runOnUiThread(() -> Toast.makeText(
+								MainActivity.this,
+								String.format("Watch state: %d, %d.", watchState.getBatteryLevel(),
+										watchState.getStepCount()),
+								Toast.LENGTH_LONG).show());
+					}
+					
+					@Override
+					public void occurred(StanzaError error) {
+						String errorText = "Query watch state execution error: " +
+								(error.getText() == null ? error.toString() : error.getText().getText());
+						remotingErrorOccurred(MainActivity.this, error, errorText);
+					}
+					
+					@Override
+					public void timeout() {
+						MainActivity.this.runOnUiThread(() -> Toast.makeText(
+								MainActivity.this,
+								"Query watch state execution timeout.",
+								Toast.LENGTH_LONG).show());
+					}
+				});
 	}
 	
 	public void monitorHeartRate(JabberId target) {

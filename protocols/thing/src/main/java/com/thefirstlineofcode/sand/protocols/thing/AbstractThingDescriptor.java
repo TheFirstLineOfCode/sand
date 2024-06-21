@@ -11,6 +11,7 @@ public abstract class AbstractThingDescriptor implements IThingDescriptor {
 	protected boolean sensor;
 	
 	protected Map<Protocol, Class<?>> supportedActions;
+	protected Map<Protocol, Class<?>> supportedActionResults;
 	protected Map<Protocol, Class<?>> supportedEvents;
 	protected Map<Protocol, Class<?>> followedEvents;
 	protected Map<Protocol, Class<?>> supportedData;
@@ -35,11 +36,18 @@ public abstract class AbstractThingDescriptor implements IThingDescriptor {
 	
 	public AbstractThingDescriptor(boolean concentrator, Map<Protocol, Class<?>> supportedEvents,
 			Map<Protocol, Class<?>> supportedData, Map<Protocol, Class<?>> suppportedActions,
-				Map<Protocol, Class<?>> followedEvents) {
+				Map<Protocol, Class<?>> suppportedActionResults) {
+		this(concentrator, supportedEvents, supportedData, suppportedActions, suppportedActionResults, null);
+	}
+	
+	public AbstractThingDescriptor(boolean concentrator, Map<Protocol, Class<?>> supportedEvents,
+			Map<Protocol, Class<?>> supportedData, Map<Protocol, Class<?>> suppportedActions,
+			Map<Protocol, Class<?>> suppportedActionResults, Map<Protocol, Class<?>> followedEvents) {
 		this.concentrator = concentrator;
 		this.supportedEvents = supportedEvents;
 		this.supportedData = supportedData;
 		this.supportedActions = suppportedActions;
+		this.supportedActionResults = suppportedActionResults;
 		this.followedEvents = followedEvents;
 		
 		if (supportedData != null) {
@@ -78,6 +86,10 @@ public abstract class AbstractThingDescriptor implements IThingDescriptor {
 	
 	public Map<Protocol, Class<?>> getSupportedActions() {
 		return supportedActions == null ? createEmptyMap() : Collections.unmodifiableMap(supportedActions);
+	}
+	
+	public Map<Protocol, Class<?>> getSupportedActionResults() {
+		return supportedActionResults == null ? createEmptyMap() : Collections.unmodifiableMap(supportedActionResults);
 	}
 
 	private Map<Protocol, Class<?>> createEmptyMap() {

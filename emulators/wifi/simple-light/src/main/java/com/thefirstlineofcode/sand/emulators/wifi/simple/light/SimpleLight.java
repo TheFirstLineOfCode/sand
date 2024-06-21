@@ -9,9 +9,9 @@ import com.thefirstlineofcode.chalk.core.AuthFailureException;
 import com.thefirstlineofcode.chalk.core.stream.StandardStreamConfig;
 import com.thefirstlineofcode.chalk.network.ConnectionException;
 import com.thefirstlineofcode.sand.client.actuator.ActuatorPlugin;
+import com.thefirstlineofcode.sand.client.actuator.ExecutorFactoryAdapter;
 import com.thefirstlineofcode.sand.client.actuator.IActuator;
 import com.thefirstlineofcode.sand.client.actuator.IExecutor;
-import com.thefirstlineofcode.sand.client.actuator.IExecutorFactory;
 import com.thefirstlineofcode.sand.client.edge.AbstractEdgeThing;
 import com.thefirstlineofcode.sand.client.ibtr.RegistrationException;
 import com.thefirstlineofcode.sand.client.thing.IAckListener;
@@ -223,7 +223,7 @@ public class SimpleLight extends AbstractEdgeThing implements ISimpleLight, IAck
 
 	protected IActuator createActuator() {
 		IActuator actuator = chatClient.createApi(IActuator.class);
-		actuator.registerExecutorFactory(new IExecutorFactory<Flash>() {
+		actuator.registerExecutorFactory(new ExecutorFactoryAdapter<Flash>() {
 			
 			@Override
 			public IExecutor<Flash> create() {
@@ -241,7 +241,7 @@ public class SimpleLight extends AbstractEdgeThing implements ISimpleLight, IAck
 			}
 			
 		});
-		actuator.registerExecutorFactory(new IExecutorFactory<TurnOn>() {
+		actuator.registerExecutorFactory(new ExecutorFactoryAdapter<TurnOn>() {
 
 			@Override
 			public IExecutor<TurnOn> create() {
@@ -259,7 +259,7 @@ public class SimpleLight extends AbstractEdgeThing implements ISimpleLight, IAck
 			}
 
 		});
-		actuator.registerExecutorFactory(new IExecutorFactory<TurnOff>() {
+		actuator.registerExecutorFactory(new ExecutorFactoryAdapter<TurnOff>() {
 
 			@Override
 			public IExecutor<TurnOff> create() {
