@@ -49,4 +49,5 @@
     <string name="yes_reset_it">是的，重置它</string>
     <string name="yes_remove_it">是的，移除它</string>
     <string name="yes_follow_it">是的，关注它</string>
+    <string name="watch_state">表状态</string>
 </resources>

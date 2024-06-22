@@ -57,4 +57,5 @@
     <string name="yes_remove_it">Yes, remove it</string>
     <string name="yes_confirm_it">Yes, confirm it</string>
     <string name="yes_follow_it">Yes, follow it</string>
+    <string name="watch_state">Watch State</string>
 </resources>

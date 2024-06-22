@@ -1296,11 +1296,25 @@ public class MainActivity extends AppCompatActivity implements IOperator.Listene
 					@Override
 					public void executed(Object xep) {
 						WatchState watchState = (WatchState)xep;
-						MainActivity.this.runOnUiThread(() -> Toast.makeText(
-								MainActivity.this,
-								String.format("Watch state: %d, %d.", watchState.getBatteryLevel(),
-										watchState.getStepCount()),
-								Toast.LENGTH_LONG).show());
+						
+						AlertDialog.Builder watchStateDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+						
+						View watchStateView = LayoutInflater.from(MainActivity.this).inflate(R.layout.watch_state_view, null, false);
+						setWatchStateToView(watchState, watchStateView);
+						
+						watchStateDialogBuilder.setView(watchStateView);
+						
+						watchStateDialogBuilder.setNeutralButton("Close", new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.dismiss();
+							}
+						});
+						
+						runOnUiThread(() -> {
+							AlertDialog watchStateDialog = watchStateDialogBuilder.create();
+							watchStateDialog.show();
+						});
 					}
 					
 					@Override
@@ -1318,6 +1332,17 @@ public class MainActivity extends AppCompatActivity implements IOperator.Listene
 								Toast.LENGTH_LONG).show());
 					}
 				});
+	}
+	
+	private void setWatchStateToView(WatchState watchState, View watchStateView) {
+		TextView address = watchStateView.findViewById(R.id.watch_address);
+		address.setText(String.format("  %s", watchState.getAddress()));
+		
+		TextView batteryLevel = watchStateView.findViewById(R.id.watch_battery_level);
+		batteryLevel.setText(String.format("  %d", watchState.getBatteryLevel()));
+		
+		TextView stepCount = watchStateView.findViewById(R.id.watch_step_count);
+		stepCount.setText(String.format("  %d", watchState.getStepCount()));
 	}
 	
 	public void monitorHeartRate(JabberId target) {
