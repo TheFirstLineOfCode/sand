@@ -31,23 +31,27 @@ class ChatClientSingleton {
 			chatClient.register(WebcamPlugin.class);
 			chatClient.register(DemoPlugin.class);
 			
-			IRemoting remoting = chatClient.createApi(IRemoting.class);
-			Collection<Class<?>> actionTypes = new Lge01ModelDescriptor().getSupportedActions().values();
-			remoting.registerActions(Collections.list(Collections.enumeration(actionTypes)));
-			
-			actionTypes = new Sle01ModelDescriptor().getSupportedActions().values();
-			remoting.registerActions(Collections.list(Collections.enumeration(actionTypes)));
-			
-			actionTypes = new Lgsc01ModelDescriptor().getSupportedActions().values();
-			remoting.registerActions(Collections.list(Collections.enumeration(actionTypes)));
-			
-			actionTypes = new AmberWatchModelDescriptor().getSupportedActions().values();
-			Collection<Class<?>> actionResultTypes = new AmberWatchModelDescriptor().getSupportedActionResults().values();
-			remoting.registerActions(Collections.list(Collections.enumeration(actionTypes)),
-					Collections.list(Collections.enumeration(actionResultTypes)));
+			registerRemotingActions();
 		}
 
 		return chatClient;
+	}
+	
+	private static void registerRemotingActions() {
+		IRemoting remoting = chatClient.createApi(IRemoting.class);
+		Collection<Class<?>> actionTypes = new Lge01ModelDescriptor().getSupportedActions().values();
+		remoting.registerActions(Collections.list(Collections.enumeration(actionTypes)));
+		
+		actionTypes = new Sle01ModelDescriptor().getSupportedActions().values();
+		remoting.registerActions(Collections.list(Collections.enumeration(actionTypes)));
+		
+		actionTypes = new Lgsc01ModelDescriptor().getSupportedActions().values();
+		remoting.registerActions(Collections.list(Collections.enumeration(actionTypes)));
+		
+		actionTypes = new AmberWatchModelDescriptor().getSupportedActions().values();
+		Collection<Class<?>> actionResultTypes = new AmberWatchModelDescriptor().getSupportedActionResults().values();
+		remoting.registerActions(Collections.list(Collections.enumeration(actionTypes)),
+				Collections.list(Collections.enumeration(actionResultTypes)));
 	}
 	
 	static void destroy() {

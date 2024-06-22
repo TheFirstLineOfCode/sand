@@ -116,7 +116,7 @@ public class AclPipelinePreprocessor implements IPipelinePreprocessor {
 		
 		ProtocolObject pObject = obj.getClass().getAnnotation(ProtocolObject.class);
 		if (pObject == null)
-			throw new ProtocolException(new InternalServerError("Not project object."));
+			throw new ProtocolException(new InternalServerError("Not protocol object."));
 		
 		return pObject.namespace().equals("urn:leps:tuxp:concentrator");
 	}
